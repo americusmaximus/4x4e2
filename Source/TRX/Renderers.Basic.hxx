@@ -52,6 +52,7 @@ namespace Renderers
         X8 = 4
     };
 
+    // TODO: Names.
     enum class RendererBlendOperation : u32
     {
         None = 0,
@@ -63,24 +64,6 @@ namespace Renderers
         Modulate4X = 6,
         Add = 7,
         AddSigned = 8,
-        AddSigned2X = 9,
-        Subtract = 10,
-        AddSmooth = 11,
-        BlendDiffuseAlpha = 12,
-        BlendTextureAlpha = 13,
-        BlendFactorAlpha = 14,
-        BlendTextureAlphaPreMultiplied = 15,
-        BlendCurrentAlpha = 16,
-        PreModulate = 17,
-        ModulateAlphaAddColor = 18,
-        ModulateColorAddAlpha = 19,
-        ModulateInverseAlphaAddColor = 20,
-        ModulateInverseColorAddAlpha = 21,
-        BumpEnvMap = 22,
-        BumpEnvMapLuminance = 23,
-        DotProduct3 = 24,
-        MultiplyAdd = 25,
-        Lerp = 26,
         All = U32_MAX
     };
 
