@@ -28,14 +28,14 @@ The game is heavily dependent on Windows API, these calls are sprinkled all over
 ![4x4e2](./Extras/ScreenShot.DX.9.0.x001.png)
 ### DirectX 9.0 T&L
 ![4x4e2](./Extras/ScreenShot.DX.9.0.TL.x001.png)
-DirectX 9.0 renderers are an upgraded versions of DirectX 8.0 renderers. This renderer is an important step towards the future 64-bit compatibility.
+DirectX 9.0 renderers are upgrades to the DirectX 8.0 renderers. These renderers are an important step towards the future 64-bit compatibility.
 
 ## Notes
 1. The DirectX 8.0 T&L renderer has the original shaders, as they come with the game. They contains debug information, thus, if you compile disassembled shaders, you will get way smaller payloads.
 
 ## Thanks
 1. Thanks to [My Abandonware](https://www.myabandonware.com/) for providing [4x4 Evo 2](https://www.myabandonware.com/game/4x4-evo-2-a6c).
-2. Thanks to [4x4 Evolution Revival Project](https://www.4x4evolution.net/doku.php?id=start) for providing custom track files (.lte), this was very helpful for testing.
+2. Thanks to [d3d8to9](https://github.com/crosire/d3d8to9) for the insights and the details for the upgrade to DirectX 9.0 above and beyond what Microsoft's article [Converting to Direct3D 9](https://learn.microsoft.com/en-us/windows/win32/direct3d9/converting-to-directx-9) provides.
 
 ## Legal
 1. This is not a complete game. Please purchase software you like!
