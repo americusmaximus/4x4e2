@@ -1,0 +1,9 @@
+ps.1.1
+tex t0
+dp3_sat r0.xyz, t0_bx2, v0_bx2
+mul r1.xyz, r0, r0
+mul r0.xyz, r1, r1
+mul r1.xyz, r0, r0
+mul r0.xyz, r1, r1
+mul r0.xyz, r0, t0.w
+mov r0.w, v0.w

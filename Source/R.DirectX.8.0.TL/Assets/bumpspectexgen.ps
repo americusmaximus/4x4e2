@@ -1,0 +1,11 @@
+ps.1.0
+tex t0
+texkill t1
+tex t2
+dp3_sat r1, t0_bx2, v0_bx2
+mul r0, r1, r1
+mul r1, r0, r0
+mul r0, r1, r1
+mul r0, r0, t0.w
+mul r0, r0, t2
+mov r0.w, v0.w
