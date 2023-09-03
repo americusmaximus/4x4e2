@@ -45,10 +45,7 @@ namespace DX
 
             dims = dims / 2;
 
-            if (dims == 0)
-            {
-                Quit("Unable to acquire texture source size %d x %d.", dimensions, State.DX.Surfaces.Dimensions);
-            }
+            if (dims == 0) { Quit("Unable to acquire texture source size %d x %d.", dimensions, State.DX.Surfaces.Dimensions); }
         }
 
         return &State.DX.Pixels.Pixels[offset];
