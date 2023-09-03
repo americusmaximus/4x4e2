@@ -48,7 +48,6 @@ namespace GL
         char Name[MAX_TEXTURE_NAME_LENGTH];
     };
 
-
     struct GLState
     {
         struct
