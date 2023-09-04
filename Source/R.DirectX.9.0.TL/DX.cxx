@@ -1093,7 +1093,7 @@ namespace DX
         DXC(State.DX.DirectX.Device->SetVertexShader(NULL), "Unable to set vertex shader.");
         DXC(State.DX.DirectX.Device->SetVertexDeclaration(NULL), "Unable to set vertex shader declaration.");
 
-        DXC(State.DX.DirectX.Device->SetFVF(fvf), "Unable to set vertex shader declaration.");
+        DXC(State.DX.DirectX.Device->SetFVF(fvf), "Unable to set vertex format.");
 
         if (State.Settings.FixedPipelineMode == FixedPipelineOptionsMode::Off)
         {
@@ -1115,7 +1115,7 @@ namespace DX
             DXC(State.DX.DirectX.Device->SetVertexShader(NULL), "Unable to set vertex shader.");
             DXC(State.DX.DirectX.Device->SetVertexDeclaration(NULL), "Unable to set vertex shader declaration.");
 
-            DXC(State.DX.DirectX.Device->SetFVF(vs->FVF), "Unable to set vertex shader declaration.");
+            DXC(State.DX.DirectX.Device->SetFVF(vs->FVF), "Unable to set vertex format.");
 
             DXC(State.DX.DirectX.Device->SetPixelShader(NULL), "Unable to set pixel shader.");
         }
