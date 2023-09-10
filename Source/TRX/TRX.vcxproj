@@ -19,20 +19,53 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App.hxx" />
+    <ClInclude Include="App.Windows.hxx" />
     <ClInclude Include="Assets.Basic.hxx" />
+    <ClInclude Include="Assets.Sounds.hxx" />
     <ClInclude Include="Basic.hxx" />
+    <ClInclude Include="Direct.Sound.EAX.hxx" />
+    <ClInclude Include="Direct.Sound.hxx" />
     <ClInclude Include="Graphics.Basic.hxx" />
+    <ClInclude Include="Logger.hxx" />
     <ClInclude Include="Mathematics.Basic.hxx" />
+    <ClInclude Include="Memory.hxx" />
     <ClInclude Include="Native.Basic.hxx" />
+    <ClInclude Include="Native.hxx" />
     <ClInclude Include="Renderers.Basic.hxx" />
     <ClInclude Include="Renderers.Basic.Textures.hxx" />
     <ClInclude Include="Renderers.Basic.Vertexes.hxx" />
     <ClInclude Include="Renderers.Modules.Basic.hxx" />
     <ClInclude Include="Renderers.Modules.Export.hxx" />
     <ClInclude Include="Renderers.Modules.Import.hxx" />
+    <ClInclude Include="Sounds.Basic.hxx" />
+    <ClInclude Include="Sounds.Controllers.DirectSoundController.hxx" />
+    <ClInclude Include="Sounds.Controllers.hxx" />
+    <ClInclude Include="Sounds.Controllers.Wave.hxx" />
+    <ClInclude Include="Sounds.Controllers.WaveOut.hxx" />
+    <ClInclude Include="Sounds.Devices.DirectSound.hxx" />
+    <ClInclude Include="Sounds.Devices.hxx" />
+    <ClInclude Include="Sounds.hxx" />
+    <ClInclude Include="Sounds.Controllers.WaveIn.hxx" />
+    <ClInclude Include="Time.hxx" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cxx" />
+    <ClCompile Include="App.cxx" />
+    <ClCompile Include="App.Windows.cxx" />
+    <ClCompile Include="Logger.cxx" />
+    <ClCompile Include="Memory.cxx" />
+    <ClCompile Include="Native.cxx" />
+    <ClCompile Include="Sounds.Controllers.cxx" />
+    <ClCompile Include="Sounds.Controllers.DirectSoundController.cxx" />
+    <ClCompile Include="Sounds.Controllers.Wave.cxx" />
+    <ClCompile Include="Sounds.Controllers.WaveOut.cxx" />
+    <ClCompile Include="Sounds.cxx" />
+    <ClCompile Include="Sounds.Devices.cxx" />
+    <ClCompile Include="Sounds.Devices.DirectSound.cxx" />
+    <ClCompile Include="Sounds.Effects.cxx" />
+    <ClCompile Include="Sounds.Controllers.WaveIn.cxx" />
+    <ClCompile Include="Sounds.Samples.cxx" />
+    <ClCompile Include="Time.cxx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

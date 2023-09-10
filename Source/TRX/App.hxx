@@ -19,3 +19,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+#pragma once
+
+#include "Basic.hxx"
+
+#define APP_NAME "4x4 Evolution 2"
+
+namespace App
+{
+    struct ApplicationContainer
+    {
+        BOOL* _IsQuit = (BOOL*)0x00d6aac0; // TODO
+    };
+
+    extern ApplicationContainer AppState;
+}
