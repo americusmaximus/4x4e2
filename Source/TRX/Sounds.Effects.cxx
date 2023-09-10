@@ -99,7 +99,7 @@ namespace Sounds
                     LogError("Reference count for sound sample %s is greater than 0.", sample->Descriptor.Definition.Name);
                 }
 
-                if (self->Descriptor.NextChannelIndex != sample->Unk7)
+                if (SoundState.Effects._Cache[sample->Descriptor.Offset].Descriptor.NextChannelIndex != sample->Unk7)
                 {
                     LogError("Streaming sound effect sample index mismatch on %s.", sample->Descriptor.Definition.Name);
                 }
