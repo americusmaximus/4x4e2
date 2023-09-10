@@ -61,6 +61,46 @@ namespace Sounds
         struct
         {
             SoundEffect* _Cache = (SoundEffect*)0x00d33c80; // TODO array of 64
+
+            u32* _Index = (u32*)0x00d436e0; // TODO
+
+            struct
+            {
+                f32* _X = (f32*)0x00d43680; // TODO array of 2
+                f32* _Y = (f32*)0x00d43688; // TODO array of 2
+                f32* _Z = (f32*)0x00d43690; // TODO array of 2
+            } Velocity;
+
+            struct
+            {
+                struct
+                {
+                    f32* _X = (f32*)0x00d43698; // TODO array of 2
+                    f32* _Y = (f32*)0x00d436a0; // TODO array of 2
+                    f32* _Z = (f32*)0x00d436a8; // TODO array of 2
+                } XYZ;
+
+                struct
+                {
+                    f32* _X = (f32*)0x00d436b0; // TODO array of 2
+                    f32* _Y = (f32*)0x00d436b8; // TODO array of 2
+                    f32* _Z = (f32*)0x00d436c0; // TODO array of 2
+                } Top;
+
+                struct
+                {
+                    f32* _X = (f32*)0x00d436c8; // TODO array of 2
+                    f32* _Y = (f32*)0x00d436d0; // TODO array of 2
+                    f32* _Z = (f32*)0x00d436d8; // TODO array of 2
+                } Front;
+            } Orientation;
+
+            struct
+            {
+                f32* _X = (f32*)0x00d43650; // TODO array of 2
+                f32* _Y = (f32*)0x00d43660; // TODO array of 2
+                f32* _Z = (f32*)0x00d436d8; // TODO array of 2
+            } Position;
         } Effects;
 
         struct
@@ -73,15 +113,13 @@ namespace Sounds
         s32* _SoundTime1 = (s32*)0x00d621b8; //TODO
         s32* _SoundTimeUnknown1 = (s32*)0x00d61654; //TODO, looks like SoundMixMode
 
-        AbstractSoundDeviceController** _SoundDeviceController = (AbstractSoundDeviceController**)0x00d440a8;
-        AbstractSoundRecordingDeviceController** _SoundRecordingDeviceController = (AbstractSoundRecordingDeviceController**)0x00d44a8c;
+        AbstractSoundDeviceController** _SoundDeviceController = (AbstractSoundDeviceController**)0x00d440a8; // TODO
+        AbstractSoundRecordingDeviceController** _SoundRecordingDeviceController = (AbstractSoundRecordingDeviceController**)0x00d44a8c; // TODO
 
         SoundSample* _SoundEffectSamples = (SoundSample*)0x00d38a4c; // TODO 64 elements, todo name
     };
 
     extern SoundContainer SoundState;
-
-    LRESULT DSC(const LRESULT code, const char* message);
 
     void LockSounds(void);
     void UnlockSound1(void);
@@ -95,10 +133,9 @@ namespace Sounds
     BOOL StopSoundThread(void);
 
     f32 AcquireMaximumSoftWareSoundLatency(void);
-    void SelectMaximumSoftWareLAtency(const f32 value);
+    void SelectMaximumSoftWareLatency(const f32 value);
 
     u32 AcquireSoundChannelCount(void);
-    s32 AcquireUnknownSoundValue102(const f32 value);
     f32 AcquireSoundEffectChannelVolume(const s32 indx);
     void AcquireSoundOutputOptions(u32* bits, u32* channels, u32* hz);
     f64 AcquireUnknownSoundValue101(const f64 value);

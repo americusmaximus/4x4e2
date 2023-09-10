@@ -101,7 +101,7 @@ namespace Sounds
             SoundWaveOutSoundControllerState.Buffers._Headers[x]->dwBufferLength = length;
             SoundWaveOutSoundControllerState.Buffers._Headers[x]->dwUser = x;
 
-            if (!PlaySoundWaveOutDeviceControllerBuffer(x))
+            if (!PollSoundWaveOutDeviceControllerBuffer(x))
             {
                 self->Self->Stop(self);
 
@@ -253,7 +253,7 @@ namespace Sounds
 
             if (SoundWaveOutSoundControllerState.Buffers._Headers[x]->dwFlags & WHDR_DONE)
             {
-                if (!PlaySoundWaveOutDeviceControllerBuffer(x))
+                if (!PollSoundWaveOutDeviceControllerBuffer(x))
                 {
                     LogMessage("[SOUND] Unable to poll device %d, play command failed.\n", x);
 
@@ -318,7 +318,7 @@ namespace Sounds
 
     // 0x005c24c0
     // a.k.a. sendWavOutBuffer
-    BOOL PlaySoundWaveOutDeviceControllerBuffer(const u32 indx)
+    BOOL PollSoundWaveOutDeviceControllerBuffer(const u32 indx)
     {
         if (SoundWaveOutSoundControllerState.Buffers._Data[indx] == NULL || SoundWaveOutSoundControllerState.Buffers._Headers[indx] == NULL) { return FALSE; }
 

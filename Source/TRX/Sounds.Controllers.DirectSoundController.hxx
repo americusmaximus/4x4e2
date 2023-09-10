@@ -114,7 +114,7 @@ namespace Sounds
     // INHERITANCE: AbstractSoundDeviceController
     struct SoundDirectSoundDeviceController
     {
-        AbstractSoundDeviceControllerSelf* Self; // NOTE: Originally statically intialized.
+        AbstractSoundDeviceControllerSelf* Self; // NOTE: Originally statically initialized.
     };
 
     struct SoundDirectSoundSoundControllerContainer
@@ -150,52 +150,18 @@ namespace Sounds
                 u32* _Unknown1 = (u32*)0x00d1e93c; // TODO, some sort of count
                 u32* _Unknown2 = (u32*)0x00d1e940; //TODO some sort of count
 
-                u32* _Count = (u32*)0x00d1e934; //TODO
-                s32* _ChannelBufferSize = (s32*)0x00d1e938; //todo, type!, name: BufferSize
+                u32* _Count = (u32*)0x00d1e934; // TODO
+                s32* _ChannelBufferSize = (s32*)0x00d1e938; // TODO, type!, name: BufferSize
 
-                IDirectSoundBuffer** _Buffer = (IDirectSoundBuffer**)0x00d1e91c; //TODO
+                IDirectSoundBuffer** _Buffer = (IDirectSoundBuffer**)0x00d1e91c; // TODO
             } Secondary;
 
         } Buffers;
 
         u32* _Options = (u32*)0x00d436e4; // TODO enum
 
-        SoundUnk0x18* _SoundUnk0x18Array = (SoundUnk0x18*)0x00d1e944; //TODO 64 size
+        SoundUnk0x18* _SoundUnk0x18Array = (SoundUnk0x18*)0x00d1e944; // TODO 65 size
         SoundUnk0x24* _SoundUnk0x24Array = (SoundUnk0x24*)0x00d1ef60; // TODO 31 size
-
-        struct
-        {
-            f32* _X = (f32*)0x00d43680; // TODO
-            f32* _Y = (f32*)0x00d43688; // TODO
-            f32* _Z = (f32*)0x00d43690; // TODO
-        } Velocity;
-
-        struct
-        {
-            struct
-            {
-                f32* _X = (f32*)0x00d43698; // TODO
-                f32* _Y = (f32*)0x00d436a0; // TODO
-                f32* _Z = (f32*)0x00d436a8; // TODO
-            } XYZ;
-
-            struct
-            {
-                f32* _X = (f32*)0x00d436b0; // TODO
-                f32* _Y = (f32*)0x00d436b8; // TODO
-                f32* _Z = (f32*)0x00d436c0; // TODO
-            } Top;
-
-            struct
-            {
-                f32* _X = (f32*)0x00d436c8; // TODO
-                f32* _Y = (f32*)0x00d436d0; // TODO
-                f32* _Z = (f32*)0x00d436d8; // TODO
-            } Front;
-        } Orientation;
-
-        f64x3* _Position = (f64x3*)0x00d43650; // TODO
-
     };
 
     extern SoundDirectSoundSoundControllerContainer SoundDirectSoundSoundControllerState;
@@ -203,4 +169,5 @@ namespace Sounds
     s32 AcquireSoundDirectSoundSoundControllerFrequency(const f32 value);
     BOOL StopSoundDirectSoundDeviceControllerSoundSample(const s32 indx);
     void PollSoundDirectSoundSoundControllerSoundEffect(void);
+    s32 AcquireUnknownSoundValue102(const f32 value);
 }

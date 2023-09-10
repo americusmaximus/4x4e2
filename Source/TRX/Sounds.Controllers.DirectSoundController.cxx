@@ -589,7 +589,7 @@ namespace Sounds
 
         u32 indx = 1; // TODO constant
 
-        for (u32 x = indx; x < 64; x++) // TODO constant
+        for (u32 x = indx; x < 65; x++) // TODO constant
         {
             if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[x].Buffer == NULL) { break; }
 
@@ -616,11 +616,11 @@ namespace Sounds
             bf.wFormatTag = WAVE_FORMAT_YAMAHA_ADPCM;
             bf.nChannels = desc->Definition.Channels;
             bf.nSamplesPerSec = desc->Definition.HZ;
-            bf.nBlockAlign = desc->Definition.Channels * (desc->Definition.BitsPerSample >> 3) / 2;
-            bf.nAvgBytesPerSec = desc->Definition.HZ * desc->Definition.Channels * (desc->Definition.BitsPerSample >> 3) / 2;
-            bf.wBitsPerSample = 4;
+            bf.nBlockAlign = desc->Definition.Channels * (desc->Definition.BitsPerSample >> 3) / 2; // TODO constant
+            bf.nAvgBytesPerSec = desc->Definition.HZ * desc->Definition.Channels * (desc->Definition.BitsPerSample >> 3) / 2; // TODO constant
+            bf.wBitsPerSample = 4; // TODO constant
 
-            bd.dwBufferBytes = desc->Definition.Length * desc->Definition.Channels / 2;
+            bd.dwBufferBytes = desc->Definition.Length * desc->Definition.Channels / 2; // TODO constant
         }
         else
         {
@@ -638,7 +638,7 @@ namespace Sounds
             &bd, &SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer, NULL),
             "Unable to create secondary sound buffer.") != DS_OK)
         {
-            return 0;// TODO: constant
+            return 0; // TODO: constant
         }
 
         if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer != NULL)
@@ -650,7 +650,7 @@ namespace Sounds
             return indx;
         }
 
-        return 0;// TODO: constant
+        return 0; // TODO: constant
     }
 
     // 0x005b61a0
@@ -670,6 +670,7 @@ namespace Sounds
     }
 
     // 0x005b6200
+    // a.k.a. lockSample
     void* LockSoundDirectSoundDeviceControllerSoundSample(AbstractSoundDeviceController* self, const s32 indx, const s32 offset, const s32 length)
     {
         if (indx < 1 || 64 < indx
@@ -717,7 +718,8 @@ namespace Sounds
     // a.k.a. unlockSample
     void UnlockSoundDirectSoundDeviceControllerSoundSample(AbstractSoundDeviceController* self, const s32 indx, const s32 offset, const s32 length)
     {
-        if (indx < 1 || 64 < indx || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer == NULL
+        if (indx < 1 || 64 < indx
+            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer == NULL
             || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2 < 1) // TODO constants
         {
             LogError("Unable to unlock sound sample, invalid index %d.", indx);
@@ -1281,8 +1283,21 @@ namespace Sounds
         return Clamp((s32)roundf(value), DSBFREQUENCY_MIN, DSBFREQUENCY_MAX);
     }
 
+    // 0x005b5020
+    // TODO name
+    s32 AcquireUnknownSoundValue102(const f32 value)
+    {
+        if (value <= 0.0f) { return DSBVOLUME_MIN; }// TODO constant
+
+        if (1.0f <= value) { return DSBVOLUME_MAX; }// TODO constant
+
+        const auto result = (s32)round(AcquireUnknownSoundValue101((f64)log2f(value) * 868.589));// TODO constant
+
+        return Clamp(result, DSBVOLUME_MIN, DSBVOLUME_MAX);
+    }
+
     // 0x005c1660
-    // pollSfx
+    // a.k.a. pollSfx
     void PollSoundDirectSoundSoundControllerSoundEffect(void)
     {
         if (*SoundState.Lock._Count < 1)
@@ -1319,18 +1334,6 @@ namespace Sounds
                 }
             }
         }
-    }
-
-    // 0x005b5020
-    s32 AcquireUnknownSoundValue102(const f32 value)
-    {
-        if (value <= 0.0f) { return DSBVOLUME_MIN; }// TODO constant
-
-        if (1.0f <= value) { return DSBVOLUME_MAX; }// TODO constant
-
-        const auto result = (s32)round(AcquireUnknownSoundValue101((f64)log2f(value) * 868.589));// TODO constant
-
-        return Clamp(result, DSBVOLUME_MIN, DSBVOLUME_MAX);
     }
 
     // 0x005b4ef0

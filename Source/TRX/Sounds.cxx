@@ -52,9 +52,9 @@ namespace Sounds
 
     // 0x005c0720
     // a.k.a. setMaxSwSoundLatency
-    void SelectMaximumSoftWareLAtency(const f32 value)
+    void SelectMaximumSoftWareLatency(const f32 value)
     {
-        if (!AcquireSoundDeviceContexActiveState())
+        if (!AcquireSoundDeviceControllerActiveState())
         {
             LogError("Unable to select maximum sound latency while sound is active.");
         }
@@ -249,16 +249,16 @@ namespace Sounds
 
     // 0x005be2c0
     // a.k.a. enableSfxChannel
-    void SelectSoundEffectChannelState(const s32 indx, const BOOL value)
+    void SelectSoundEffectChannelState(const s32 indx, const BOOL state)
     {
         if (indx < 0 || 31 < indx) // TODO constant
         {
             LogError("Unable to select sound effect channel state, invalid index %d.", indx);
         }
 
-        SoundState._SoundChannelStates[indx] = value;
+        SoundState._SoundChannelStates[indx] = state;
 
-        if (!value)
+        if (!state)
         {
             LockSounds();
 

@@ -34,6 +34,7 @@ using namespace Mathematics;
 
 namespace Sounds
 {
+    // 0x005c3400
     AbstractSoundRecordingDeviceController* InitializeSoundWaveInDeviceController(const s32 indx)
     {
         if (!ReleaseSoundWaveInDeviceController(SoundWaveInSoundControllerState._Instance)) { return NULL; }
@@ -125,7 +126,6 @@ namespace Sounds
     }
 
     // 0x005c2d10
-    // a.k.a. waveInReset
     BOOL StopSoundWaveInDeviceController(AbstractSoundRecordingDeviceController* self)
     {
         BOOL result = TRUE;

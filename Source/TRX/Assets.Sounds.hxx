@@ -35,7 +35,7 @@ namespace Assets::Sounds
         WAVYADPCM = 2, // WAVE_FORMAT_YAMAHA_ADPCM
         Unknown3 = 3,
         Unknown4 = 4,
-        WAVVWBA = 5, // WAVE_FORMAT_VOXWARE_BYTE_ALIGNED
+        Unknown5 = 5,
         Unknown6 = 6
     };
 

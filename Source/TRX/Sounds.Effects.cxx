@@ -53,7 +53,7 @@ namespace Sounds
     }
 
     typedef const BOOL(CDECLAPI* FUN_005B88B0) (const u32); // TODO
-    static FUN_005B88B0 FUN_005b88b0 = (FUN_005B88B0)0x005b88b0;//TODO
+    static FUN_005B88B0 FUN_005b88b0 = (FUN_005B88B0)0x005b88b0; // TODO
 
     // 0x005bc730
     void ReleaseSoundEffect(SoundEffect* self)

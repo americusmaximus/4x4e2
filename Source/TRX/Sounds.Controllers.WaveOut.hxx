@@ -130,5 +130,5 @@ namespace Sounds
 
     extern SoundWaveOutSoundControllerContainer SoundWaveOutSoundControllerState;
 
-    BOOL PlaySoundWaveOutDeviceControllerBuffer(const u32 indx);
+    BOOL PollSoundWaveOutDeviceControllerBuffer(const u32 indx);
 }

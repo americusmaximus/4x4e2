@@ -113,8 +113,7 @@ namespace Sounds
         BOOL* _IsSoftwareDevice = (BOOL*)0x00d1ef5c; // TODO
         BOOL* _ActiveState = (BOOL*)0x00d440ac; // TODO
 
-
-        SoundMixMode* _MixMode = (SoundMixMode*)0x00d440b0; //TODO
+        SoundMixMode* _MixMode = (SoundMixMode*)0x00d440b0; // TODO
 
         void** _UnknownMemory1 = (void**)0x00d440ec; // TODO
         void** _UnknownMemory2 = (void**)0x00d44110; // TODO
@@ -133,22 +132,22 @@ namespace Sounds
 
     extern SoundDeviceControllerContainer SoundDeviceControllerState;
 
+    BOOL AcquireSoundDeviceControllerState(void);
     BOOL InitializeSoundDeviceController(void);
-    BOOL IsSoundDeviceControllerAvailable(void);
     BOOL ReleaseSoundDeviceController(void);
     BOOL StopSoundDeviceController(void);
     void ReleaseSoundDeviceControllerMemory(void);
 
+    BOOL AcquireSoundRecordingDeviceControllerState(void);
     BOOL InitializeSoundRecordingDeviceController(void);
-    BOOL IsSoundRecordingDeviceControllerAvailable(void);
     BOOL ReleaseSoundRecordingDeviceController(void);
     BOOL StopSoundRecordingDeviceController(void);
 
-    void ReleaseSoundDeviceControllerSoundSample(SoundSample* self);
-    BOOL AcquireSoundDeviceContexActiveState(void);
-    SoundMixMode AcquireSoundControllerMixMode(void);
-    void PollSoundDeviceControllerSoundSamples(const BOOL mode);
-    void SelectSoundDeviceControllerOptions(void);
-    void PollSoundDeviceController(void);
+    BOOL AcquireSoundDeviceControllerActiveState(void);
     BOOL SelectSoundDeviceControllerSoundMode(const u32 bits, const u32 channels, const u32 hz);
+    SoundMixMode AcquireSoundControllerMixMode(void);
+    void PollSoundDeviceController(void);
+    void PollSoundDeviceControllerSoundSamples(const BOOL mode);
+    void ReleaseSoundDeviceControllerSoundSample(SoundSample* self);
+    void SelectSoundDeviceControllerOptions(void);
 }

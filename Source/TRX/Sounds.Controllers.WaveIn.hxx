@@ -69,7 +69,7 @@ namespace Sounds
     // INHERITANCE: AbstractSoundRecordingDeviceController
     struct SoundWaveInSoundController
     {
-        SoundWaveInSoundControllerSelf* Self; // NOTE: Originally statically intialized.
+        SoundWaveInSoundControllerSelf* Self; // NOTE: Originally statically initialized.
     };
 
     struct SoundWaveInSoundControllerContainer
