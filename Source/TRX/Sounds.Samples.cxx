@@ -127,4 +127,21 @@ namespace Sounds
 
         return (s32)((value + sign * -8) - (u32)(sign << 2 < 0)) >> 3; // TODO constants
     }
+
+    // 0x005bd060
+    u32 AcquireUnknownSoundSampleValue1(SoundSample* self)
+    {
+        if (self->Descriptor.LoopMode < 2
+            && self->Descriptor.Definition.Length == self->Descriptor.ChannelLength[0]) // TODO constant
+        {
+            if (self->Descriptor.Unk6 < 1) // TODO constant
+            {
+                if (self->Descriptor.Unk6 == 0) { return 1; } // TODO constant
+
+                return 0; // TODO constant
+            }
+        }
+
+        return 2; // TODO constant
+    }
 }

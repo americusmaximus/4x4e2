@@ -114,4 +114,83 @@ namespace Sounds
 
         self->Options = 0; // TODO constant
     }
+
+    // 0x005bc960
+    // a.k.a. pollStream
+    BOOL PollSoundEffectStream(SoundEffect* self)
+    {
+        if (self->UnknownIndex != 0 && *SoundState._SoundDeviceController != NULL && self->Sample != NULL)
+        {
+            const auto position = (*SoundState._SoundDeviceController)->Self->AcquireSoundEffectPosition(*SoundState._SoundDeviceController, self);
+
+            if (position < 0.0)
+            {
+                LogMessage("[ERROR] [SOUND] Unable to poll hardware playback position %s.", self->Sample->Descriptor.Definition.Name);
+
+                return FALSE;
+            }
+
+            UpdateSoundEffectPosition(self, position);
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    // 0x005bc9f0
+    // a.k.a. updatePlaybackPos
+    void UpdateSoundEffectPosition(SoundEffect* self, const f64 position)
+    {
+        if (self->Sample == NULL)
+        {
+            LogError("Unable to update sound effect playback position, sound sample is missing.");
+        }
+
+        if (position < 0.0 || self->Sample->Length < position)
+        {
+            LogError("Unable to update sound effect playback position, invalid position provided.");
+        }
+
+        auto delta = position - self->Position;
+
+        if (delta < 0.0) { delta = self->Sample->Length + delta; }
+
+        if (delta < 0.0 || (self->Sample->Length + 0.001 < delta))
+        {
+            LogError("Unable to update sound effect playback position, invalid step: %f - %f = %f, sample = %d (%s).",
+                position, self->Position, delta, self->Sample->Length, self->Sample->Descriptor.Definition.Name);
+        }
+
+        if (self->Descriptor.Unknown1005 != self->Position
+            || position < self->Descriptor.Unknown1005)
+        {
+            self->Descriptor.Unknown1005 = self->Descriptor.Unknown1005 + delta;
+        }
+        else
+        {
+            self->Descriptor.Unknown1005 = position;
+        }
+
+        if (self->Descriptor.Unknown1005 < 0.0)
+        {
+            self->Descriptor.Unknown1005 = 0.0;
+        }
+
+        if (-1 < self->Sample->Descriptor.Definition.Length
+            && self->Sample->Descriptor.Definition.Length <= self->Descriptor.Unknown1005)
+        {
+            if (AcquireUnknownSoundSampleValue1(self->Sample) == 0) // TODO constant
+            {
+                self->Descriptor.Unknown1005 = self->Sample->Descriptor.Definition.Length;
+            }
+            else
+            {
+                self->Descriptor.Unknown1005 = self->Descriptor.Unknown1005
+                    - AcquireUnknownSoundValue101(self->Descriptor.Unknown1005 / self->Sample->Descriptor.Definition.Length) * self->Sample->Descriptor.Definition.Length;
+            }
+        }
+
+        self->Position = position;
+    }
 }

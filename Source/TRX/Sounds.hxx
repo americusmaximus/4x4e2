@@ -152,6 +152,9 @@ namespace Sounds
     void* LockSoundSample(SoundSample* self, const s32 offset, const s32 length);
     void UnlockSoundSample(SoundSample* self);
     s32 AcquireSoundSampleOffset(SoundSample* self, const s32 offset);
+    BOOL PollSoundEffectStream(SoundEffect* self);
+    void UpdateSoundEffectPosition(SoundEffect* self, const f64 position);
+    u32 AcquireUnknownSoundSampleValue1(SoundSample* self);
 
     typedef const BOOL(CDECLAPI* FUN_005B4D20) (void); // TODO
     static FUN_005B4D20 FUN_005b4d20 = (FUN_005B4D20)0x005b4d20;// TODO

@@ -121,8 +121,7 @@ namespace Sounds
         s32 Unknown1003; // TODO
         u32 Unk30;// TODO enum
         s32 Unknown1004; // TODO
-        s32 Unknown1005; // TODO
-        s32 Unknown1006; // TODO
+        f64 Unknown1005; // TODO
         s32 Unknown1007; // TODO
         s32 Unknown1008; // TODO
     };
