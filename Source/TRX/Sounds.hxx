@@ -117,6 +117,11 @@ namespace Sounds
         AbstractSoundRecordingDeviceController** _SoundRecordingDeviceController = (AbstractSoundRecordingDeviceController**)0x00d44a8c; // TODO
 
         SoundSample* _SoundEffectSamples = (SoundSample*)0x00d38a4c; // TODO 64 elements, todo name
+
+        f32* _UnknownSoundEffectValue1 = (f32*)0x00d33c70; // TODO, looks like it is read-only and always zero
+
+        SoundEffectDescriptor* _SoundEffectDescriptor = (SoundEffectDescriptor*)0x00d38688; // TOOD array of 8
+        s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680; // TODO type
     };
 
     extern SoundContainer SoundState;
@@ -143,10 +148,9 @@ namespace Sounds
     BOOL AcquireSoundEffectChannelState(const s32 indx);
     void SelectSoundEffectChannelState(const s32 indx, const BOOL value);
 
-
-    void ReleaseSoundSample(SoundSample* self);
+    void DisposeSoundSample(SoundSample* self);
     void ReleaseSoundEffectSamples(void);
-    void ReleaseSoundEffect(SoundEffect* self);
+    void DisposeSoundEffect(SoundEffect* self);
     void ReleaseSoundSampleMemory(SoundSample* self);
     void SelectSoundEffectChannelVolume(const s32 indx, const f32 volume);
     void* LockSoundSample(SoundSample* self, const s32 offset, const s32 length);
@@ -155,6 +159,7 @@ namespace Sounds
     BOOL PollSoundEffectStream(SoundEffect* self);
     void UpdateSoundEffectPosition(SoundEffect* self, const f64 position);
     u32 AcquireUnknownSoundSampleValue1(SoundSample* self);
+    void InitializeSoundEffectDescriptor(SoundEffectDescriptor* self);
 
     typedef const BOOL(CDECLAPI* FUN_005B4D20) (void); // TODO
     static FUN_005B4D20 FUN_005b4d20 = (FUN_005B4D20)0x005b4d20;// TODO

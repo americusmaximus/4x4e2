@@ -850,8 +850,8 @@ namespace Sounds
 
             if (mode & 0x88) // TODO constants
             {
-                minimumDistance = effect->MinimumDistance;
-                maximumDistance = effect->MaximumDistance;
+                minimumDistance = effect->Descriptor.MinimumDistance;
+                maximumDistance = effect->Descriptor.MaximumDistance;
 
                 const auto value = AcquireSoundEffectChannelVolume(effect->Descriptor.NextChannelIndex);
 

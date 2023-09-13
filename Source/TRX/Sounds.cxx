@@ -266,7 +266,7 @@ namespace Sounds
             {
                 if (indx == SoundState.Effects._Cache[x].Descriptor.NextChannelIndex)
                 {
-                    ReleaseSoundEffect(&SoundState.Effects._Cache[x]);
+                    DisposeSoundEffect(&SoundState.Effects._Cache[x]);
                 }
             }
 

@@ -22,11 +22,73 @@ SOFTWARE.
 
 #include "Logger.hxx"
 #include "Sounds.hxx"
+#include "Sounds.Effects.hxx"
 
 using namespace Logger;
+using namespace Objects;
 
 namespace Sounds
 {
+    SoundEffectDescriptorContainer SoundEffectDescriptorState;
+    SoundEffectContainer SoundEffectState;
+
+    // 0x005c23f0
+    SoundEffectDescriptor* ConstructSoundEffectDescriptor(SoundEffectDescriptor* self)
+    {
+        InitializeSoundEffectDescriptor(self);
+
+        return self;
+    }
+
+    // 0x005c2440
+    void* ReleaseSoundEffectDescriptor(SoundEffectDescriptor* self, const ReleaseMode mode) { return self; }
+
+    // 0x005bd0c0
+    void InitializeSoundEffectDescriptor(SoundEffectDescriptor* self)
+    {
+        self->NextChannelIndex = 0;
+
+        self->Location.X = 0.0;
+        self->Location.Y = 0.0;
+        self->Location.Z = 0.0;
+
+        self->Unknown102 = 0;
+        self->Unknown103 = 0;
+        self->Unknown104 = 0;
+        self->Unknown105 = 0;
+
+        self->Volume = 1.0f; // TODO constant
+        self->HZ = 1.0f; // TODO constant
+
+        self->Velocity.X = 0.0f;
+        self->Velocity.Y = 0.0f;
+        self->Velocity.Z = 0.0f;
+
+        ZeroMemory(&self->Unknown1002, sizeof(self->Unknown1002)); // TODO
+
+        self->Unknown1005 = 0.0;
+
+        self->Unknown1007 = 0;
+        self->Unknown1008 = 0;
+
+        self->Unknown1001 = -1.0f; // TODO constant
+
+        self->MinimumDistance = 20.0f; // TODO constant
+        self->AAA01 = *SoundState._UnknownSoundEffectValue1;
+        self->MaximumDistance = 10000.0f; // TODO constant
+    }
+
+    // 0x005c2410
+    SoundEffect* ConstructSoundEffect(SoundEffect* self)
+    {
+        InitializeSoundEffectDescriptor(&self->Descriptor);
+
+        return self;
+    }
+
+    // 0x005c2430
+    void* ReleaseSoundEffect(SoundEffect* self, const ReleaseMode mode) { return self; }
+
     // 0x005be230
     // a.k.a. getSfxChannelVol
     f32 AcquireSoundEffectChannelVolume(const s32 indx)
@@ -46,7 +108,7 @@ namespace Sounds
 
         for (u32 x = 0; x < 64; x++) // TODO constant
         {
-            ReleaseSoundEffect(&SoundState.Effects._Cache[x]);
+            DisposeSoundEffect(&SoundState.Effects._Cache[x]);
         }
 
         UnlockSound1();
@@ -56,7 +118,7 @@ namespace Sounds
     static FUN_005B88B0 FUN_005b88b0 = (FUN_005B88B0)0x005b88b0; // TODO
 
     // 0x005bc730
-    void ReleaseSoundEffect(SoundEffect* self)
+    void DisposeSoundEffect(SoundEffect* self)
     {
         if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant;
 
@@ -104,7 +166,7 @@ namespace Sounds
                     LogError("Streaming sound effect sample index mismatch on %s.", sample->Descriptor.Definition.Name);
                 }
 
-                ReleaseSoundSample(sample);
+                DisposeSoundSample(sample);
             }
 
             FUN_005b88b0(0); // TODO constant

@@ -91,7 +91,7 @@ namespace Sounds
 
         for (u32 x = 0; x < 64; x++) // TODO constant
         {
-            ReleaseSoundSample(&SoundState._SoundEffectSamples[x]);
+            DisposeSoundSample(&SoundState._SoundEffectSamples[x]);
         }
 
         if (*SoundState._SoundDeviceController != NULL)
@@ -312,7 +312,7 @@ namespace Sounds
 
             if (!(*SoundState._SoundDeviceController)->Self->SelectSoundEffectOptions(*SoundState._SoundDeviceController, effect, effect->Options))
             {
-                ReleaseSoundEffect(effect);
+                DisposeSoundEffect(effect);
             }
             else if (effect->Options & 0x40000000) // TODO constant
             {
@@ -322,7 +322,7 @@ namespace Sounds
                 }
                 else
                 {
-                    ReleaseSoundEffect(effect);
+                    DisposeSoundEffect(effect);
                 }
             }
 

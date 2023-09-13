@@ -168,7 +168,7 @@ namespace Sounds
         for (u32 x = 0; x < *SoundWaveOutSoundControllerState.Counters._Unknown2; x++)
         {
             const auto length = (*SoundWaveOutSoundControllerState.Mode.Active._Bits >> 3)
-                ** SoundWaveOutSoundControllerState.Counters._Unknown1
+                * *SoundWaveOutSoundControllerState.Counters._Unknown1
                 * *SoundWaveOutSoundControllerState.Mode.Active._Channels;
 
             SoundWaveOutSoundControllerState.Memory._Data[x] = GlobalAlloc(GMEM_SHARE | GMEM_MOVEABLE, length);

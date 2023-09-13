@@ -21,17 +21,22 @@
   <ItemGroup>
     <ClInclude Include="App.hxx" />
     <ClInclude Include="App.Windows.hxx" />
+    <ClInclude Include="ASCII.hxx" />
     <ClInclude Include="Assets.Basic.hxx" />
     <ClInclude Include="Assets.Sounds.hxx" />
     <ClInclude Include="Basic.hxx" />
     <ClInclude Include="Direct.Sound.EAX.hxx" />
     <ClInclude Include="Direct.Sound.hxx" />
     <ClInclude Include="Graphics.Basic.hxx" />
+    <ClInclude Include="IO.hxx" />
+    <ClInclude Include="IO.Handlers.hxx" />
+    <ClInclude Include="IO.Streams.hxx" />
     <ClInclude Include="Logger.hxx" />
     <ClInclude Include="Mathematics.Basic.hxx" />
     <ClInclude Include="Memory.hxx" />
     <ClInclude Include="Native.Basic.hxx" />
     <ClInclude Include="Native.hxx" />
+    <ClInclude Include="Objects.hxx" />
     <ClInclude Include="Renderers.Basic.hxx" />
     <ClInclude Include="Renderers.Basic.Textures.hxx" />
     <ClInclude Include="Renderers.Basic.Vertexes.hxx" />
@@ -45,16 +50,24 @@
     <ClInclude Include="Sounds.Controllers.WaveOut.hxx" />
     <ClInclude Include="Sounds.Devices.DirectSound.hxx" />
     <ClInclude Include="Sounds.Devices.hxx" />
+    <ClInclude Include="Sounds.Effects.hxx" />
     <ClInclude Include="Sounds.hxx" />
     <ClInclude Include="Sounds.Controllers.WaveIn.hxx" />
+    <ClInclude Include="Sounds.Samples.hxx" />
+    <ClInclude Include="Strings.hxx" />
     <ClInclude Include="Time.hxx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cxx" />
     <ClCompile Include="App.Windows.cxx" />
+    <ClCompile Include="IO.cxx" />
+    <ClCompile Include="IO.Handlers.cxx" />
+    <ClCompile Include="IO.Streams.cxx" />
+    <ClCompile Include="IO.Streams.InFileStream.cxx" />
     <ClCompile Include="Logger.cxx" />
     <ClCompile Include="Memory.cxx" />
     <ClCompile Include="Native.cxx" />
+    <ClCompile Include="Objects.cxx" />
     <ClCompile Include="Sounds.Controllers.cxx" />
     <ClCompile Include="Sounds.Controllers.DirectSoundController.cxx" />
     <ClCompile Include="Sounds.Controllers.Wave.cxx" />
@@ -156,7 +169,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
@@ -184,7 +197,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
@@ -212,7 +225,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
@@ -240,7 +253,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>

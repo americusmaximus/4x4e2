@@ -20,18 +20,66 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "Assets.Sounds.hxx"
+#include "IO.Streams.hxx"
 #include "Logger.hxx"
 #include "Memory.hxx"
 #include "Sounds.hxx"
+#include "Sounds.Samples.hxx"
 
+using namespace Assets::Sounds;
+using namespace IO::Streams;
 using namespace Logger;
 using namespace Memory;
+using namespace Objects;
 
 namespace Sounds
 {
+    SoundSampleContainer SoundSampleState;
+
+    // 0x005ba700
+    SoundSample* ConstructSoundSample(SoundSample* self)
+    {
+        ZeroMemory(self, 0x150); // TODO, why 0x150 if sizeof(SoundSampleDescriptor) == 0x15c ??? and then set cachecontrol, priority and offset separately?
+
+        self->Descriptor.ReferenceDistance = 20.0f;
+
+        self->Descriptor.MinimumDistance = *SoundState._UnknownSoundEffectValue1;
+        self->Descriptor.MaximumDistance = 10000.0f;
+
+        ConstructInStreamFile(&self->File);
+
+        self->Descriptor.AllocatedMemory1 = NULL;
+
+        self->Descriptor.CacheControl = SoundCacheMode::Normal;
+        self->Descriptor.Priority = 0;
+        self->Descriptor.Offset = 0;
+
+        self->Unk6 = 0;
+        self->Unk7 = -1; // TODO constant
+        self->Unk12 = 0;
+
+        self->File.File.Handle = NULL;
+
+        self->Length = 0;
+        self->Unk9 = 0;
+
+        return self;
+    }
+
+    // 0x005ba770
+    void* ReleaseSoundSample(SoundSample* self, const ReleaseMode mode)
+    {
+        DisposeSoundSample(self);
+
+        ReleaseInStreamFile(&self->File, ReleaseMode::None);
+
+        return self;
+    }
+
     // 0x005ba910
     // a.k.a. freeMemory
-    void ReleaseSoundSample(SoundSample* self)
+    void DisposeSoundSample(SoundSample* self)
     {
         if (self->Descriptor.Priority != 0)
         {
