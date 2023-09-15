@@ -161,7 +161,7 @@ namespace IO::Streams
     }
 
     // 0x005d2500
-    s32 ReadInStreamFile(InStreamFile* self, void* data, const s32 count)
+    s32 ReadInStreamFile(InStreamFile* self, void* data, const u32 size)
     {
         if (self->File.Handle == NULL) { return STREAM_RESULT_FAILURE; }
         if (self->File.Size <= self->File.Position) { return STREAM_RESULT_END_OF_DATA; }
@@ -169,8 +169,8 @@ namespace IO::Streams
         auto result = STREAM_RESULT_SUCCESS;
         auto readable = self->File.Size - self->File.Position;
 
-        auto left = count;
-        if (readable < count) { left = readable; }
+        auto left = size;
+        if (readable < size) { left = readable; }
 
         while (TRUE)
         {

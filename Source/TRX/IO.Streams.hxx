@@ -54,7 +54,7 @@ namespace IO::Streams
     typedef const s32(CDECLAPI* ABSTRACTINSTREAMTAKE) (AbstractInStream* self);
     typedef const BOOL(CDECLAPI* ABSTRACTINSTREAMPUT) (AbstractInStream* self, const s32 value);
     typedef const s32(CDECLAPI* ABSTRACTINSTREAMPEEK) (AbstractInStream* self);
-    typedef const s32(CDECLAPI* ABSTRACTINSTREAMREAD) (AbstractInStream* self, void* data, const s32 count);
+    typedef const s32(CDECLAPI* ABSTRACTINSTREAMREAD) (AbstractInStream* self, void* data, const u32 size);
     typedef const BOOL(CDECLAPI* ABSTRACTINSTREAMSEEK) (AbstractInStream* self, const s32 offset, const StreamSeek mode);
     typedef const s32(CDECLAPI* ABSTRACTINSTREAMTELL) (AbstractInStream* self);
     typedef const BOOL(CDECLAPI* ABSTRACTINSTREAMISAVAILABLE) (AbstractInStream* self);
@@ -64,9 +64,9 @@ namespace IO::Streams
 
     void* ReleaseAbstractInStream(AbstractInStream* self, const Objects::ReleaseMode mode);
     s32 TakeAbstractInStream(AbstractInStream* self);
-    BOOL PutAbstractInStream(AbstractInStream* self, const u32 value);
+    BOOL PutAbstractInStream(AbstractInStream* self, const s32 value);
     s32 PeekAbstractInStream(AbstractInStream* self);
-    s32 ReadAbstractInStream(AbstractInStream* self, void* data, const s32 count);
+    s32 ReadAbstractInStream(AbstractInStream* self, void* data, const u32 size);
     BOOL SeekAbstractInStream(AbstractInStream* self, const s32 offset, const StreamSeek mode);
     s32 TellAbstractInStream(AbstractInStream* self);
     BOOL IsAbstractInStreamAvailable(AbstractInStream* self);
@@ -103,7 +103,7 @@ namespace IO::Streams
     typedef const s32(CDECLAPI* INSTREAMFILETAKE) (InStreamFile* self);
     typedef const BOOL(CDECLAPI* INSTREAMFILEPUT) (InStreamFile* self, const s32 value);
     typedef const s32(CDECLAPI* INSTREAMFILEPEEK) (InStreamFile* self);
-    typedef const s32(CDECLAPI* INSTREAMFILEREAD) (InStreamFile* self, void* data, const s32 count);
+    typedef const s32(CDECLAPI* INSTREAMFILEREAD) (InStreamFile* self, void* data, const u32 size);
     typedef const BOOL(CDECLAPI* INSTREAMFILESEEK) (InStreamFile* self, const s32 offset, const StreamSeek mode);
     typedef const s32(CDECLAPI* INSTREAMFILETELL) (InStreamFile* self);
     typedef const BOOL(CDECLAPI* INSTREAMFILEISAVAILABLE) (InStreamFile* self);
@@ -120,7 +120,7 @@ namespace IO::Streams
     s32 TakeInStreamFile(InStreamFile* self);
     BOOL PutInStreamFile(InStreamFile* self, const s32 value);
     s32 PeekInStreamFile(InStreamFile* self);
-    s32 ReadInStreamFile(InStreamFile* self, void* data, const s32 count);
+    s32 ReadInStreamFile(InStreamFile* self, void* data, const u32 size);
     BOOL SeekInStreamFile(InStreamFile* self, const s32 offset, const StreamSeek mode);
     s32 TellInStreamFile(InStreamFile* self);
     BOOL IsInStreamFileAvailable(InStreamFile* self);
@@ -202,4 +202,85 @@ namespace IO::Streams
     s32 AcquireInStreamFileValue(InStreamFile* self, const s32 offset);
     void AllocateInStreamFileBuffer(InStreamFile* self);
     void DisposeInStreamFile(InStreamFile* self);
+
+    struct InStreamMemory;
+
+    typedef const void* (CDECLAPI* INSTREAMMEMORYRELEASE) (InStreamMemory* self, const Objects::ReleaseMode mode);
+    typedef const s32(CDECLAPI* INSTREAMMEMORYTAKE) (InStreamMemory* self);
+    typedef const BOOL(CDECLAPI* INSTREAMMEMORYPUT) (InStreamMemory* self, const s32 value);
+    typedef const s32(CDECLAPI* INSTREAMMEMORYPEEK) (InStreamMemory* self);
+    typedef const s32(CDECLAPI* INSTREAMMEMORYREAD) (InStreamMemory* self, void* data, const u32 size);
+    typedef const BOOL(CDECLAPI* INSTREAMMEMORYSEEK) (InStreamMemory* self, const s32 offset, const StreamSeek mode);
+    typedef const s32(CDECLAPI* INSTREAMMEMORYTELL) (InStreamMemory* self);
+    typedef const BOOL(CDECLAPI* INSTREAMMEMORYISAVAILABLE) (InStreamMemory* self);
+    typedef const s32(CDECLAPI* INSTREAMMEMORYISENDREACHED) (InStreamMemory* self);
+    typedef const void(CDECLAPI* INSTREAMMEMORYCLOSE) (InStreamMemory* self);
+    typedef const void(CDECLAPI* INSTREAMMEMORYSETTEXT) (InStreamMemory* self, void* data, const u32 size);
+    typedef const void(CDECLAPI* INSTREAMMEMORYSETDATA) (InStreamMemory* self, void* data, const u32 size);
+
+    InStreamMemory* AssignInStreamMemory(InStreamMemory* self, InStreamMemory* value);
+    InStreamMemory* ConstructInStreamMemory(InStreamMemory* self);
+
+    void* ReleaseInStreamMemory(InStreamMemory* self, const Objects::ReleaseMode mode);
+    s32 TakeInStreamMemory(InStreamMemory* self);
+    BOOL PutInStreamMemory(InStreamMemory* self, const s32 value);
+    s32 PeekInStreamMemory(InStreamMemory* self);
+    s32 ReadInStreamMemory(InStreamMemory* self, void* data, const u32 size);
+    BOOL SeekInStreamMemory(InStreamMemory* self, const s32 offset, const StreamSeek mode);
+    s32 TellInStreamMemory(InStreamMemory* self);
+    BOOL IsInStreamMemoryAvailable(InStreamMemory* self);
+    s32 IsInStreamMemoryEndReached(InStreamMemory* self);
+    void CloseInStreamMemory(InStreamMemory* self);
+    void SetInStreamMemoryText(InStreamMemory* self, void* data, const u32 size);
+    void SetInStreamMemoryData(InStreamMemory* self, void* data, const u32 size);
+
+    // INHERITANCE: AbstractInStreamSelf
+    struct InStreamMemorySelf
+    {
+        INSTREAMMEMORYRELEASE Release = (INSTREAMMEMORYRELEASE)&ReleaseInStreamMemory; // 0x005d2b80
+        INSTREAMMEMORYTAKE Take = (INSTREAMMEMORYTAKE)&TakeInStreamMemory; // 0x005d2be0
+        INSTREAMMEMORYPUT Put = (INSTREAMMEMORYPUT)&PutInStreamMemory; // 0x005d2c30
+        INSTREAMMEMORYPEEK Peek = (INSTREAMMEMORYPEEK)&PeekInStreamMemory; // 0x005d2c70
+        INSTREAMMEMORYREAD Read = (INSTREAMMEMORYREAD)&ReadInStreamMemory; // 0x005d2ca0
+        INSTREAMMEMORYSEEK Seek = (INSTREAMMEMORYSEEK)&SeekInStreamMemory; // 0x005d2d00
+        INSTREAMMEMORYTELL Tell = (INSTREAMMEMORYTELL)&TellInStreamMemory; // 0x005d2d50
+        INSTREAMMEMORYISAVAILABLE IsAvailable = (INSTREAMMEMORYISAVAILABLE)&IsInStreamMemoryAvailable; // 0x005d2690
+        INSTREAMMEMORYISENDREACHED IsEndReached = (INSTREAMMEMORYISENDREACHED)&IsInStreamMemoryEndReached;// 0x005d2d70
+        INSTREAMMEMORYCLOSE Close = (INSTREAMMEMORYCLOSE)&CloseInStreamMemory; // 0x005d2da0
+        INSTREAMMEMORYSETTEXT SetText = (INSTREAMMEMORYSETTEXT)&SetInStreamMemoryText; // 0x005d2df0
+        INSTREAMMEMORYSETDATA SetData = (INSTREAMMEMORYSETDATA)&SetInStreamMemoryData; // 0x005d2e20
+    };
+
+    // a.k.a. CInStreamMemory
+    // INHERITANCE: AbstractInStream
+    struct InStreamMemory
+    {
+        InStreamMemorySelf* Self;
+
+        u8* Buffer;
+        s32 Size;
+        s32 Offset;
+
+        StreamMode Mode;
+    };
+
+    struct InStreamMemoryContainer
+    {
+        InStreamMemorySelf InStreamMemorySelf; // 0x00667c64
+
+        // 0x00663830
+        Objects::AbstractObjectInitializer InStreamMemoryInitializer =
+        {
+            .Options = 0x20100, // TODO
+            .Initialize = (Objects::ABSTRACTOBJECTINITIALIZERINITIALIZE)&ConstructInStreamMemory,
+            .Assign = (Objects::ABSTRACTOBJECTINITIALIZERASSIGN)&AssignInStreamMemory,
+            .Release = (Objects::ABSTRACTOBJECTINITIALIZERRELEASE)&ReleaseInStreamMemory,
+            .Size = sizeof(InStreamMemory),
+            .Name = "$CInStreamMemory$$"
+        };
+    };
+
+    extern InStreamMemoryContainer InStreamMemoryState;
+
+    InStreamMemory* ConstructInStreamMemoryText(InStreamMemory* self, void* data, const u32 size);
 }

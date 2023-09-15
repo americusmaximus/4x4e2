@@ -20,20 +20,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include "Strings.hxx"
 
-#include "Basic.hxx"
+#include <string.h>
 
 namespace Strings
 {
-    inline BOOL IsNull(const char* value) { return value == NULL; }
+    BOOL EqualStrings(const char* s1, const char* s2) { return strcmpi(s1, s2) == 0; }
 
-    inline BOOL IsNotNull(const char* value) { return value != NULL; }
+    BOOL StartsWithString(const char* s1, const char* s2)
+    {
+        if (s1 == s2) { return TRUE; }
 
-    inline BOOL IsNullOrEmpty(const char* value) { return value == NULL || value[0] == NULL; }
+        const auto s1l = strlen(s1);
+        const auto s2l = strlen(s2);
 
-    inline BOOL IsNotNullOrEmpty(const char* value) { return (value != NULL && value[0] != NULL); }
-
-    BOOL EqualStrings(const char* s1, const char* s2);
-    BOOL StartsWithString(const char* s1, const char* s2);
+        return s1l < s2l ? FALSE : strnicmp(s2, s1, s2l) == 0;
+    }
 }

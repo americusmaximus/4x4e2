@@ -47,11 +47,11 @@ namespace IO::Streams
     s32 TakeAbstractInStream(AbstractInStream* self) { return STREAM_RESULT_SUCCESS; }
 
     // 0x005d0d30
-    BOOL PutAbstractInStream(AbstractInStream* self, const u32 value) { return FALSE; }
+    BOOL PutAbstractInStream(AbstractInStream* self, const s32 value) { return FALSE; }
 
     s32 PeekAbstractInStream(AbstractInStream* self) { return STREAM_RESULT_SUCCESS; }
 
-    s32 ReadAbstractInStream(AbstractInStream* self, void* data, const s32 count) { return STREAM_RESULT_SUCCESS; }
+    s32 ReadAbstractInStream(AbstractInStream* self, void* data, const u32 size) { return STREAM_RESULT_SUCCESS; }
 
     // 0x005d0d30
     BOOL SeekAbstractInStream(AbstractInStream* self, const s32 offset, const StreamSeek mode) { return FALSE; }

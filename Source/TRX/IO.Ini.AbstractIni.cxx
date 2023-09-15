@@ -20,20 +20,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include "IO.Ini.hxx"
+#include "Strings.hxx"
 
-#include "Basic.hxx"
+using namespace Strings;
 
-namespace Strings
+namespace IO::Ini
 {
-    inline BOOL IsNull(const char* value) { return value == NULL; }
+    // 0x0047e370
+    void SelectAbstractIniFile(AbstractIni* self, const char* file)
+    {
+        if (IsNullOrEmpty(file)) { self->Name[0] = NULL; return; }
 
-    inline BOOL IsNotNull(const char* value) { return value != NULL; }
+        strcpy(self->Name, file);
+    }
 
-    inline BOOL IsNullOrEmpty(const char* value) { return value == NULL || value[0] == NULL; }
+    // 0x0047e3b0
+    void SelectAbstractIniSection(AbstractIni* self, const char* section)
+    {
+        if (IsNullOrEmpty(section)) { self->Section[0] = NULL; return; }
 
-    inline BOOL IsNotNullOrEmpty(const char* value) { return (value != NULL && value[0] != NULL); }
-
-    BOOL EqualStrings(const char* s1, const char* s2);
-    BOOL StartsWithString(const char* s1, const char* s2);
+        strcpy(self->Section, section);
+    }
 }

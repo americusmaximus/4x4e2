@@ -30,6 +30,7 @@
     <ClInclude Include="Graphics.Basic.hxx" />
     <ClInclude Include="IO.hxx" />
     <ClInclude Include="IO.Handlers.hxx" />
+    <ClInclude Include="IO.Ini.hxx" />
     <ClInclude Include="IO.Streams.hxx" />
     <ClInclude Include="Logger.hxx" />
     <ClInclude Include="Mathematics.Basic.hxx" />
@@ -62,8 +63,11 @@
     <ClCompile Include="App.Windows.cxx" />
     <ClCompile Include="IO.cxx" />
     <ClCompile Include="IO.Handlers.cxx" />
+    <ClCompile Include="IO.Ini.cxx" />
+    <ClCompile Include="IO.Ini.IniMemory.cxx" />
     <ClCompile Include="IO.Streams.cxx" />
     <ClCompile Include="IO.Streams.InFileStream.cxx" />
+    <ClCompile Include="IO.Streams.InMemoryStream.cxx" />
     <ClCompile Include="Logger.cxx" />
     <ClCompile Include="Memory.cxx" />
     <ClCompile Include="Native.cxx" />
@@ -78,7 +82,14 @@
     <ClCompile Include="Sounds.Effects.cxx" />
     <ClCompile Include="Sounds.Controllers.WaveIn.cxx" />
     <ClCompile Include="Sounds.Samples.cxx" />
+    <ClCompile Include="Strings.cxx" />
     <ClCompile Include="Time.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IO.Ini.IniFile.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IO.Ini.AbstractIni.cxx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -169,11 +180,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;28183;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatSpecificWarningsAsErrors>4706</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,11 +209,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;28183;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatSpecificWarningsAsErrors>4706</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -225,11 +238,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;28183;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatSpecificWarningsAsErrors>4706</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -253,11 +267,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4229;4996;6031;6335;6387;28183;</DisableSpecificWarnings>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatSpecificWarningsAsErrors>4706</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
