@@ -39,5 +39,5 @@ DirectX 9.0 renderers are upgrades to the DirectX 8.0 renderers. These renderers
 
 ## Legal
 1. This is not a complete game. Please purchase software you like!
-2. The source code in this repository is mostly produced by reverse engineering the original binaries. There are a couple of exceptions for reverse engineering under DMCA -- documentation, interoperability, fair use. See goals section for the interoperability and fair use cases. The documentation is needed to support those.
+2. The source code in this repository is mostly produced by reverse engineering the original binaries. There are a couple of exceptions for reverse engineering under DMCA -- documentation, interoperability, fair use. See goals section for the interoperability and fair use cases. The documentation is needed to support those. Also please see an article about [software preservation](https://en.wikipedia.org/wiki/Digital_preservation).
 3. 4x4 Evolution, DirectX, OpenGL, Vulkan, and others are trademarks of their respective owners.
