@@ -151,4 +151,16 @@ namespace IO
 
         _makepath(file, resdisk, resdir, infile, inext);
     }
+
+    // 0x0043a130
+    s32 AcquireFileSize(const char* dir, const char* file)
+    {
+        FileDescriptor desc;
+
+        InitializeFileDescriptor(&desc, dir, file);
+
+        if (HandleFileDescriptor(&desc)) { return desc.Size; }
+
+        return INVALID_FILE_SIZE;
+    }
 }

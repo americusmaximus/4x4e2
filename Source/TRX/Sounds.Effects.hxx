@@ -64,4 +64,8 @@ namespace Sounds
     };
 
     extern SoundEffectContainer SoundEffectState;
+
+    SoundEffect* AcquireSoundEffect(const u32 indx, const BOOL mode);
+    BOOL SelectSoundEffectVolume(const u32 indx, const f32 volume);
+    BOOL SelectSoundEffectFrequency(const u32 indx, const f32 hz);
 }

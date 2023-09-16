@@ -130,7 +130,7 @@ namespace Sounds
 
         s32 UnknownIndex; // TODO
 
-        s32 AAA03; // TODO
+        BOOL AAA03; // TODO todo enum
 
         SoundSample* Sample;
 
