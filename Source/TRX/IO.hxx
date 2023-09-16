@@ -25,12 +25,13 @@ SOFTWARE.
 #include "Basic.hxx"
 #include "Native.Basic.hxx"
 
-#define MAX_IO_FILE_NAME_LENGTH 260
-
 #define STANDARD_IO_DISK_NAME_LENGTH 3
 #define STANDARD_IO_FILE_NAME_LENGTH 256
 #define STANDARD_IO_DIRECTORY_NAME_LENGTH 256
 #define STANDARD_IO_EXTENSION_NAME_LENGTH 256
+
+#define MAX_IO_FILE_NAME_LENGTH 260
+#define MAX_IO_DISK_NAME_LENGTH (STANDARD_IO_DISK_NAME_LENGTH + 1)
 
 namespace IO
 {
@@ -51,4 +52,7 @@ namespace IO
     BOOL HandleFileDescriptor(FileDescriptor* desc);
     BOOL AcquireFileDescriptorDetails(FileDescriptor* self);
     BOOL AcquireAbsoluteFilePath(char* buffer, const char* file);
+
+    void AcquireNormalizedDirectoryPath(const char* path, char* disk, char* dir);
+    void AcquireNormalizedFilePath(const char* path, char* name, char* file);
 }

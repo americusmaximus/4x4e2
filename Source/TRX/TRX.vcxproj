@@ -28,6 +28,7 @@
     <ClInclude Include="Direct.Sound.EAX.hxx" />
     <ClInclude Include="Direct.Sound.hxx" />
     <ClInclude Include="Graphics.Basic.hxx" />
+    <ClInclude Include="IO.FileFinder.hxx" />
     <ClInclude Include="IO.hxx" />
     <ClInclude Include="IO.Handlers.hxx" />
     <ClInclude Include="IO.Ini.hxx" />
@@ -62,6 +63,7 @@
     <ClCompile Include="App.cxx" />
     <ClCompile Include="App.Windows.cxx" />
     <ClCompile Include="IO.cxx" />
+    <ClCompile Include="IO.FileFinder.cxx" />
     <ClCompile Include="IO.Handlers.cxx" />
     <ClCompile Include="IO.Ini.cxx" />
     <ClCompile Include="IO.Ini.IniMemory.cxx" />
@@ -171,7 +173,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_USE_32BIT_TIME_T;_WINDOWS;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -200,7 +202,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;NOOPTIMIZATION;_WINDOWS;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;NOOPTIMIZATION;_USE_32BIT_TIME_T;_WINDOWS;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
