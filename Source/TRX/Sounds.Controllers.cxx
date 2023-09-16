@@ -29,19 +29,48 @@ SOFTWARE.
 #include "Sounds.Controllers.WaveOut.hxx"
 #include "Sounds.Devices.hxx"
 #include "Sounds.hxx"
+#include "Time.hxx"
 
 using namespace Logger;
 using namespace Memory;
 using namespace Native;
+using namespace Time;
 
 namespace Sounds
 {
     SoundDeviceControllerContainer SoundDeviceControllerState;
 
     // 0x005bfc50
-    SoundMixMode AcquireSoundControllerMixMode(void)
+    SoundMixMode AcquireSoundDeviceControllerMixMode(void)
     {
         return *SoundDeviceControllerState._MixMode;
+    }
+
+    // 0x005bdc60
+    BOOL AcquireSoundDeviceControllerMuteMode(void)
+    {
+        return SoundDeviceControllerState.MuteMode;
+    }
+
+    // 0x005bdc70
+    BOOL SelectSoundDeviceControllerMuteMode(const BOOL mode)
+    {
+        SoundDeviceControllerState.MuteMode = mode;
+
+        if (!mode) { return mode; }
+
+        ReleaseSoundEffectSamples();
+
+        if (*SoundState._SoundDeviceController != NULL)
+        {
+            if (!(*SoundState._SoundDeviceController)->Self->Stop(*SoundState._SoundDeviceController)) { return FALSE; }
+        }
+
+        *SoundDeviceControllerState._ActiveState = FALSE;
+
+        ReleaseSoundDeviceControllerMemory();
+
+        return TRUE;
     }
 
     // 0x005bfc40
@@ -288,7 +317,7 @@ namespace Sounds
     {
         if (*SoundState._SoundDeviceController == NULL) { return; }
 
-        if (AcquireSoundControllerMixMode() == SoundMixMode::None) { return; }
+        if (AcquireSoundDeviceControllerMixMode() == SoundMixMode::None) { return; }
 
         for (u32 x = 0; x < 64; x++) // TODO constant
         {
@@ -392,5 +421,73 @@ namespace Sounds
         }
 
         return TRUE;
+    }
+
+    // 0x005bf5d0
+    BOOL StartSoundDeviceController(void)
+    {
+        if (!AcquireSoundDeviceControllerState()) { return FALSE; }
+
+        if (AcquireSoundDeviceControllerMuteMode()) { return StopSoundDeviceController(); }
+
+        if (AcquireSoundDeviceControllerActiveState()) { return TRUE; }
+
+        LockSounds();
+
+        if (SelectSoundDeviceControllerSoundMode(*SoundState.Options._Bits, *SoundState.Options._ChannelCount, *SoundState.Options._HZ))
+        {
+            if (0 < *SoundDeviceControllerState._Unknown1)
+            {
+                for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+                {
+                    ZeroMemory(SoundDeviceControllerState._UnknownArray4[x],
+                        *SoundDeviceControllerState._Unknown4 * *SoundDeviceControllerState._Unknown1 * 4); // TODO constant
+                }
+            }
+
+            *SoundDeviceControllerState._Unknown2 = 0; // TODO constant
+            *SoundDeviceControllerState._Unknown3 = 0; // TODO constant
+
+            (*SoundState._SoundDeviceController)->Self->SelectPosition(*SoundState._SoundDeviceController,
+                SoundState.Effects.Position._X[*SoundState.Effects._Index],
+                SoundState.Effects.Position._Y[*SoundState.Effects._Index],
+                SoundState.Effects.Position._Z[*SoundState.Effects._Index]);
+
+            (*SoundState._SoundDeviceController)->Self->SelectOrientation(*SoundState._SoundDeviceController,
+                SoundState.Effects.Orientation.XYZ._X[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.XYZ._Y[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.XYZ._Z[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.Top._X[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.Top._Y[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.Top._Z[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.Front._X[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.Front._Y[*SoundState.Effects._Index],
+                SoundState.Effects.Orientation.Front._Z[*SoundState.Effects._Index]);
+
+            (*SoundState._SoundDeviceController)->Self->SelectVelocity(*SoundState._SoundDeviceController,
+                SoundState.Effects.Velocity._X[*SoundState.Effects._Index],
+                SoundState.Effects.Velocity._Y[*SoundState.Effects._Index],
+                SoundState.Effects.Velocity._Z[*SoundState.Effects._Index]);
+
+            (*SoundState._SoundDeviceController)->Self->SelectDistanceFactor(*SoundState._SoundDeviceController, 1.0f);
+
+            (*SoundState._SoundDeviceController)->Self->SelectEnvironment(*SoundState._SoundDeviceController,
+                *SoundState.Environment._Volume, *SoundState.Environment._Time, *SoundState.Environment._Damping);
+
+            *SoundState._SoundTime1 = AcquireTime();
+
+            if ((*SoundState._SoundDeviceController)->Self->Start(*SoundState._SoundDeviceController))
+            {
+                *SoundDeviceControllerState._ActiveState = TRUE;
+
+                UnlockSound1();
+
+                return TRUE;
+            }
+        }
+
+        UnlockSound1();
+
+        return FALSE;
     }
 }

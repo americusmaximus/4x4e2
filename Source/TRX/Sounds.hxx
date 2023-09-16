@@ -34,7 +34,7 @@ namespace Sounds
 {
     struct SoundContainer
     {
-        SoundMixMode* _MixMode = (SoundMixMode*)0x0067ace8; //TODO, default value 2
+        SoundMixMode MixMode = SoundMixMode::Advanced; // 0x0067ace8
 
         struct
         {
@@ -105,6 +105,13 @@ namespace Sounds
 
         struct
         {
+            f32* _Volume = (f32*)0x00d44228; // TODO
+            f32* _Time = (f32*)0x00d4422c; // TODO
+            f32* _Damping = (f32*)0x00d44230; // TODO
+        } Environment;
+
+        struct
+        {
             f32* ChannelVolumes1 = (f32*)0x00d436e8; // TODO MAX_SOUND_SFX_CHANNEL_COUNT (32)
         } SFX;
 
@@ -121,7 +128,7 @@ namespace Sounds
         f32* _UnknownSoundEffectValue1 = (f32*)0x00d33c70; // TODO, looks like it is read-only and always zero
 
         SoundEffectDescriptor* _SoundEffectDescriptor = (SoundEffectDescriptor*)0x00d38688; // TOOD array of 8
-        s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680; // TODO type
+        s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680;
     };
 
     extern SoundContainer SoundState;
@@ -132,6 +139,7 @@ namespace Sounds
     void UnlockSound3(void);
 
     SoundMixMode AcquireSoundMixMode2(void);
+    void SelectSoundMixMode(const SoundMixMode mode);
 
     BOOL RestartSoundThread(const f32 value);
     DWORD WINAPI StartSoundThread(LPVOID);
@@ -160,6 +168,8 @@ namespace Sounds
     void UpdateSoundEffectPosition(SoundEffect* self, const f64 position);
     u32 AcquireUnknownSoundSampleValue1(SoundSample* self);
     void InitializeSoundEffectDescriptor(SoundEffectDescriptor* self);
+    void PopSoundEffectDescriptor(void);
+    void PushSoundEffectDescriptor(void);
 
     typedef const BOOL(CDECLAPI* FUN_005B4D20) (void); // TODO
     static FUN_005B4D20 FUN_005b4d20 = (FUN_005B4D20)0x005b4d20;// TODO
