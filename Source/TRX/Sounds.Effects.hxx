@@ -33,7 +33,7 @@ namespace Sounds
     struct SoundEffectDescriptorContainer
     {
         // 0x00667a00
-        Objects::AbstractObjectInitializer SoundEffectDescriptorInitializer =
+        Objects::AbstractObjectInitializer Initializer =
         {
             .Options = 0x20100, // TODO
             .Initialize = (Objects::ABSTRACTOBJECTINITIALIZERINITIALIZE)&ConstructSoundEffectDescriptor,
@@ -52,7 +52,7 @@ namespace Sounds
     struct SoundEffectContainer
     {
         // 0x006679e0
-        Objects::AbstractObjectInitializer SoundEffectInitializer =
+        Objects::AbstractObjectInitializer Initializer =
         {
             .Options = 0x20100, // TODO
             .Initialize = (Objects::ABSTRACTOBJECTINITIALIZERINITIALIZE)&ConstructSoundEffect,

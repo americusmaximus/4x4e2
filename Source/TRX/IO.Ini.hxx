@@ -55,7 +55,7 @@ namespace IO::Ini
     struct IniContainer
     {
         // 0x006648f0
-        Objects::AbstractObjectInitializer IniInitializer =
+        Objects::AbstractObjectInitializer Initializer =
         {
             .Options = 0x20100, // TODO
             .Initialize = (Objects::ABSTRACTOBJECTINITIALIZERINITIALIZE)&ConstructIni,
@@ -124,7 +124,7 @@ namespace IO::Ini
         IniFileSelf IniFileSelf; // 0x006648e4
 
         // 0x00664910
-        Objects::AbstractObjectInitializer IniFileInitializer =
+        Objects::AbstractObjectInitializer Initializer =
         {
             .Options = 0x20100, // TODO
             .Initialize = NULL,
@@ -170,7 +170,7 @@ namespace IO::Ini
         IniMemorySelf IniMemorySelf; // 0x00664e84
 
         // 0x00664e90
-        Objects::AbstractObjectInitializer IniFileInitializer =
+        Objects::AbstractObjectInitializer Initializer =
         {
             .Options = 0x20100, // TODO
             .Initialize = (Objects::ABSTRACTOBJECTINITIALIZERINITIALIZE)&ConstructIniMemory,
@@ -183,5 +183,5 @@ namespace IO::Ini
 
     extern IniMemoryContainer IniMemoryState;
 
-    char* AcquireString(char* input, char* output);
+    char* AcquireIniMemoryString(char* input, char* output);
 }

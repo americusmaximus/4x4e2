@@ -55,7 +55,7 @@ namespace IO::Ini
     {
         if ((mode & ReleaseMode::Unknown4) != ReleaseMode::None)
         {
-            ReleaseMemory3(ReleaseObject(self, &IniMemoryState.IniFileInitializer));
+            ReleaseMemory3(ReleaseObject(self, &IniMemoryState.Initializer));
 
             return self;
         }
@@ -93,7 +93,7 @@ namespace IO::Ini
             sprintf(section, "[%s]", self->Section);
             while (buffer[0] != NULL)
             {
-                buffer = AcquireString(buffer, result);
+                buffer = AcquireIniMemoryString(buffer, result);
 
                 if (EqualStrings(section, result)) { found = TRUE; break; }
             }
@@ -109,7 +109,7 @@ namespace IO::Ini
 
             while (buffer[0] != NULL)
             {
-                buffer = AcquireString(buffer, line);
+                buffer = AcquireIniMemoryString(buffer, line);
 
                 if (line[0] == ASCII_SQUARE_BRACKET_OPEN) { break; }
 
@@ -145,7 +145,7 @@ namespace IO::Ini
 
             while (buffer[0] != NULL)
             {
-                buffer = AcquireString(buffer, line);
+                buffer = AcquireIniMemoryString(buffer, line);
 
                 if (EqualStrings(section, line)) { found = TRUE; break; }
             }
@@ -190,7 +190,7 @@ namespace IO::Ini
 
                 // Search for the property.
                 lo = (addr)buffer - (addr)self->Buffer;
-                buffer = AcquireString(buffer, line);
+                buffer = AcquireIniMemoryString(buffer, line);
 
                 if (sscanf(line, "%[^ =]", property) == 1 && EqualStrings(name, property)) { break; }
             }
@@ -251,7 +251,7 @@ namespace IO::Ini
 
     // 0x00490c80
     // Gets one line of text from the buffer, trimming "spaces" on the both sides.
-    char* AcquireString(char* input, char* output)
+    char* AcquireIniMemoryString(char* input, char* output)
     {
         char* result = input;
 

@@ -77,7 +77,7 @@ namespace IO::Streams
     {
         if ((mode & ReleaseMode::Unknown4) != ReleaseMode::None)
         {
-            ReleaseMemory3(ReleaseObject(self, &InStreamMemoryState.InStreamMemoryInitializer));
+            ReleaseMemory3(ReleaseObject(self, &InStreamMemoryState.Initializer));
 
             return self;
         }

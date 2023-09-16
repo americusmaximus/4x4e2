@@ -50,7 +50,7 @@ namespace IO::Ini
     {
         if ((mode & ReleaseMode::Unknown4) != ReleaseMode::None)
         {
-            ReleaseMemory3(ReleaseObject(self, &IniFileState.IniFileInitializer));
+            ReleaseMemory3(ReleaseObject(self, &IniFileState.Initializer));
 
             return self;
         }
