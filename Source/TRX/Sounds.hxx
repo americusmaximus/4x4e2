@@ -97,9 +97,9 @@ namespace Sounds
 
             struct
             {
-                f32* _X = (f32*)0x00d43650; // TODO array of 2
-                f32* _Y = (f32*)0x00d43660; // TODO array of 2
-                f32* _Z = (f32*)0x00d436d8; // TODO array of 2
+                f64* _X = (f64*)0x00d43650; // TODO array of 2
+                f64* _Y = (f64*)0x00d43660; // TODO array of 2
+                f64* _Z = (f64*)0x00d43670; // TODO array of 2
             } Position;
         } Effects;
 
@@ -171,6 +171,7 @@ namespace Sounds
     void PopSoundEffectDescriptor(void);
     void PushSoundEffectDescriptor(void);
     void LoadSoundSampleDescriptor(SoundSampleDescriptor* self);
+    void SelectSoundEffectIndex(const s32 indx);
 
     typedef const BOOL(CDECLAPI* FUN_005B4D20) (void); // TODO
     static FUN_005B4D20 FUN_005b4d20 = (FUN_005B4D20)0x005b4d20;// TODO

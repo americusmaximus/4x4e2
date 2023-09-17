@@ -327,7 +327,7 @@ namespace Sounds
 
             if (*SoundDeviceControllerState._MixMode == SoundMixMode::Simple)
             {
-                effect->Options = effect->Options | *SoundDirectSoundSoundControllerState._Options;
+                effect->Options = effect->Options | *SoundDeviceControllerState._Options;
             }
 
             if (effect->Descriptor.Unk30 & 1) // TODO constant
@@ -357,7 +357,7 @@ namespace Sounds
 
         }
 
-        if ((*SoundDirectSoundSoundControllerState._Options & 2) != 0) // TODO constant
+        if ((*SoundDeviceControllerState._Options & 2) != 0) // TODO constant
         {
             (*SoundState._SoundDeviceController)->Self->SelectPosition(*SoundState._SoundDeviceController,
                 SoundState.Effects.Position._X[0],
@@ -365,7 +365,7 @@ namespace Sounds
                 SoundState.Effects.Position._Z[0]);
         }
 
-        if ((*SoundDirectSoundSoundControllerState._Options & 0x20000000) != 0) // TODO constant
+        if ((*SoundDeviceControllerState._Options & 0x20000000) != 0) // TODO constant
         {
             (*SoundState._SoundDeviceController)->Self->SelectOrientation(*SoundState._SoundDeviceController,
                 SoundState.Effects.Orientation.XYZ._X[0],
@@ -379,7 +379,7 @@ namespace Sounds
                 SoundState.Effects.Orientation.Front._Z[0]);
         }
 
-        if ((*SoundDirectSoundSoundControllerState._Options & 4) != 0) // TODO constant
+        if ((*SoundDeviceControllerState._Options & 4) != 0) // TODO constant
         {
             (*SoundState._SoundDeviceController)->Self->SelectVelocity(*SoundState._SoundDeviceController,
                 SoundState.Effects.Velocity._X[0],
@@ -387,7 +387,7 @@ namespace Sounds
                 SoundState.Effects.Velocity._Z[0]);
         }
 
-        *SoundDirectSoundSoundControllerState._Options = 0;  // TODO constant
+        *SoundDeviceControllerState._Options = 0;  // TODO constant
 
         (*SoundState._SoundDeviceController)->Self->ApplyOptions(*SoundState._SoundDeviceController);
     }
@@ -489,5 +489,55 @@ namespace Sounds
         UnlockSound1();
 
         return FALSE;
+    }
+
+    // 0x005be620
+    void SelectSoundDeviceControllerVelocity(const f32 x, const f32 y, const f32 z)
+    {
+        LockSounds();
+
+        SoundState.Effects.Velocity._X[*SoundState.Effects._Index] = x;
+        SoundState.Effects.Velocity._Y[*SoundState.Effects._Index] = y;
+        SoundState.Effects.Velocity._Z[*SoundState.Effects._Index] = z;
+
+        *SoundDeviceControllerState._Options = *SoundDeviceControllerState._Options | 4; // TODO constant
+
+        UnlockSound1();
+    }
+
+    // 0x005be5a0
+    void SelectSoundDeviceControllerOrientation(const f32 x, const f32 y, const f32 z, const f32 xt, const f32 yt, const f32 zt, const f32 xf, const f32 yf, const f32 zf)
+    {
+        LockSounds();
+
+        SoundState.Effects.Orientation.XYZ._X[*SoundState.Effects._Index] = x;
+        SoundState.Effects.Orientation.XYZ._Y[*SoundState.Effects._Index] = y;
+        SoundState.Effects.Orientation.XYZ._Z[*SoundState.Effects._Index] = z;
+
+        SoundState.Effects.Orientation.Top._X[*SoundState.Effects._Index] = xt;
+        SoundState.Effects.Orientation.Top._Y[*SoundState.Effects._Index] = yt;
+        SoundState.Effects.Orientation.Top._Z[*SoundState.Effects._Index] = zt;
+
+        SoundState.Effects.Orientation.Front._X[*SoundState.Effects._Index] = xf;
+        SoundState.Effects.Orientation.Front._Y[*SoundState.Effects._Index] = yf;
+        SoundState.Effects.Orientation.Front._Z[*SoundState.Effects._Index] = zf;
+
+        *SoundDeviceControllerState._Options = *SoundDeviceControllerState._Options | 0x20000000; // TODO constant
+
+        UnlockSound1();
+    }
+
+    // 0x005be540
+    void SelectSoundDeviceControllerPosition(const f64 x, const f64 y, const f64 z)
+    {
+        LockSounds();
+
+        SoundState.Effects.Position._X[*SoundState.Effects._Index] = x;
+        SoundState.Effects.Position._Y[*SoundState.Effects._Index] = y;
+        SoundState.Effects.Position._Z[*SoundState.Effects._Index] = z;
+
+        *SoundDeviceControllerState._Options = *SoundDeviceControllerState._Options | 2; // TODO constant
+
+        UnlockSound1();
     }
 }

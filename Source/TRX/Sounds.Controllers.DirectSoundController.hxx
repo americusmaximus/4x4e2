@@ -158,8 +158,6 @@ namespace Sounds
 
         } Buffers;
 
-        u32* _Options = (u32*)0x00d436e4; // TODO enum
-
         SoundUnk0x18* _SoundUnk0x18Array = (SoundUnk0x18*)0x00d1e944; // TODO 65 size
         SoundUnk0x24* _SoundUnk0x24Array = (SoundUnk0x24*)0x00d1ef60; // TODO 31 size
     };

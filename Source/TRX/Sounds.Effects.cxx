@@ -369,4 +369,14 @@ namespace Sounds
 
         return TRUE;
     }
+
+    // 0x005be530
+    void SelectSoundEffectIndex(const s32 indx)
+    {
+        LockSounds();
+
+        *SoundState.Effects._Index = indx;
+
+        UnlockSound1();
+    }
 }
