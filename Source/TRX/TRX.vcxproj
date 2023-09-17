@@ -25,6 +25,7 @@
     <ClInclude Include="Assets.Basic.hxx" />
     <ClInclude Include="Assets.Sounds.hxx" />
     <ClInclude Include="Basic.hxx" />
+    <ClInclude Include="Components.StringList.hxx" />
     <ClInclude Include="Direct.Sound.EAX.hxx" />
     <ClInclude Include="Direct.Sound.hxx" />
     <ClInclude Include="Graphics.Basic.hxx" />
@@ -62,6 +63,7 @@
   <ItemGroup>
     <ClCompile Include="App.cxx" />
     <ClCompile Include="App.Windows.cxx" />
+    <ClCompile Include="Components.StringList.cxx" />
     <ClCompile Include="IO.cxx" />
     <ClCompile Include="IO.FileFinder.cxx" />
     <ClCompile Include="IO.Handlers.cxx" />
