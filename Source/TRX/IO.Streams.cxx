@@ -62,4 +62,45 @@ namespace IO::Streams
     BOOL IsAbstractInStreamAvailable(AbstractInStream* self) { return FALSE; }
 
     s32 IsAbstractInStreamEndReached(AbstractInStream* self) { return STREAM_RESULT_SUCCESS; }
+
+    // 0x005d1f50
+    s32 ReadAbstractInStreamLine(AbstractInStream* self, char* line, const u32 length)
+    {
+        u32 index = 0;
+        auto result = 0;
+
+        while (TRUE)
+        {
+            const auto value = self->Self->Take(self);
+
+            if (value == STREAM_RESULT_END_OF_DATA)
+            {
+                line[index] = NULL;
+
+                return index == 0 ? STREAM_RESULT_END_OF_DATA : index;
+            }
+
+            if (value < 0) { break; }
+
+            if (value != ASCII_CARRIAGE_RETURN)
+            {
+                if (value == ASCII_NEW_LINE)
+                {
+                    line[index] = NULL;
+
+                    return index;
+                }
+
+                if (index < length - 1)
+                {
+                    line[index] = (char)value;
+                    index = index + 1;
+                }
+            }
+        }
+
+        line[index] = NULL;
+
+        return STREAM_RESULT_FAILURE;
+    }
 }

@@ -97,6 +97,8 @@ namespace IO::Streams
 
     extern AbstractInStreamContainer AbstractInStreamState;
 
+    s32 ReadAbstractInStreamLine(AbstractInStream* self, char* line, const u32 length);
+
     struct InStreamFile;
 
     typedef const void* (CDECLAPI* INSTREAMFILERELEASE) (InStreamFile* self, const Objects::ReleaseMode mode);

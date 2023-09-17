@@ -1159,14 +1159,14 @@ namespace Sounds
             LogError("Unable to start sound effect, sound sample is missing.");
         }
 
-        if (1 < effect->Sample->Descriptor.LoopMode || 0 < effect->Sample->Descriptor.Unk6) // TODO constants
+        if (effect->Sample->Descriptor.LoopMode == SoundLoopMode::Unknown2 || 0 < effect->Sample->Descriptor.Unk6) // TODO constants
         {
             LogError("Unable to start sound effect, exotic jump sequences not allowed for hardware mixed sounds.");
         }
 
         DWORD options = DSBPLAY_NONE;
 
-        if (effect->Sample->Descriptor.LoopMode == 1 && -1 < effect->Sample->Descriptor.Unk6) // TODO constants
+        if (effect->Sample->Descriptor.LoopMode == SoundLoopMode::Looping && -1 < effect->Sample->Descriptor.Unk6) // TODO constants
         {
             options = options | DSBPLAY_LOOPING;
         }

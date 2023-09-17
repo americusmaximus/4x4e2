@@ -47,7 +47,7 @@ namespace Sounds
         self->Descriptor.MinimumDistance = *SoundState._UnknownSoundEffectValue1;
         self->Descriptor.MaximumDistance = 10000.0f;
 
-        ConstructInStreamFile(&self->File);
+        ConstructInStreamFile(&self->Stream);
 
         self->Descriptor.AllocatedMemory1 = NULL;
 
@@ -57,9 +57,9 @@ namespace Sounds
 
         self->Unk6 = 0;
         self->Unk7 = -1; // TODO constant
-        self->Unk12 = 0;
+        self->Decoder = NULL;
 
-        self->File.File.Handle = NULL;
+        self->Stream.File.Handle = NULL;
 
         self->Length = 0;
         self->Unk9 = 0;
@@ -72,7 +72,7 @@ namespace Sounds
     {
         DisposeSoundSample(self);
 
-        ReleaseInStreamFile(&self->File, ReleaseMode::None);
+        ReleaseInStreamFile(&self->Stream, ReleaseMode::None);
 
         return self;
     }
@@ -90,12 +90,20 @@ namespace Sounds
         ReleaseSoundSampleMemory(self);
         ReleaseSoundDeviceControllerSoundSample(self);
 
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
+        if (self->Decoder != NULL)
+        {
+            // TODO ReleaseMemory2(ReleaseSoundDecoder(self->Decoder, ReleaseMode::None));
+        }
 
+        self->Decoder = NULL;
+
+        CloseInStreamFile(&self->Stream);
+
+        self->Descriptor.Definition.Name[0] = NULL;
+        self->Descriptor.CacheControl = SoundCacheMode::Normal;
+        self->Unk6 = 0;
+        self->Length = 0;
+        self->Unk9 = 0;
         self->Unk7 = -1; // TODO constant
     }
 
@@ -132,7 +140,7 @@ namespace Sounds
                 LogError("Unable to lock sound sample, memory buffer is not allocated.");
             }
 
-            result = (void*)((addr)self->Descriptor.AllocatedMemory1 + (addr)AcquireSoundSampleOffset(self, offset));
+            result = (void*)((addr)self->Descriptor.AllocatedMemory1 + (addr)AcquireSoundSampleDescriptorOffset(&self->Descriptor, offset));
         }
         else
         {
@@ -164,32 +172,5 @@ namespace Sounds
 
         self->Lock.Offset = 0;
         self->Lock.Length = 0;
-    }
-
-    // 0x005bcde0
-    s32 AcquireSoundSampleOffset(SoundSample* self, const s32 offset)
-    {
-        const s32 value = offset * self->Descriptor.Definition.BitsPerSample * self->Descriptor.Definition.Channels + 7; // TODO constant
-
-        const auto sign = value >> 0x1f; // TODO constants
-
-        return (s32)((value + sign * -8) - (u32)(sign << 2 < 0)) >> 3; // TODO constants
-    }
-
-    // 0x005bd060
-    u32 AcquireUnknownSoundSampleValue1(SoundSample* self)
-    {
-        if (self->Descriptor.LoopMode < 2
-            && self->Descriptor.Definition.Length == self->Descriptor.ChannelLength[0]) // TODO constant
-        {
-            if (self->Descriptor.Unk6 < 1) // TODO constant
-            {
-                if (self->Descriptor.Unk6 == 0) { return 1; } // TODO constant
-
-                return 0; // TODO constant
-            }
-        }
-
-        return 2; // TODO constant
     }
 }

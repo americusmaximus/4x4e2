@@ -26,6 +26,15 @@ SOFTWARE.
 #include "Assets.Sounds.hxx"
 #include "IO.Streams.hxx"
 
+#define SOUND_DIRECTORY_NAME "sound"
+
+// NOTE: klp is a legacy metadata file used in earlier games.
+// The one I found in "Fly" had the following content: 1 0 0
+#define SOUND_FILE_KLP_EXTENSION_NAME "klp"
+
+// NOTE: sfx is a modern metadata file used to describe sound.
+#define SOUND_FILE_SFX_EXTENSION_NAME "sfx"
+
 namespace Sounds
 {
     enum class SoundMixMode : u32
@@ -33,6 +42,13 @@ namespace Sounds
         None = 0,
         Simple = 1, // Mixing
         Advanced = 2 // Mixing & Spatialization
+    };
+
+    enum class SoundLoopMode : u32
+    {
+        None = 0,
+        Looping = 1,
+        Unknown2 = 2 // TODO
     };
 
     struct SoundDecoder
@@ -51,13 +67,13 @@ namespace Sounds
 
         void* AllocatedMemory1;
 
-        u32 LoopMode; // TODO Enum
+        SoundLoopMode LoopMode;
         s32 ChannelLength[2]; // TODO
 
         s32 Unk106; // TODO
         s32 Unk107; // TODO
         s32 Unk108; // TODO
-        s32 Unk6; // TODO
+        s32 Unk6; // TODO, may be an enum
         s32 Unk109; // TODO
         s32 Unk110; // TODO
         s32 Unk111; // TODO
@@ -81,10 +97,10 @@ namespace Sounds
         s32 Unk9;
         s32 Unk10;
         s32 Unl11;
-        s32 Unk12;
+        SoundDecoder* Decoder;
         s32 Unk13;
 
-        IO::Streams::InStreamFile File;
+        IO::Streams::InStreamFile Stream;
 
         struct
         {

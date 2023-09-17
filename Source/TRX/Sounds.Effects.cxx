@@ -242,7 +242,7 @@ namespace Sounds
         if (-1 < self->Sample->Descriptor.Definition.Length
             && self->Sample->Descriptor.Definition.Length <= self->Descriptor.Unknown1005)
         {
-            if (AcquireUnknownSoundSampleValue1(self->Sample) == 0) // TODO constant
+            if (AcquireUnknownSoundSampleDescriptorValue1(&self->Sample->Descriptor) == 0) // TODO constant
             {
                 self->Descriptor.Unknown1005 = self->Sample->Descriptor.Definition.Length;
             }

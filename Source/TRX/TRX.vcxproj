@@ -84,6 +84,7 @@
     <ClCompile Include="Sounds.Effects.cxx" />
     <ClCompile Include="Sounds.Controllers.WaveIn.cxx" />
     <ClCompile Include="Sounds.Samples.cxx" />
+    <ClCompile Include="Sounds.Samples.Descriptors.cxx" />
     <ClCompile Include="Strings.cxx" />
     <ClCompile Include="Time.cxx" />
   </ItemGroup>
