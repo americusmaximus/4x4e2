@@ -1305,14 +1305,14 @@ namespace Sounds
             LogError("Unable to poll sound effect, sound sample is not locked.");
         }
 
-        auto time1 = AcquireTime(); // TODO type
-        auto time2 = time1 - *SoundState._SoundTime1; // TODO type
+        auto time1 = AcquireTime(); // TODO type, name
+        auto time2 = time1 - *SoundState._SoundTime1; // TODO type, name
 
         if (time2 < 0 || 0x1cccb < time2) // TODO constants
         {
             *SoundState._SoundTime1 = time1;
 
-            if (*SoundState._SoundTimeUnknown1 < 2) // TODO constants
+            if (*SoundState._UnknownSoundCount1 < 2) // TODO constants
             {
                 FUN_005b9ac0();
             }

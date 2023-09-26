@@ -20,20 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "Components.StringList.hxx"
+#include "Editor.Clipboard.hxx"
+#include "Editor.StringList.hxx"
 #include "Logger.hxx"
+#include "Strings.hxx"
 
-#include <string.h>
-#include <stdlib.h>
 #include <search.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define STRING_LIST_ALLOCATION_INCREMENT 21
 
 using namespace Memory;
 using namespace Objects;
 using namespace Logger;
+using namespace Strings;
 
-namespace Components
+namespace Editor
 {
     StringListContainer StringListState;
 
@@ -56,8 +60,10 @@ namespace Components
 
         for (u32 x = 0; x < value->Count; x = x + 1)
         {
-            AttachStringListItem(self, AcquireStringListItem(value, x));
+            AttachStringList(self, AcquireStringList(value, x));
         }
+
+        return self;
     }
 
     // 0x00445720
@@ -211,14 +217,58 @@ namespace Components
     }
 
     // 0x00445cd0
-    char* AcquireStringListItem(StringList* self, const s32 indx)
+    char* AcquireStringList(StringList* self, const s32 indx)
     {
         return self->Items[indx];
     }
 
     // 0x00445870
-    void AttachStringListItem(StringList* self, const char* value)
+    void AttachStringList(StringList* self, const char* value)
     {
         self->Self->Insert(self, self->Count, value);
+    }
+
+    // 0x00445e80
+    // a.k.a. set
+    void SetStringList(StringList* self, const s32 indx, const char* value)
+    {
+        if (indx < 0 || self->Count <= indx) { LogError("Unable to set the collection item value, invalid index %d.", indx); }
+
+        self->Items[indx] = (char*)ReallocateMemory(self->Items[indx], IsNull(value) ? 0 : strlen(value));
+
+        if (self->Items[indx] == NULL) { LogError("Unable to allocate memory for the element collection item."); }
+
+        if (IsNull(value)) { self->Items[indx][0] = NULL; return; }
+
+        strcpy(self->Items[indx], value);
+    }
+
+    // 0x00445fd0
+    // a.k.a. copyToClipboard
+    void CopyStringList(StringList* self)
+    {
+        u32 length = 0;
+
+        for (u32 x = 0; x < self->Count; x++)
+        {
+            length = length + strlen(AcquireStringList(self, x));
+        }
+
+        char* buffer = (char*)AllocateMemory(length + 1);
+
+        if (buffer == NULL) { LogError("Unable to allocate clipboard memory."); }
+
+        u32 indx = 0;
+
+        for (u32 x = 0; x < self->Count; x++)
+        {
+            indx = indx + sprintf(&buffer[indx], "%s\n", AcquireStringList(self, x));
+        }
+
+        buffer[indx] = NULL;
+
+        SelectClipboardValue(*EditorState._InstancePointer, buffer);
+
+        ReleaseMemory1(buffer);
     }
 }

@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "Objects.hxx"
 
-namespace Components
+namespace Editor
 {
     struct StringList;
 
@@ -83,6 +83,8 @@ namespace Components
     extern StringListContainer StringListState;
 
     void AllocateStringList(StringList* self, const s32 count);
-    char* AcquireStringListItem(StringList* self, const s32 indx);
-    void AttachStringListItem(StringList*, const char* value);
+    char* AcquireStringList(StringList* self, const s32 indx);
+    void AttachStringList(StringList*, const char* value);
+    void SetStringList(StringList* self, const s32 indx, const char* value);
+    void CopyStringList(StringList* self);
 }

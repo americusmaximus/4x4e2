@@ -23,50 +23,46 @@ SOFTWARE.
 #pragma once
 
 #include "Basic.hxx"
-#include "Native.Basic.hxx"
+#include "Direct.Draw.hxx"
 
-namespace Time
+namespace Graphics
 {
-    struct TimeContainer
+    struct GraphicsContainer
     {
         struct
         {
-            BOOL* _IsActive = (BOOL*)0x00d6921c;
-        } Timer;
+            s32* _Width = (s32*)0x00813e4c; // TODO
+            s32* _Height = (s32*)0x00813e50; // TODO
+        } View;
 
         struct
         {
-            struct
-            {
-                LARGE_INTEGER Frequency; // 0x00d69200
-
-                f64 Divisor; // 0x00d69208
-                f64 Quotient; // 0x00d69210
-            } Performance;
-
-            LARGE_INTEGER Current; // 0x00d691f8
+            IDirectDraw** _Instance = (IDirectDraw**)0x00d65750; // TODO
 
             struct
             {
-                DWORD LowPart; // 0x00d691f0
-                LONG HighPart; // 0x00d691f4
-            } Previous;
+                u32** _Frame = (u32**)0x00682010; // TODO type, name
+                u32** _Depth = (u32**)0x00d65760; // TODO
+                u32** _DepthAligned = (u32**)0x006832d4; // TODO
+            } Buffers;
 
             struct
             {
-                DWORD LowPart; // 0x00d691e0
-                LONG HighPart; // 0x00d691e4
+                IDirectDrawSurface** _Main = (IDirectDrawSurface**)0x00d65754; // TODO
+                IDirectDrawSurface** _Back = (IDirectDrawSurface**)0x00d65758; // TODO
+            } Surfaces;
 
-                s32 Value; // 0x00d691e8
-            } Delta;
-
-            s32 Time; // 0x00d69218
-        } Counter;
+            IDirectDrawPalette** _Palette = (IDirectDrawPalette**)0x00d6575c; // TODO
+        } DX;
     };
 
-    extern TimeContainer TimeState;
+    extern GraphicsContainer GraphicsState;
 
-    u32 AcquireTime(void);
-    void InitializeTime(void);
-    void ReleaseTime(void);
+    void ReleaseGraphics(void);
+
+    typedef const void(CDECLAPI* FUN_006029D0) (void); // TODO
+    static FUN_006029D0 FUN_006029d0 = (FUN_006029D0)0x006029d0; // TODO
+
+    typedef const void(CDECLAPI* FUN_004969B0) (f32, f32, f32, f32); // TODO
+    static FUN_004969B0 FUN_004969b0 = (FUN_004969B0)0x004969b0; // TODO
 }

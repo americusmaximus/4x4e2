@@ -20,53 +20,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
-
-#include "Basic.hxx"
+#include "Graphics.hxx"
+#include "Input.Mouse.hxx"
 #include "Native.Basic.hxx"
 
-namespace Time
+using namespace Graphics;
+
+namespace Input
 {
-    struct TimeContainer
+    // 0x0060b1e0
+    void SetCursorPosition(const s32 x, const s32 y)
     {
-        struct
-        {
-            BOOL* _IsActive = (BOOL*)0x00d6921c;
-        } Timer;
+        SetCursorPos(x, y);
 
-        struct
-        {
-            struct
-            {
-                LARGE_INTEGER Frequency; // 0x00d69200
-
-                f64 Divisor; // 0x00d69208
-                f64 Quotient; // 0x00d69210
-            } Performance;
-
-            LARGE_INTEGER Current; // 0x00d691f8
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691f0
-                LONG HighPart; // 0x00d691f4
-            } Previous;
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691e0
-                LONG HighPart; // 0x00d691e4
-
-                s32 Value; // 0x00d691e8
-            } Delta;
-
-            s32 Time; // 0x00d69218
-        } Counter;
-    };
-
-    extern TimeContainer TimeState;
-
-    u32 AcquireTime(void);
-    void InitializeTime(void);
-    void ReleaseTime(void);
+        *GraphicsState.View._Width = x;
+        *GraphicsState.View._Height = y;
+    }
 }

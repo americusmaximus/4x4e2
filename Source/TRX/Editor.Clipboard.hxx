@@ -22,51 +22,22 @@ SOFTWARE.
 
 #pragma once
 
-#include "Basic.hxx"
-#include "Native.Basic.hxx"
+#include "Editor.hxx"
 
-namespace Time
+#define MAX_CLIPBOARD_NULL_STING_LENGTH 4
+
+namespace Editor
 {
-    struct TimeContainer
+    struct ClipboardContainer
     {
-        struct
-        {
-            BOOL* _IsActive = (BOOL*)0x00d6921c;
-        } Timer;
+        const char NullInString[MAX_CLIPBOARD_NULL_STING_LENGTH] = { NULL, NULL, NULL, NULL }; // 0x006313e0
+        const char NullOutString[MAX_CLIPBOARD_NULL_STING_LENGTH] = { NULL, NULL, NULL, NULL }; // 0x006313df
 
-        struct
-        {
-            struct
-            {
-                LARGE_INTEGER Frequency; // 0x00d69200
-
-                f64 Divisor; // 0x00d69208
-                f64 Quotient; // 0x00d69210
-            } Performance;
-
-            LARGE_INTEGER Current; // 0x00d691f8
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691f0
-                LONG HighPart; // 0x00d691f4
-            } Previous;
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691e0
-                LONG HighPart; // 0x00d691e4
-
-                s32 Value; // 0x00d691e8
-            } Delta;
-
-            s32 Time; // 0x00d69218
-        } Counter;
+        char* Value; // 0x00813388
     };
 
-    extern TimeContainer TimeState;
+    extern ClipboardContainer ClipboardState;
 
-    u32 AcquireTime(void);
-    void InitializeTime(void);
-    void ReleaseTime(void);
+    char* AcquireClipboardValue(Editor* self);
+    void SelectClipboardValue(Editor* self, const char* value);
 }

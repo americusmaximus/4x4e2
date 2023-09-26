@@ -101,6 +101,16 @@ namespace Sounds
                 f64* _Y = (f64*)0x00d43660; // TODO array of 2
                 f64* _Z = (f64*)0x00d43670; // TODO array of 2
             } Position;
+
+            struct
+            {
+                struct
+                {
+                    f64* _X = (f64*)0x00d44168; // TODO array of 8
+                    f64* _Y = (f64*)0x00d441a8; // TODO array of 8
+                    f64* _Z = (f64*)0x00d441e8; // TODO array of 8
+                } Position;
+            } Channels;
         } Effects;
 
         struct
@@ -117,17 +127,17 @@ namespace Sounds
 
         BOOL* _SoundChannelStates = (BOOL*)0x00d43768; // TODO ARRAY of 32
 
-        s32* _SoundTime1 = (s32*)0x00d621b8; //TODO
-        s32* _SoundTimeUnknown1 = (s32*)0x00d61654; //TODO, looks like SoundMixMode
+        s32* _SoundTime1 = (s32*)0x00d44248; //TODO
+        s32* _UnknownSoundCount1 = (s32*)0x0067acc8; // TODO, default value 1
 
         AbstractSoundDeviceController** _SoundDeviceController = (AbstractSoundDeviceController**)0x00d440a8; // TODO
         AbstractSoundRecordingDeviceController** _SoundRecordingDeviceController = (AbstractSoundRecordingDeviceController**)0x00d44a8c; // TODO
 
         SoundSample* _SoundEffectSamples = (SoundSample*)0x00d38a4c; // TODO 64 elements, todo name
-
+        s32* _SoundEffectIndex = (s32*)0x00d38a48; // TODO
         f32* _UnknownSoundEffectValue1 = (f32*)0x00d33c70; // TODO, looks like it is read-only and always zero
 
-        SoundEffectDescriptor* _SoundEffectDescriptor = (SoundEffectDescriptor*)0x00d38688; // TOOD array of 8
+        SoundEffectDescriptor* _SoundEffectDescriptors = (SoundEffectDescriptor*)0x00d38688; // TOOD array of 8
         s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680;
     };
 
@@ -172,6 +182,8 @@ namespace Sounds
     void PushSoundEffectDescriptor(void);
     void LoadSoundSampleDescriptor(SoundSampleDescriptor* self);
     void SelectSoundEffectIndex(const s32 indx);
+    u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z);
+    void ReleaseSounds(void);
 
     typedef const BOOL(CDECLAPI* FUN_005B4D20) (void); // TODO
     static FUN_005B4D20 FUN_005b4d20 = (FUN_005B4D20)0x005b4d20;// TODO

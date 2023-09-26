@@ -20,15 +20,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "ASCII.hxx"
 #include "IO.hxx"
 #include "IO.Handlers.hxx"
 #include "Strings.hxx"
 
+#include <direct.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "ASCII.hxx"
 
 #define MAX_IO_PATH_LENGTH 512
 
@@ -98,8 +99,6 @@ namespace IO
         return FALSE;
     }
 
-
-
     // 0x0043a730
     void AcquireNormalizedDirectoryPath(const char* path, char* disk, char* dir)
     {
@@ -162,5 +161,35 @@ namespace IO
         if (HandleFileDescriptor(&desc)) { return desc.Size; }
 
         return INVALID_FILE_SIZE;
+    }
+
+    // 0x0043a300
+    FILE* OpenAttributedFile(const char* dir, const char* file, const char* attrs)
+    {
+        FileDescriptor desc;
+        InitializeFileDescriptor(&desc, dir, file);
+
+        for (u32 x = 0; ; x++)
+        {
+            if (attrs[x] == NULL) { break; }
+
+            if (toupper(attrs[x]) == ASCII_CHARACTER_UPPER_CASE_W)
+            {
+                if (IsNotNull(dir)) { _mkdir(dir); }
+
+                return fopen(desc.Name, attrs);
+            }
+        }
+
+        if (HandleFileDescriptor(&desc))
+        {
+            auto result = fopen(desc.Path, attrs);
+
+            if (result != NULL && desc.Offset != 0) { fseek(result, desc.Offset, SEEK_SET); }
+
+            return result;
+        }
+
+        return NULL;
     }
 }

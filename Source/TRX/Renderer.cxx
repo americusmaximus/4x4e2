@@ -20,53 +20,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include "Renderer.hxx"
 
-#include "Basic.hxx"
-#include "Native.Basic.hxx"
+using namespace Renderer::Module;
 
-namespace Time
+namespace Renderer
 {
-    struct TimeContainer
+    RendererContainer RendererState;
+
+    // 0x005c7700
+    BOOL SelectRendererGraphicsCard(const u32 indx)
     {
-        struct
-        {
-            BOOL* _IsActive = (BOOL*)0x00d6921c;
-        } Timer;
+        if (!*RendererModule.State._IsActive) { return FALSE; }
 
-        struct
-        {
-            struct
-            {
-                LARGE_INTEGER Frequency; // 0x00d69200
+        *RendererModule.State._SelectedDeviceIndex = indx;
 
-                f64 Divisor; // 0x00d69208
-                f64 Quotient; // 0x00d69210
-            } Performance;
+        return (*RendererModule._SelectGraphicsCard)(indx);
+    }
 
-            LARGE_INTEGER Current; // 0x00d691f8
+    // 0x005c7260
+    BOOL ReleaseRenderer(void)
+    {
+        if (!*RendererModule.State._IsActive) { return TRUE; }
 
-            struct
-            {
-                DWORD LowPart; // 0x00d691f0
-                LONG HighPart; // 0x00d691f4
-            } Previous;
+        (*RendererModule._Kill)();
 
-            struct
-            {
-                DWORD LowPart; // 0x00d691e0
-                LONG HighPart; // 0x00d691e4
+        ReleaseRendererModule();
 
-                s32 Value; // 0x00d691e8
-            } Delta;
+        return TRUE;
+    }
 
-            s32 Time; // 0x00d69218
-        } Counter;
-    };
+    // 0x005c7370
+    BOOL SetRendererDirtyRect(const s32 x, const s32 y, const s32 width, const s32 height)
+    {
+        if (RendererModule.SetDirtyRect == NULL) { return TRUE; }
 
-    extern TimeContainer TimeState;
+        RendererModule.SetDirtyRect(x, y, width, height);
 
-    u32 AcquireTime(void);
-    void InitializeTime(void);
-    void ReleaseTime(void);
+        return TRUE;
+    }
 }

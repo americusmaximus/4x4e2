@@ -152,14 +152,7 @@ namespace Sounds
 
         f32 HZ;
 
-        s32 AAA04; // TODO
-        s32 AAA05; // TODO
-        s32 AAA06; // TODO
-        s32 AAA07; // TODO
-        s32 AAA08; // TODO
-        s32 AAA09; // TODO
-        s32 AAA10; // TODO
-        s32 AAA11; // TODO
+        f32 AAA04[8];  // TODO constant, name, Distance/Position?
 
         f32 Pans[8]; // TODO constant
 
@@ -180,7 +173,7 @@ namespace Sounds
         s32 AAA26; // TODO
         s32 AAA27; // TODO
         s32 AAA28; // TODO
-        s32 AAA29; // TODO
+        f32 AAA29; // TODO
         s32 AAA30; // TODO
         s32 AAA31; // TODO
 

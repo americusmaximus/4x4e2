@@ -316,4 +316,48 @@ namespace Sounds
 
         SoundState.MixMode = mode;
     }
+
+    // 0x005be700
+    u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z)
+    {
+        if (*SoundState._UnknownSoundCount1 < 2) { return 0; } // TODO constant
+
+        auto diff = (x - SoundState.Effects.Position._X[0]) * (x - SoundState.Effects.Position._X[0])
+            + (y - SoundState.Effects.Position._Y[0]) * (y - SoundState.Effects.Position._Y[0])
+            + (z - SoundState.Effects.Position._Z[0]) * (z - SoundState.Effects.Position._Z[0]);
+
+        u32 result = 0;
+
+        for (u32 x = 1; x < *SoundState._UnknownSoundCount1; x++)
+        {
+            const auto dx = x - SoundState.Effects.Position._X[x];
+            const auto dy = y - SoundState.Effects.Position._Y[x];
+            const auto dz = z - SoundState.Effects.Position._Z[x];
+
+            const auto delta = dx * dx + dy * dy + dz * dz;
+
+            if (delta < diff)
+            {
+                diff = delta;
+
+                result = result + 1;
+            }
+        }
+
+        return result;
+    }
+
+    // 0x005bed90
+    void ReleaseSounds(void)
+    {
+        LockSounds();
+        ReleaseSoundEffectSamples();
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            DisposeSoundSample(&SoundState._SoundEffectSamples[x]);
+        }
+
+        UnlockSound1();
+    }
 }

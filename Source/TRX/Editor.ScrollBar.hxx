@@ -20,24 +20,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "IO.Streams.Pools.hxx"
+#pragma once
 
-namespace IO::Streams
+#include "Basic.hxx"
+#include "Objects.hxx"
+
+namespace Editor
 {
-    PoolContainer PoolState;
-
-    // 0x005d0c90
-    void ReleaseFilePool(void)
+    struct ScrollBar
     {
-        for (u32 x = 0; x < MAX_IO_STREAM_POOL_FILE_COUNT; x++)
-        {
-            auto file = &PoolState.Files[x];
+        s32 Unk1; // TODO
+        s32 Unk2; // TODO
+        s32 Unk3; // TODO
+        s32 Unk4; // TODO
+        s32 Unk5; // TODO
+        s32 Unk6; // TODO
+        s32 Unk7; // TODO
+        s32 Unk8; // TODO
+        s32 Unk9; // TODO
+        s32 Unk10;// TODO
+        s32 Unk11;// TODO
+        s32 Unk12;// TODO
+        s32 Unk13;// TODO
+        s32 Unk14;// TODO
+    };
 
-            if (file != NULL && file->Handle != NULL)
-            {
-                CloseHandle(file->Handle);
-                file->Name[0] = NULL;
-            }
-        }
-    }
+    ScrollBar* ConstructScrollBar(ScrollBar* self);
+    void* ReleaseScrollBar(ScrollBar* self, const Objects::ReleaseMode mode);
+    void ClearScrollBar(ScrollBar* self);
+    void ComputeScrollBar(ScrollBar* self);
 }

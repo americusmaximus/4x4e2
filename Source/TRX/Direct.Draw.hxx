@@ -22,26 +22,7 @@ SOFTWARE.
 
 #pragma once
 
-#include "IO.hxx"
+#include "Native.Basic.hxx"
 
-#define MAX_IO_STREAM_POOL_FILE_COUNT 5
-
-namespace IO::Streams
-{
-    struct PoolFile
-    {
-        HANDLE Handle;
-        char Name[MAX_IO_FILE_NAME_LENGTH];
-    };
-
-    struct PoolContainer
-    {
-        // NOTE: Contains the list of recently "closed" files,
-        // that are still kept open, in case there is a need to reopen same file.
-        PoolFile Files[MAX_IO_STREAM_POOL_FILE_COUNT]; // 0x00d5ebf0
-    };
-
-    extern PoolContainer PoolState;
-
-    void ReleaseFilePool(void);
-}
+#define   DIRECTDRAW_VERSION 0x0700
+#include <ddraw.h>

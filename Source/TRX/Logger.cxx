@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 #include "App.Windows.hxx"
+#include "Graphics.hxx"
 #include "Logger.hxx"
 #include "Native.hxx"
 #include "Time.hxx"
@@ -32,6 +33,7 @@ SOFTWARE.
 #define MAX_LOG_MESSAGE_BUFFER_SIZE 1024
 
 using namespace App::Windows;
+using namespace Graphics;
 using namespace Native;
 using namespace Time;
 
@@ -85,7 +87,7 @@ namespace Logger
 
         if (IsDebuggerActive()) { Halt(); }
 
-        // TODO ReleaseGraphics();
+        ReleaseGraphics();
 
         ReleaseTime();
 

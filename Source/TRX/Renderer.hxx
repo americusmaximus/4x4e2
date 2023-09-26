@@ -22,51 +22,27 @@ SOFTWARE.
 
 #pragma once
 
-#include "Basic.hxx"
-#include "Native.Basic.hxx"
+#include "Renderer.Module.hxx"
 
-namespace Time
+namespace Renderer
 {
-    struct TimeContainer
+    struct RendererContainer
     {
-        struct
-        {
-            BOOL* _IsActive = (BOOL*)0x00d6921c;
-        } Timer;
+        BOOL* _IsActive = (BOOL*)0x008218d8; // TODO
 
         struct
         {
-            struct
-            {
-                LARGE_INTEGER Frequency; // 0x00d69200
+            BOOL* _IsUsingModule = (BOOL*)0x00d44cac; // TODO
 
-                f64 Divisor; // 0x00d69208
-                f64 Quotient; // 0x00d69210
-            } Performance;
+            char ModuleName[MAX_RENDERER_MODULE_NAME_LENGTH];
 
-            LARGE_INTEGER Current; // 0x00d691f8
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691f0
-                LONG HighPart; // 0x00d691f4
-            } Previous;
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691e0
-                LONG HighPart; // 0x00d691e4
-
-                s32 Value; // 0x00d691e8
-            } Delta;
-
-            s32 Time; // 0x00d69218
-        } Counter;
+            char* _ModuleFileName = (char*)0x0067ced0; // TODO array of [MAX_RENDERER_MODULE_FILE_NAME_LENGTH], default value
+        } Options;
     };
 
-    extern TimeContainer TimeState;
+    extern RendererContainer RendererState;
 
-    u32 AcquireTime(void);
-    void InitializeTime(void);
-    void ReleaseTime(void);
+    BOOL SelectRendererGraphicsCard(const u32 indx);
+    BOOL ReleaseRenderer(void);
+    BOOL SetRendererDirtyRect(const s32 x, const s32 y, const s32 width, const s32 height);
 }

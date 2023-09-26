@@ -23,41 +23,49 @@ SOFTWARE.
 #pragma once
 
 #include "Basic.hxx"
-#include "Native.Basic.hxx"
 
-#include <stdio.h>
+#define MAX_EDITOR_WINDOW_COUNT 5
 
-#define STANDARD_IO_DISK_NAME_LENGTH 3
-#define STANDARD_IO_FILE_NAME_LENGTH 256
-#define STANDARD_IO_DIRECTORY_NAME_LENGTH 256
-#define STANDARD_IO_EXTENSION_NAME_LENGTH 256
-
-#define MAX_IO_FILE_NAME_LENGTH 260
-#define MAX_IO_DISK_NAME_LENGTH (STANDARD_IO_DISK_NAME_LENGTH + 1)
-
-namespace IO
+namespace Editor
 {
-    struct FileDescriptor
+    struct Window
     {
-        char Name[STANDARD_IO_FILE_NAME_LENGTH];
-        char Path[STANDARD_IO_FILE_NAME_LENGTH];
-
-        s32 Offset;
-        s32 Size;
-
+        s32 Unk001; // TODO
+        s32 Unk002; // TODO
         s32 Unk003; // TODO
         s32 Unk004; // TODO
+
         s32 Unk005; // TODO
+        s32 Unk006; // TODO
+        s32 Unk007; // TODO
+        s32 Unk008; // TODO
+
+        f32 Unk009; // TODO
+        f32 Unk010; // TODO
+        f32 Unk011; // TODO
+        f32 Unk012; // TODO
+
+        s32 Unk013; // TODO
+        s32 Unk014; // TODO
+        s32 Unk015; // TODO
+        s32 Unk016; // TODO
+        s32 Unk017; // TODO
+        s32 Unk018; // TODO
+        s32 Unk019; // TODO
+        s32 Unk020; // TODO
+        s32 Unk021; // TODO
+
+        char Unknown1[388]; // TODO
+
+        void* AllocatedMemory; // TODO
+
+        char Unknown2[32]; // TODO
     };
 
-    void InitializeFileDescriptor(FileDescriptor* desc, const char* dir, const char* file);
-    BOOL HandleFileDescriptor(FileDescriptor* desc);
-    BOOL AcquireFileDescriptorDetails(FileDescriptor* self);
-    BOOL AcquireAbsoluteFilePath(char* buffer, const char* file);
+    struct WindowContainer
+    {
+        Window* _Windows = (Window*)0x00813390; // TODO an array of [MAX_EDITOR_WINDOW_COUNT]
+    };
 
-    void AcquireNormalizedDirectoryPath(const char* path, char* disk, char* dir);
-    void AcquireNormalizedFilePath(const char* path, char* name, char* file);
-
-    s32 AcquireFileSize(const char* dir, const char* file);
-    FILE* OpenAttributedFile(const char* dir, const char* file, const char* attrs);
+    extern WindowContainer WindowState;
 }

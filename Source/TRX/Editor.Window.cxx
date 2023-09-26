@@ -20,53 +20,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include "Editor.Window.hxx"
 
-#include "Basic.hxx"
-#include "Native.Basic.hxx"
-
-namespace Time
+namespace Editor
 {
-    struct TimeContainer
-    {
-        struct
-        {
-            BOOL* _IsActive = (BOOL*)0x00d6921c;
-        } Timer;
-
-        struct
-        {
-            struct
-            {
-                LARGE_INTEGER Frequency; // 0x00d69200
-
-                f64 Divisor; // 0x00d69208
-                f64 Quotient; // 0x00d69210
-            } Performance;
-
-            LARGE_INTEGER Current; // 0x00d691f8
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691f0
-                LONG HighPart; // 0x00d691f4
-            } Previous;
-
-            struct
-            {
-                DWORD LowPart; // 0x00d691e0
-                LONG HighPart; // 0x00d691e4
-
-                s32 Value; // 0x00d691e8
-            } Delta;
-
-            s32 Time; // 0x00d69218
-        } Counter;
-    };
-
-    extern TimeContainer TimeState;
-
-    u32 AcquireTime(void);
-    void InitializeTime(void);
-    void ReleaseTime(void);
+    WindowContainer WindowState;
 }
