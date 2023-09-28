@@ -55,13 +55,13 @@ namespace Sounds
     // 0x005b4b60
     void SoundDirectSoundDeviceControllerConstructor(void)
     {
-        SoundDirectSoundSoundControllerState._Instance->Self = (AbstractSoundDeviceControllerSelf*)&SoundDirectSoundSoundControllerState.SoundDirectDeviceSoundControllerSelf;
+        SoundDirectSoundSoundControllerState.Instance.Self = (AbstractSoundDeviceControllerSelf*)&SoundDirectSoundSoundControllerState.SoundDirectDeviceSoundControllerSelf;
     }
 
     // 0x005b7af0
     AbstractSoundDeviceController* InitializeSoundDirectSoundDeviceController(const s32 indx)
     {
-        if (!ReleaseSoundDirectSoundDeviceController(SoundDirectSoundSoundControllerState._Instance)) { return NULL; }
+        if (!ReleaseSoundDirectSoundDeviceController(&SoundDirectSoundSoundControllerState.Instance)) { return NULL; }
 
         SoundDevice device;
 
@@ -96,7 +96,7 @@ namespace Sounds
                         &desc, &SoundDirectSoundSoundControllerState.Buffers.Primary.Buffer, NULL),
                         "Unable to create primary sound buffer.") != DS_OK)
                     {
-                        ReleaseSoundDirectSoundDeviceController(SoundDirectSoundSoundControllerState._Instance);
+                        ReleaseSoundDirectSoundDeviceController(&SoundDirectSoundSoundControllerState.Instance);
 
                         return NULL;
                     }
@@ -109,11 +109,11 @@ namespace Sounds
                         IID_IDirectSound3DListener, (void**)&SoundDirectSoundSoundControllerState.DirectSound.Listener);
                 }
 
-                return SoundDirectSoundSoundControllerState._Instance;
+                return &SoundDirectSoundSoundControllerState.Instance;
             }
         }
 
-        ReleaseSoundDirectSoundDeviceController(SoundDirectSoundSoundControllerState._Instance);
+        ReleaseSoundDirectSoundDeviceController(&SoundDirectSoundSoundControllerState.Instance);
 
         return NULL;
     }
@@ -592,7 +592,7 @@ namespace Sounds
 
         for (u32 x = indx; x < 65; x++) // TODO constant
         {
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[x].Buffer == NULL) { break; }
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x18Array[x].Buffer == NULL) { break; }
 
             indx = indx + 1;
         }
@@ -636,17 +636,17 @@ namespace Sounds
         }
 
         if (DSC(SoundDirectSoundSoundControllerState.DirectSound.Instance->CreateSoundBuffer(
-            &bd, &SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer, NULL),
+            &bd, &SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer, NULL),
             "Unable to create secondary sound buffer.") != DS_OK)
         {
             return 0; // TODO: constant
         }
 
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer != NULL)
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer != NULL)
         {
-            SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2 = 256 * desc->Definition.Channels * (desc->Definition.BitsPerSample >> 3); // TODO constant
-            SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk3 = bd.dwBufferBytes;
-            SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio = NULL;
+            SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk2 = 256 * desc->Definition.Channels * (desc->Definition.BitsPerSample >> 3); // TODO constant
+            SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk3 = bd.dwBufferBytes;
+            SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio = NULL;
 
             return indx;
         }
@@ -657,17 +657,17 @@ namespace Sounds
     // 0x005b61a0
     void ReleaseSoundDirectSoundDeviceControllerSoundSample(AbstractSoundDeviceController* self, const s32 indx)
     {
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer != NULL)
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer != NULL)
         {
-            SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer->Release();
-            SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer = NULL;
+            SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer->Release();
+            SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer = NULL;
         }
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2 = 0;
-        SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk3 = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk2 = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk3 = 0;
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio = NULL;
-        SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].AudioSize = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio = NULL;
+        SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].AudioSize = 0;
     }
 
     // 0x005b6200
@@ -675,44 +675,44 @@ namespace Sounds
     void* LockSoundDirectSoundDeviceControllerSoundSample(AbstractSoundDeviceController* self, const s32 indx, const s32 offset, const s32 length)
     {
         if (indx < 1 || 64 < indx
-            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer == NULL
-            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2 < 1) // TODO constants
+            || SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer == NULL
+            || SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk2 < 1) // TODO constants
         {
             return NULL;
         }
 
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio != NULL)
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio != NULL)
         {
             LogError("Unable to lock sound sample, it is already locked.");
         }
 
-        auto offsetValue = offset * SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2;
+        auto offsetValue = offset * SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk2;
         auto offsetMask = offsetValue >> 0x1f;// TODO
         offsetValue = (offsetValue + offsetMask * (-0x100)) - (offsetMask << 7 < 0); // TODO
 
         auto lenOffset = (((offset >> 24) << 16) | (offset >> 8)) & 0xffffffe; // TODO
         auto len = (length + 0x1fU) & 0xffffffe0; // TODO
-        auto lenVal = SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk3 - lenOffset;// TODO
+        auto lenVal = SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk3 - lenOffset;// TODO
 
         if (lenVal < len) { len = lenVal; }
 
-        if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer->Lock(
-            lenOffset, len, &SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio,
-            (LPDWORD)&SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].AudioSize, NULL, NULL, DSBLOCK_NONE),
+        if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer->Lock(
+            lenOffset, len, &SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio,
+            (LPDWORD)&SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].AudioSize, NULL, NULL, DSBLOCK_NONE),
             "Unable to lock hardware sound buffer.") != DS_OK)
         {
             return NULL;
         }
 
-        if ((SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk3 + -0x20) <= (len + lenOffset)) // TODO
+        if ((SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk3 + -0x20) <= (len + lenOffset)) // TODO
         {
-            const auto ptr = (void*)((addr)SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio
-                + ((addr)SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk3 - lenOffset) + -0x20); // TODO
+            const auto ptr = (void*)((addr)SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio
+                + ((addr)SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk3 - lenOffset) + -0x20); // TODO
 
             ZeroMemory(ptr, 0x20); // TODO
         }
 
-        return (void*)((addr)SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio + ((offsetValue >> 8) - lenOffset));
+        return (void*)((addr)SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio + ((offsetValue >> 8) - lenOffset));
     }
 
     // 0x005b6360
@@ -720,19 +720,19 @@ namespace Sounds
     void UnlockSoundDirectSoundDeviceControllerSoundSample(AbstractSoundDeviceController* self, const s32 indx, const s32 offset, const s32 length)
     {
         if (indx < 1 || 64 < indx
-            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer == NULL
-            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2 < 1) // TODO constants
+            || SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer == NULL
+            || SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk2 < 1) // TODO constants
         {
             LogError("Unable to unlock sound sample, invalid index %d.", indx);
         }
 
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio != NULL)
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio != NULL)
         {
-            DSC(SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer->Unlock(
-                SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio, SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].AudioSize, NULL, 0),
+            DSC(SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer->Unlock(
+                SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio, SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].AudioSize, NULL, 0),
                 "Unable to unlock hardware sound buffer.");
 
-            SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Audio = NULL;
+            SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Audio = NULL;
         }
     }
 
@@ -741,8 +741,8 @@ namespace Sounds
     u32 AllocateSoundDirectSoundDeviceControllerSoundEffect(AbstractSoundDeviceController* self, const s32 indx)
     {
         if (indx < 1 || 64 < indx
-            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer == NULL
-            || SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk2 < 1) // TODO: constants
+            || SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer == NULL
+            || SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk2 < 1) // TODO: constants
         {
             LogError("Unable to allocate sound effect, invalid index %d.", indx);
         }
@@ -756,7 +756,7 @@ namespace Sounds
 
         for (u32 x = index; x < 31; x++) // TODO constants
         {
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[x].Buffer == NULL) { break; }
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[x].Buffer == NULL) { break; }
 
             index = index + 1;
         }
@@ -770,49 +770,49 @@ namespace Sounds
 
         u32 ai = 0; // TODO name
 
-        for (ai = SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk1;
-            ai != 0 && SoundDirectSoundSoundControllerState._SoundUnk0x24Array[ai].Buffer != SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer;
-            ai = SoundDirectSoundSoundControllerState._SoundUnk0x24Array[ai].Unk5) {
+        for (ai = SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk1;
+            ai != 0 && SoundDirectSoundSoundControllerState.SoundUnk0x24Array[ai].Buffer != SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer;
+            ai = SoundDirectSoundSoundControllerState.SoundUnk0x24Array[ai].Unk5) {
         }// TODO constants
 
         if (ai == 0) // TODO constants
         {
-            SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Buffer = SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer;
+            SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Buffer = SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer;
 
-            SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Unk3 = indx;
+            SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Unk3 = indx;
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk1 != 0) // TODO constants
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk1 != 0) // TODO constants
             {
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk1].Unk4 = index;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk1].Unk4 = index;
             }
         }
         else
         {
             if (DSC(SoundDirectSoundSoundControllerState.DirectSound.Instance->DuplicateSoundBuffer(
-                SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Buffer, &SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Buffer),
+                SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Buffer, &SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Buffer),
                 "Unable to duplicate sound buffer.") != DS_OK)
             {
                 return 0; // TODO constants
             }
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Buffer == NULL) { return 0; } // TODO constants
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Buffer == NULL) { return 0; } // TODO constants
 
-            SoundDirectSoundSoundControllerState._SoundUnk0x24Array[SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk1].Unk4 = index;
-            SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Unk3 = indx;
+            SoundDirectSoundSoundControllerState.SoundUnk0x24Array[SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk1].Unk4 = index;
+            SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Unk3 = indx;
         }
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Unk4 = 0;
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Unk5 = SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk1;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Unk4 = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Unk5 = SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk1;
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x18Array[indx].Unk1 = index;
+        SoundDirectSoundSoundControllerState.SoundUnk0x18Array[indx].Unk1 = index;
 
         if (SoundDirectSoundSoundControllerState.DirectSound.Listener != NULL)
         {
-            DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Buffer->QueryInterface(
-                IID_IDirectSound3DBuffer, (void**)&SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].AdvancedBuffer),
+            DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Buffer->QueryInterface(
+                IID_IDirectSound3DBuffer, (void**)&SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].AdvancedBuffer),
                 "Unable to create a 3D sound buffer from a secondary sound buffer.");
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].AdvancedBuffer == NULL)
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].AdvancedBuffer == NULL)
             {
                 StopSoundDirectSoundDeviceControllerSoundSample(index);
 
@@ -820,10 +820,10 @@ namespace Sounds
             }
         }
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].HZ = -1; // TODO constant
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Unk9 = -1; // TODO constant
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Pan = DSBPAN_CENTER;
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[index].Volume = DSBVOLUME_MAX;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].HZ = -1; // TODO constant
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Unk9 = -1; // TODO constant
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Pan = DSBPAN_CENTER;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[index].Volume = DSBVOLUME_MAX;
 
         return index;
     }
@@ -834,16 +834,16 @@ namespace Sounds
     {
         const auto indx = effect->UnknownIndex;
 
-        if (indx < 1 || 30 < indx || SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer == NULL) // TODO constants
+        if (indx < 1 || 30 < indx || SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer == NULL) // TODO constants
         {
             LogError("Unable to select sound effect options, invalid index %d.", indx);
         }
 
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer == NULL) { return FALSE; }
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer == NULL) { return FALSE; }
 
         auto result = TRUE;
 
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer != NULL)
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer != NULL)
         {
             auto volume = 0.0f;
             auto minimumDistance = 0.0f;
@@ -868,7 +868,7 @@ namespace Sounds
 
             if (mode & 2) // TODO constants
             {
-                if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer->SetPosition(
+                if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer->SetPosition(
                     (f32)effect->Descriptor.Location.X, (f32)effect->Descriptor.Location.Y, (f32)effect->Descriptor.Location.Z, TRUE),
                     "Unable to set secondary sound hardware buffer position.") != DS_OK)
                 {
@@ -878,7 +878,7 @@ namespace Sounds
 
             if (mode & 4) // TODO constants
             {
-                if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer->SetVelocity(
+                if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer->SetVelocity(
                     effect->Descriptor.Velocity.X, effect->Descriptor.Velocity.Y, effect->Descriptor.Velocity.Z, TRUE),
                     "Unable to set secondary sound hardware buffer velocity.") != DS_OK)
                 {
@@ -890,38 +890,38 @@ namespace Sounds
             {
                 auto value = AcquireUnknownSoundValue102(effect->Descriptor.Volume * volume);
 
-                auto v1 = value - SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Volume;
+                auto v1 = value - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume;
                 auto v2 = v1 >> 0x1f;// TODO
 
                 if (mode == U32_MAX || 1 < ((v1 ^ v2) - v2)) // TODO
                 {
-                    if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetVolume(value),
+                    if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetVolume(value),
                         "Unable to set secondary sound hardware buffer volume.") != DS_OK)
                     {
                         result = FALSE;
                     }
                 }
 
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Volume = value;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume = value;
             }
 
             if (mode & 0x10) // TODO constants
             {
                 auto value = AcquireSoundDirectSoundSoundControllerFrequency(effect->Sample->Descriptor.Definition.HZ * effect->Descriptor.HZ);
 
-                auto v1 = value - SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ;
+                auto v1 = value - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ;
                 auto v2 = v1 >> 0x1f;// TODO
 
                 if (mode == U32_MAX || 1 < ((v1 ^ v2) - v2)) // TODO
                 {
-                    if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetFrequency(value),
+                    if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetFrequency(value),
                         "Unable to set secondary sound hardware buffer frequency.") != DS_OK)
                     {
                         result = FALSE;
                     }
                 }
 
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ = value;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ = value;
             }
 
             if (mode & 0x40)
@@ -933,27 +933,27 @@ namespace Sounds
                     options = DS3DMODE_DISABLE;
                 }
 
-                if (mode == U32_MAX || options != SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk9)
+                if (mode == U32_MAX || options != SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk9)
                 {
-                    if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer->SetMode(options, DS3D_DEFERRED),
+                    if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer->SetMode(options, DS3D_DEFERRED),
                         "Unable to set sound buffer into spatial mode.") != DS_OK)
                     {
                         result = FALSE;
                     }
 
-                    SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk9 = options;
+                    SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk9 = options;
                 }
             }
 
             if (mode & 0x80) // TODO constants
             {
-                if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer->SetMinDistance(minimumDistance, TRUE),
+                if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer->SetMinDistance(minimumDistance, TRUE),
                     "Unable to set secondary sound hardware buffer minimum distance.") != DS_OK)
                 {
                     result = FALSE;
                 }
 
-                if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer->SetMaxDistance(maximumDistance, TRUE),
+                if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer->SetMaxDistance(maximumDistance, TRUE),
                     "Unable to set secondary sound hardware buffer maximum distance.") != DS_OK)
                 {
                     result = FALSE;
@@ -962,7 +962,7 @@ namespace Sounds
 
             if (mode & 0x100) // TODO constants
             {
-                if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetCurrentPosition((u32)round(effect->Position)),
+                if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetCurrentPosition((u32)round(effect->Position)),
                     "Unable to set secondary sound hardware buffer playback position.") != DS_OK)
                 {
                     result = FALSE;
@@ -1042,37 +1042,37 @@ namespace Sounds
             {
                 const auto value = AcquireUnknownSoundValue102(maximum);
 
-                auto v1 = value - SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Volume;
+                auto v1 = value - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume;
 
                 auto v2 = v1 >> 0x1f;// TODO
 
                 if (mode != U32_MAX || 1 < ((v1 ^ v2) - v2)) // TODO
                 {
-                    if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetVolume(value),
+                    if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetVolume(value),
                         "Unable to set secondary sound hardware buffer volume.") != DS_OK)
                     {
                         result = FALSE;
                     }
                 }
 
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Volume = value;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume = value;
             }
 
             {
-                auto v1 = val - SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Pan;
+                auto v1 = val - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Pan;
 
                 auto v2 = v1 >> 0x1f;// TODO
 
                 if (mode != U32_MAX || 1 < ((v1 ^ v2) - v2)) // TODO
                 {
-                    if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetPan(val),
+                    if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetPan(val),
                         "Unable to set secondary sound hardware buffer pan.") != DS_OK)
                     {
                         result = FALSE;
                     }
                 }
 
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Pan = val;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Pan = val;
             }
         }
 
@@ -1080,24 +1080,24 @@ namespace Sounds
         {
             auto value = AcquireSoundDirectSoundSoundControllerFrequency(effect->Sample->Descriptor.Definition.HZ * effect->HZ);
 
-            auto v1 = value - SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ;
+            auto v1 = value - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ;
             auto v2 = v1 >> 0x1f;// TODO
 
             if (mode != U32_MAX || 1 < ((v1 ^ v2) - v2)) // TODO
             {
-                if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetFrequency(value),
+                if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetFrequency(value),
                     "Unable to set secondary sound hardware buffer frequency.") != DS_OK)
                 {
                     result = FALSE;
                 }
             }
 
-            SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ = value;
+            SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ = value;
         }
 
         if (mode & 0x100)//TODO constant
         {
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetCurrentPosition((u32)round(effect->Position)),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetCurrentPosition((u32)round(effect->Position)),
                 "Unable to set secondary sound hardware buffer playback position.") != DS_OK) // TODO constant
             {
                 result = FALSE;
@@ -1117,7 +1117,7 @@ namespace Sounds
     {
         const auto indx = effect->UnknownIndex;
 
-        if (indx < 1 || 30 < indx || SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer == NULL) // TODO constant
+        if (indx < 1 || 30 < indx || SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer == NULL) // TODO constant
         {
             LogError("Unable to get sound effect playback position, invalid index.");
         }
@@ -1127,7 +1127,7 @@ namespace Sounds
             DWORD play = 0;
             DWORD write = 0;
 
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->GetCurrentPosition(&play, &write),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->GetCurrentPosition(&play, &write),
                 "Unable to acquire secondary sound buffer playback position.") != DS_OK)
             {
                 return -1.0; // TODO constant
@@ -1145,7 +1145,7 @@ namespace Sounds
     {
         const auto indx = effect->UnknownIndex;
 
-        if (indx < 1 || 30 < indx || SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer == NULL)
+        if (indx < 1 || 30 < indx || SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer == NULL)
         {
             LogError("Unable to start sound effect, invalid index %d.", indx);
         }
@@ -1171,52 +1171,52 @@ namespace Sounds
             options = options | DSBPLAY_LOOPING;
         }
 
-        const auto result = SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->Play(NULL, DSBPRIORITY_NONE, options);
+        const auto result = SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->Play(NULL, DSBPRIORITY_NONE, options);
 
         if (result == DSERR_BADFORMAT)
         {
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetFrequency(DSBFREQUENCY_ORIGINAL),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetFrequency(DSBFREQUENCY_ORIGINAL),
                 "Unable to set secondary hardware sound buffer frequency.") != DS_OK)
             {
                 return FALSE;
             }
 
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetVolume(DSBVOLUME_MIN),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetVolume(DSBVOLUME_MIN),
                 "Unable to set secondary hardware sound buffer volume.") != DS_OK)
             {
                 return FALSE;
             }
 
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->Play(NULL, DSBPRIORITY_NONE, DSBPLAY_NONE),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->Play(NULL, DSBPRIORITY_NONE, DSBPLAY_NONE),
                 "Unable to play secondary hardware sound buffer.") != DS_OK)
             {
                 return FALSE;
             }
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ != -1 &&
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ != effect->Sample->Descriptor.Definition.HZ) // TODO constants
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ != -1 &&
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ != effect->Sample->Descriptor.Definition.HZ) // TODO constants
             {
                 const auto hz = AcquireSoundDirectSoundSoundControllerFrequency(effect->Sample->Descriptor.Definition.HZ * effect->Descriptor.HZ);
 
-                if (1 < (u32)(hz - SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ))
+                if (1 < (u32)(hz - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ))
                 {
-                    if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetFrequency(hz),
+                    if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetFrequency(hz),
                         "Unable to set secondary hardware sound buffer frequency.") != DS_OK)
                     {
                         return FALSE;
                     }
 
-                    SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].HZ = hz;
+                    SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].HZ = hz;
                 }
             }
 
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetCurrentPosition(0),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetCurrentPosition(0),
                 "Unable to set secondary hardware sound buffer playback position.") != DS_OK)
             {
                 return FALSE;
             }
 
-            if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->SetVolume(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Volume),
+            if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->SetVolume(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume),
                 "Unable to set secondary hardware sound buffer volume.") != DS_OK)
             {
                 return FALSE;
@@ -1239,7 +1239,7 @@ namespace Sounds
         const auto indx = effect->UnknownIndex;
 
         if (indx < MIN_ACTIVE_SOUND_BUFFER_POOL_INDEX || (MAX_ACTIVE_SOUND_BUFFER_POOL_SIZE - 1) < indx
-            || SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer == NULL)
+            || SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer == NULL)
         {
             LogMessage("Unable to release sound effect, invalid index %d.\n", indx);
 
@@ -1255,13 +1255,13 @@ namespace Sounds
         const auto indx = effect->UnknownIndex;
 
         if (indx < MIN_ACTIVE_SOUND_BUFFER_POOL_INDEX || (MAX_ACTIVE_SOUND_BUFFER_POOL_SIZE - 1) < indx
-            || SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer == NULL) {
+            || SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer == NULL) {
             return FALSE;
         }
 
         DWORD status = DSBSTATUS_NONE;
 
-        if (DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->GetStatus(&status),
+        if (DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->GetStatus(&status),
             "Unable to get active sound effect buffer status.") != DS_OK)
         {
             return FALSE;
@@ -1327,44 +1327,44 @@ namespace Sounds
     {
         auto result = TRUE;
 
-        if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer != NULL)
+        if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer != NULL)
         {
-            result = DSC(SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->Stop(),
+            result = DSC(SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->Stop(),
                 "Unable to stop secondary sound effect buffer.") == DS_OK;
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer != NULL)
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer != NULL)
             {
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer->Release();
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].AdvancedBuffer = NULL;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer->Release();
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer = NULL;
             }
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk5 != 0) // TODO constant
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk5 != 0) // TODO constant
             {
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk5].Unk4 = SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk4;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk5].Unk4 = SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk4;
             }
 
-            if (indx == SoundDirectSoundSoundControllerState._SoundUnk0x18Array[SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk3].Unk1)
+            if (indx == SoundDirectSoundSoundControllerState.SoundUnk0x18Array[SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk3].Unk1)
             {
-                SoundDirectSoundSoundControllerState._SoundUnk0x18Array[SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk3].Unk1 = SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk5;
+                SoundDirectSoundSoundControllerState.SoundUnk0x18Array[SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk3].Unk1 = SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk5;
             }
             else
             {
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk4].Unk5 = SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk5;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk4].Unk5 = SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk5;
             }
 
-            if (SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer != NULL
-                && SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer != SoundDirectSoundSoundControllerState._SoundUnk0x18Array[SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk3].Buffer)
+            if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer != NULL
+                && SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer != SoundDirectSoundSoundControllerState.SoundUnk0x18Array[SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk3].Buffer)
             {
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer->Release();
-                SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer = NULL;
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer->Release();
+                SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer = NULL;
             }
         }
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Buffer = NULL;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Buffer = NULL;
 
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk5 = 0;
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk4 = 0;
-        SoundDirectSoundSoundControllerState._SoundUnk0x24Array[indx].Unk3 = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk5 = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk4 = 0;
+        SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Unk3 = 0;
 
         return result;
     }

@@ -119,7 +119,7 @@ namespace Sounds
 
     struct SoundDirectSoundSoundControllerContainer
     {
-        AbstractSoundDeviceController* _Instance = (AbstractSoundDeviceController*)0x00d1f3bc; // TODO
+        AbstractSoundDeviceController Instance; // 0x00d1f3bc
         SoundDirectSoundDeviceControllerSelf SoundDirectDeviceSoundControllerSelf; // 0x0066792c
 
         struct
@@ -158,8 +158,8 @@ namespace Sounds
 
         } Buffers;
 
-        SoundUnk0x18* _SoundUnk0x18Array = (SoundUnk0x18*)0x00d1e944; // TODO 65 size
-        SoundUnk0x24* _SoundUnk0x24Array = (SoundUnk0x24*)0x00d1ef60; // TODO 31 size
+        SoundUnk0x18 SoundUnk0x18Array[65]; // 0x00d1e944 // TODO
+        SoundUnk0x24 SoundUnk0x24Array[31]; // 0x00d1ef60 // TODO
     };
 
     extern SoundDirectSoundSoundControllerContainer SoundDirectSoundSoundControllerState;
