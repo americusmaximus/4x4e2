@@ -37,7 +37,7 @@ namespace Sounds
     // 0x005b7730
     BOOL CALLBACK EnumerateDirectSoundDevicesCallback(const LPGUID guid, const LPCSTR description, const LPCSTR module, const LPVOID context)
     {
-        if ((MAX_SOUND_ENUMERATED_DEVICE_COUNT - 1) < *SoundDeviceState._EnumeratedDeviceCount) { return FALSE; }
+        if ((MAX_SOUND_ENUMERATED_DEVICE_COUNT - 1) < SoundDeviceState.EnumeratedDeviceCount) { return FALSE; }
 
         IDirectSound* instance;
 
@@ -51,9 +51,9 @@ namespace Sounds
 
         instance->Release();
 
-        if (*SoundDeviceState._EnumeratedDeviceCount == MIN_SOUND_DEVICE_COUNT)
+        if (SoundDeviceState.EnumeratedDeviceCount == MIN_SOUND_DEVICE_COUNT)
         {
-            auto device = &SoundDeviceState._EnumeratedDevices[*SoundDeviceState._EnumeratedDeviceCount];
+            auto device = &SoundDeviceState.EnumeratedDevices[SoundDeviceState.EnumeratedDeviceCount];
 
             ZeroMemory(device, sizeof(SoundDeviceDetail));
 
@@ -97,7 +97,7 @@ namespace Sounds
 
             strncpy(device->Name, description, MAX_SOUND_DEVICE_NAME_LENGTH - 1);
 
-            *SoundDeviceState._EnumeratedDeviceCount = *SoundDeviceState._EnumeratedDeviceCount + 1;
+            SoundDeviceState.EnumeratedDeviceCount = SoundDeviceState.EnumeratedDeviceCount + 1;
         }
 
         return TRUE;
@@ -106,16 +106,16 @@ namespace Sounds
     // 0x005b7a40
     BOOL EnumerateDirectSoundDevices(const s32 indx, SoundDevice* device)
     {
-        if (*SoundDeviceState._EnumeratedDeviceCount < MIN_SOUND_DEVICE_COUNT)
+        if (SoundDeviceState.EnumeratedDeviceCount < MIN_SOUND_DEVICE_COUNT)
         {
-            *SoundDeviceState._EnumeratedDeviceCount = MIN_SOUND_DEVICE_COUNT;
+            SoundDeviceState.EnumeratedDeviceCount = MIN_SOUND_DEVICE_COUNT;
 
             DirectSoundEnumerateA(EnumerateDirectSoundDevicesCallback, NULL);
         }
 
-        if (INVALID_SOUND_DEVICE_COUNT < indx && indx < *SoundDeviceState._EnumeratedDeviceCount)
+        if (INVALID_SOUND_DEVICE_COUNT < indx && indx < SoundDeviceState.EnumeratedDeviceCount)
         {
-            const auto dev = &SoundDeviceState._EnumeratedDevices[indx];
+            const auto dev = &SoundDeviceState.EnumeratedDevices[indx];
 
             device->Index = indx;
             device->Type = SoundDeviceType::DirectSound;
@@ -175,10 +175,7 @@ namespace Sounds
 
     LRESULT DSC(const LRESULT code, const char* message)
     {
-        if (code != DS_OK)
-        {
-            LogMessage("[ERROR] [SOUND] %s %s\n", message, Checks::Convert(code));
-        }
+        if (code != DS_OK) { LogMessage("[ERROR] [SOUND] %s %s\n", message, Checks::Convert(code)); }
 
         return code;
     }

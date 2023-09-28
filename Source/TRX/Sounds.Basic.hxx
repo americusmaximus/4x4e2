@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Assets.Sounds.hxx"
 #include "IO.Streams.hxx"
 
+#define MAX_SOUND_CHANNEL_COUNT 8
+
 #define SOUND_DIRECTORY_NAME "sound"
 
 // NOTE: klp is a legacy metadata file used in earlier games.
@@ -158,23 +160,17 @@ namespace Sounds
 
         f32 HZ;
 
-        f32 AAA04[8];  // TODO constant, name, Distance/Position?
+        f32 AAA04[MAX_SOUND_CHANNEL_COUNT];  // TODO constant, name, Distance/Position?
 
-        f32 Pans[8]; // TODO constant
+        f32 Pans[MAX_SOUND_CHANNEL_COUNT];
 
-        s32 AAA12[8]; // TODO
+        s32 AAA12[MAX_SOUND_CHANNEL_COUNT]; // TODO
 
-        s32 AAA20; // TODO
-        s32 AAA21; // TODO
-        s32 AAA22; // TODO
-        s32 AAA23; // TODO
-        s32 AAA24; // TODO
-        s32 AAA25; // TODO
-        s32 AAA26; // TODO
-        s32 AAA27; // TODO
-        f32 AAA28; // TODO
+        s32 AAA20[MAX_SOUND_CHANNEL_COUNT]; // TODO
+
+        f32 AAA28; // TODO MinimumDistance?
         f32 AAA29; // TODO
-        s32 AAA30; // TODO
+        s32 AAA30; // TODO MaximumDistance?
 
         BOOL DebugMode;
 

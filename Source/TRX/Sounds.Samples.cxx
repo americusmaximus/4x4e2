@@ -40,12 +40,12 @@ namespace Sounds
     // 0x005ba700
     SoundSample* ConstructSoundSample(SoundSample* self)
     {
-        ZeroMemory(self, 0x150); // TODO, why 0x150 if sizeof(SoundSampleDescriptor) == 0x15c ??? and then set cachecontrol, priority and offset separately?
+        ZeroMemory(&self->Descriptor, sizeof(SoundSampleDescriptor));
 
-        self->Descriptor.ReferenceDistance = 20.0f;
+        self->Descriptor.ReferenceDistance = 20.0f; // TODO constant
 
         self->Descriptor.MinimumDistance = *SoundState._UnknownSoundEffectValue1;
-        self->Descriptor.MaximumDistance = 10000.0f;
+        self->Descriptor.MaximumDistance = 10000.0f; // TODO constant
 
         ConstructInStreamFile(&self->Stream);
 
@@ -121,24 +121,15 @@ namespace Sounds
     // a.k.a. lock
     void* LockSoundSample(SoundSample* self, const s32 offset, const s32 length)
     {
-        if (self->Lock.Length != 0)
-        {
-            LogError("Unable to lock sound sample, it is already locked.");
-        }
+        if (self->Lock.Length != 0) { LogError("Unable to lock sound sample, it is already locked."); }
 
-        if (offset < 0 || (self->Length < offset + length))
-        {
-            LogError("Unable to lock sound sample, provided region is invalid.");
-        }
+        if (offset < 0 || (self->Length < offset + length)) { LogError("Unable to lock sound sample, provided region is invalid."); }
 
         void* result = NULL;
 
         if (self->Descriptor.Offset == 0)
         {
-            if (self->Lock.Length == 0)
-            {
-                LogError("Unable to lock sound sample, memory buffer is not allocated.");
-            }
+            if (self->Descriptor.AllocatedMemory1 == NULL) { LogError("Unable to lock sound sample, memory buffer is not allocated."); }
 
             result = (void*)((addr)self->Descriptor.AllocatedMemory1 + (addr)AcquireSoundSampleDescriptorOffset(&self->Descriptor, offset));
         }

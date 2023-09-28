@@ -95,8 +95,8 @@ namespace Sounds
 
         if (INVALID_SOUND_DEVICE_INDEX < *SoundDeviceState._SoundDeviceIndex)
         {
-            const auto type = SoundDeviceState._SoundDevices[*SoundDeviceState._SoundDeviceIndex].Type;
-            const auto index = SoundDeviceState._SoundDevices[*SoundDeviceState._SoundDeviceIndex].Index;
+            const auto type = SoundDeviceState.SoundDevices[*SoundDeviceState._SoundDeviceIndex].Type;
+            const auto index = SoundDeviceState.SoundDevices[*SoundDeviceState._SoundDeviceIndex].Index;
 
             switch (type)
             {
@@ -142,22 +142,22 @@ namespace Sounds
     // 0x005b9f10
     void ReleaseSoundDeviceControllerMemory(void)
     {
-        if (*SoundDeviceControllerState._UnknownMemory1 != NULL)
+        if (SoundDeviceControllerState.UnknownMemory1 != NULL)
         {
-            ReleaseMemory1(*SoundDeviceControllerState._UnknownMemory1);
-            *SoundDeviceControllerState._UnknownMemory1 = NULL;
+            ReleaseMemory1(SoundDeviceControllerState.UnknownMemory1);
+            SoundDeviceControllerState.UnknownMemory1 = NULL;
         }
 
-        if (*SoundDeviceControllerState._UnknownMemory2 != NULL)
+        if (SoundDeviceControllerState.UnknownMemory2 != NULL)
         {
-            ReleaseMemory1(*SoundDeviceControllerState._UnknownMemory2);
-            *SoundDeviceControllerState._UnknownMemory2 = NULL;
+            ReleaseMemory1(SoundDeviceControllerState.UnknownMemory2);
+            SoundDeviceControllerState.UnknownMemory2 = NULL;
         }
 
-        if (*SoundDeviceControllerState._UnknownMemory3 != NULL)
+        if (SoundDeviceControllerState.UnknownMemory3 != NULL)
         {
-            ReleaseMemory1(*SoundDeviceControllerState._UnknownMemory3);
-            *SoundDeviceControllerState._UnknownMemory3 = NULL;
+            ReleaseMemory1(SoundDeviceControllerState.UnknownMemory3);
+            SoundDeviceControllerState.UnknownMemory3 = NULL;
         }
 
         for (u32 x = 0; x < 8; x++) // TODO constant
@@ -202,13 +202,13 @@ namespace Sounds
     {
         if (!ReleaseSoundRecordingDeviceController()) { return FALSE; }
 
-        SelectSoundRecordingDevice(*SoundDeviceState._SoundRecordingDeviceIndex);
+        SelectSoundRecordingDevice(SoundDeviceState.SoundRecordingDeviceIndex);
 
-        if (INVALID_SOUND_RECORDING_DEVICE_INDEX < *SoundDeviceState._SoundRecordingDeviceIndex)
+        if (INVALID_SOUND_RECORDING_DEVICE_INDEX < SoundDeviceState.SoundRecordingDeviceIndex)
         {
-            if (SoundDeviceState._SoundRecordingDevices[*SoundDeviceState._SoundRecordingDeviceIndex].Type == SoundDeviceType::Wave)
+            if (SoundDeviceState.SoundRecordingDevices[SoundDeviceState.SoundRecordingDeviceIndex].Type == SoundDeviceType::Wave)
             {
-                *SoundState._SoundRecordingDeviceController = InitializeSoundWaveInDeviceController(SoundDeviceState._SoundRecordingDevices[*SoundDeviceState._SoundRecordingDeviceIndex].Index);
+                *SoundState._SoundRecordingDeviceController = InitializeSoundWaveInDeviceController(SoundDeviceState.SoundRecordingDevices[SoundDeviceState.SoundRecordingDeviceIndex].Index);
             }
 
             if (*SoundState._SoundRecordingDeviceController != NULL) { return TRUE; }
@@ -390,9 +390,6 @@ namespace Sounds
         (*SoundState._SoundDeviceController)->Self->ApplyOptions(*SoundState._SoundDeviceController);
     }
 
-    typedef const void(CDECLAPI* FUN_005B9D50) (u32, u32); // TODO
-    static FUN_005B9D50 FUN_005b9d50 = (FUN_005B9D50)0x005b9d50; // TODO
-
     // 0x005bf810
     // a.k.a. setSoundOutputMode
     BOOL SelectSoundDeviceControllerSoundMode(const u32 bits, const u32 channels, const u32 hz)
@@ -412,10 +409,7 @@ namespace Sounds
 
             if (!(*SoundState._SoundDeviceController)->Self->Reset(*SoundState._SoundDeviceController, bits, channels, hz, &count)) { return FALSE; }
 
-            if (count != 0) // TODO constant
-            {
-                FUN_005b9d50(count, 4); // TODO constant
-            }
+            if (0 < count) { AllocateSoundDeviceControllerMixBuffers(count, 4); } // TODO constant
         }
 
         return TRUE;
@@ -537,5 +531,35 @@ namespace Sounds
         *SoundDeviceControllerState._Options = *SoundDeviceControllerState._Options | 2; // TODO constant
 
         UnlockSound1();
+    }
+
+    // 0x005b9d50
+    // a.k.a. allocMixBuffers
+    void AllocateSoundDeviceControllerMixBuffers(const u32 count, const s32 value)
+    {
+        *SoundDeviceControllerState._Unknown4 = 1; // TODO constant
+        *SoundDeviceControllerState._Unknown1 = value;
+
+        for (u32 x = 1; *SoundDeviceControllerState._Unknown4 < count; x++)
+        {
+            *SoundDeviceControllerState._Unknown4 = *SoundDeviceControllerState._Unknown4 * 2; // TODO constant
+        }
+
+        *SoundDeviceControllerState._Unknown2 = 0;
+        *SoundDeviceControllerState._Unknown3 = 0;
+
+        SoundDeviceControllerState.UnknownMemory1 = ReallocateMemory(SoundDeviceControllerState.UnknownMemory1, *SoundDeviceControllerState._Unknown4 * 4 * value * *SoundState.Options._ChannelCount); // TODO constant
+        SoundDeviceControllerState.UnknownMemory2 = ReallocateMemory(SoundDeviceControllerState.UnknownMemory2, 2 * *SoundDeviceControllerState._Unknown4 * 4 * *SoundState.Options._ChannelCount); // TODO constants
+        SoundDeviceControllerState.UnknownMemory3 = ReallocateMemory(SoundDeviceControllerState.UnknownMemory3, *SoundDeviceControllerState._Unknown4 * 4 * *SoundState.Options._ChannelCount); // TODO constant
+
+        if (SoundDeviceControllerState.UnknownMemory1 == NULL || SoundDeviceControllerState.UnknownMemory2 == NULL || SoundDeviceControllerState.UnknownMemory3 == NULL) { LogError("Unable to allocate sound mix buffers memory."); }
+
+        for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+        {
+            SoundDeviceControllerState._UnknownArray4[x] = (void*)((addr)SoundDeviceControllerState.UnknownMemory1 + (addr)(x * *SoundDeviceControllerState._Unknown4 * *SoundDeviceControllerState._Unknown1 * 4)); // TODO constant
+            SoundDeviceControllerState._UnknownArray1[x] = (void*)((addr)SoundDeviceControllerState.UnknownMemory3 + (addr)(x * *SoundDeviceControllerState._Unknown4 * 4)); // TODO constant
+            SoundDeviceControllerState._UnknownArray2[x] = (void*)((addr)SoundDeviceControllerState.UnknownMemory2 + (addr)(x * *SoundDeviceControllerState._Unknown4 * 4 * 2)); // TODO constant
+            SoundDeviceControllerState._UnknownArray3[x] = (void*)((addr)SoundDeviceControllerState.UnknownMemory2 + (addr)(x * *SoundDeviceControllerState._Unknown4 * 4 * 2)); // TODO constant
+        }
     }
 }

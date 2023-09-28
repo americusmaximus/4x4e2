@@ -31,30 +31,30 @@ SOFTWARE.
 
 namespace Sounds
 {
-    struct SoundUnk0x18//TODO
+    struct SoundUnk0x18 // TODO
     {
         IDirectSoundBuffer* Buffer;
 
-        s32 Unk1;//TODO
-        s32 Unk2;//TODO
-        u32 Unk3;//TODO
+        s32 Unk1; // TODO
+        s32 Unk2; // TODO
+        u32 Unk3; // TODO
 
-        void* Audio;//TODO
-        u32 AudioSize;//TODO
+        void* Audio; // TODO
+        u32 AudioSize; // TODO
     };
 
-    struct SoundUnk0x24//TODO
+    struct SoundUnk0x24 // TODO
     {
         IDirectSoundBuffer* Buffer;
         IDirectSound3DBuffer* AdvancedBuffer;
 
-        s32 Unk3;//TODO
-        s32 Unk4;//TODO
-        s32 Unk5;//TODO
+        s32 Unk3; // TODO
+        s32 Unk4; // TODO
+        s32 Unk5; // TODO
         s32 Volume;
         s32 Pan;
         s32 HZ;
-        s32 Unk9;//TODO
+        s32 Unk9; // TODO
     };
 
     void SoundDirectSoundDeviceControllerConstructor(void);
@@ -153,7 +153,7 @@ namespace Sounds
                 u32* _Count = (u32*)0x00d1e934; // TODO
                 s32* _ChannelBufferSize = (s32*)0x00d1e938; // TODO, type!, name: BufferSize
 
-                IDirectSoundBuffer** _Buffer = (IDirectSoundBuffer**)0x00d1e91c; // TODO
+                IDirectSoundBuffer* Buffer; // 0x00d1e91c
             } Secondary;
 
         } Buffers;
@@ -168,4 +168,5 @@ namespace Sounds
     BOOL StopSoundDirectSoundDeviceControllerSoundSample(const s32 indx);
     void PollSoundDirectSoundSoundControllerSoundEffect(void);
     s32 AcquireUnknownSoundValue102(const f32 value);
+    BOOL FillSoundDirectSoundDeviceControllerSecondaryBuffer(void);
 }

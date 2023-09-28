@@ -53,9 +53,9 @@ namespace Sounds
 
         struct
         {
-            f32* _TimeValue = (f32*)0x00d44238; //TODO
-            BOOL* _IsActive = (BOOL*)0x00d4423c; //TODO
-            BOOL* _IsQuit = (BOOL*)0x00d44240; //TODO
+            f32* _TimeValue = (f32*)0x00d44238; // TODO
+            BOOL* _IsActive = (BOOL*)0x00d4423c; // TODO
+            BOOL* _IsQuit = (BOOL*)0x00d44240; // TODO
         } Thread;
 
         struct
@@ -106,9 +106,9 @@ namespace Sounds
             {
                 struct
                 {
-                    f64 X[8]; // 0x00d44168 // TODO
-                    f64 Y[8]; // 0x00d441a8 // TODO
-                    f64 Z[8]; // 0x00d441e8 // TODO
+                    f64 X[MAX_SOUND_CHANNEL_COUNT]; // 0x00d44168
+                    f64 Y[MAX_SOUND_CHANNEL_COUNT]; // 0x00d441a8
+                    f64 Z[MAX_SOUND_CHANNEL_COUNT]; // 0x00d441e8
                 } Position;
             } Channels;
         } Effects;
@@ -185,9 +185,6 @@ namespace Sounds
     u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z);
     void ReleaseSounds(void);
     void UnlockSounds(const s32 value);
-
-    typedef const BOOL(CDECLAPI* FUN_005B4D20) (void); // TODO
-    static FUN_005B4D20 FUN_005b4d20 = (FUN_005B4D20)0x005b4d20;// TODO
 
     typedef const void(CDECLAPI* FUN_005BC8D0) (SoundEffect*); // TODO
     static FUN_005BC8D0 FUN_005bc8d0 = (FUN_005BC8D0)0x005bc8d0; // TODO

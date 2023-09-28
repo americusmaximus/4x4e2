@@ -55,26 +55,23 @@ namespace Sounds
     // 0x005bf9b0
     s32 AcquireSoundDeviceCount(void)
     {
-        if (INVALID_SOUND_DEVICE_COUNT < *SoundDeviceState._SoundDeviceCount) { return *SoundDeviceState._SoundDeviceCount; }
+        if (INVALID_SOUND_DEVICE_COUNT < SoundDeviceState.SoundDeviceCount) { return SoundDeviceState.SoundDeviceCount; }
 
         LockSounds();
         UnlockSound1();
 
-        *SoundDeviceState._SoundDeviceCount = MIN_SOUND_DEVICE_COUNT;
+        SoundDeviceState.SoundDeviceCount = MIN_SOUND_DEVICE_COUNT;
 
         for (u32 x = MIN_SOUND_DEVICE_COUNT; x < MAX_SOUND_DEVICE_COUNT; x++)
         {
-            if (!AcquireSoundDeviceCapabilities(x, &SoundDeviceState._SoundDevices[x])) { break; }
+            if (!AcquireSoundDeviceCapabilities(x, &SoundDeviceState.SoundDevices[x])) { break; }
 
-            if (!EnumerateDirectSoundDevices(x, &SoundDeviceState._SoundDevices[x]))
-            {
-                return *SoundDeviceState._SoundDeviceCount;
-            }
+            if (!EnumerateDirectSoundDevices(x, &SoundDeviceState.SoundDevices[x])) { return SoundDeviceState.SoundDeviceCount; }
 
-            *SoundDeviceState._SoundDeviceCount = *SoundDeviceState._SoundDeviceCount + 1;
+            SoundDeviceState.SoundDeviceCount = SoundDeviceState.SoundDeviceCount + 1;
         }
 
-        return *SoundDeviceState._SoundDeviceCount;
+        return SoundDeviceState.SoundDeviceCount;
     }
 
     // 0x005bfaa0
@@ -142,7 +139,7 @@ namespace Sounds
             LogError("Unable to acquire sound device, invalid index %d.", indx);
         }
 
-        CopyMemory(device, &SoundDeviceState._SoundDevices[indx], sizeof(SoundDevice));
+        CopyMemory(device, &SoundDeviceState.SoundDevices[indx], sizeof(SoundDevice));
     }
 
     // 0x005bfbc0
@@ -185,21 +182,21 @@ namespace Sounds
     // 0x005bfe20
     s32 AcquireSoundRecordingDeviceCount(void)
     {
-        if (INVALID_SOUND_RECORDING_DEVICE_COUNT < *SoundDeviceState._SoundRecordingDeviceCount) { return *SoundDeviceState._SoundRecordingDeviceCount; }
+        if (INVALID_SOUND_RECORDING_DEVICE_COUNT < SoundDeviceState.SoundRecordingDeviceCount) { return SoundDeviceState.SoundRecordingDeviceCount; }
 
         LockSounds();
         UnlockSound1();
 
-        *SoundDeviceState._SoundRecordingDeviceCount = MIN_SOUND_RECORDING_DEVICE_COUNT;
+        SoundDeviceState.SoundRecordingDeviceCount = MIN_SOUND_RECORDING_DEVICE_COUNT;
 
         for (u32 x = MIN_SOUND_RECORDING_DEVICE_COUNT; x < MAX_SOUND_RECORDING_DEVICE_COUNT; x++)
         {
-            if (!AcquireSoundRecordingDeviceCapabilities(x, &SoundDeviceState._SoundRecordingDevices[x])) { break; }
+            if (!AcquireSoundRecordingDeviceCapabilities(x, &SoundDeviceState.SoundRecordingDevices[x])) { break; }
 
-            *SoundDeviceState._SoundRecordingDeviceCount = *SoundDeviceState._SoundRecordingDeviceCount + 1;
+            SoundDeviceState.SoundRecordingDeviceCount = SoundDeviceState.SoundRecordingDeviceCount + 1;
         }
 
-        return *SoundDeviceState._SoundRecordingDeviceCount;
+        return SoundDeviceState.SoundRecordingDeviceCount;
     }
 
     // 0x005bfe80
@@ -211,7 +208,7 @@ namespace Sounds
             LogError("Unable to acquire sound recording device, invalid index %d.", indx);
         }
 
-        CopyMemory(device, &SoundDeviceState._SoundRecordingDevices[indx], sizeof(SoundRecordingDevice));
+        CopyMemory(device, &SoundDeviceState.SoundRecordingDevices[indx], sizeof(SoundRecordingDevice));
     }
 
     // 0x005bfee0
@@ -243,7 +240,7 @@ namespace Sounds
     // 0x005c0090
     s32 AcquireSelectedSoundRecordingDeviceIndex(void)
     {
-        return *SoundDeviceState._SoundRecordingDeviceIndex;
+        return SoundDeviceState.SoundRecordingDeviceIndex;
     }
 
     // 0x005bff60
@@ -256,15 +253,9 @@ namespace Sounds
         }
 
         const auto count = AcquireSoundRecordingDeviceCount();
-        const auto index = indx < 0 ? *SoundDeviceState._SoundRecordingDeviceIndex : indx;
+        const auto index = indx < 0 ? SoundDeviceState.SoundRecordingDeviceIndex : indx;
 
-        if (indx < count && INVALID_SOUND_RECORDING_DEVICE_INDEX < indx)
-        {
-            *SoundDeviceState._SoundRecordingDeviceIndex = indx;
-        }
-        else
-        {
-            *SoundDeviceState._SoundRecordingDeviceIndex = AcquireSoundRecordingDeviceIndex();
-        }
+        SoundDeviceState.SoundRecordingDeviceIndex =
+            (indx < count && INVALID_SOUND_RECORDING_DEVICE_INDEX < indx) ? indx : AcquireSoundRecordingDeviceIndex();
     }
 }

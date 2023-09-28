@@ -81,16 +81,16 @@ namespace Sounds
 
     struct SoundDeviceContainer
     {
-        s32* _SoundDeviceCount = (s32*)0x0067ace0; // TODO INVALID_SOUND_DEVICE_COUNT
-        SoundDevice* _SoundDevices = (SoundDevice*)0x00d437e8; // TODO [MAX_SOUND_DEVICE_COUNT] ;
+        s32 SoundDeviceCount = INVALID_SOUND_DEVICE_COUNT; // 0x0067ace0
+        SoundDevice SoundDevices[MAX_SOUND_DEVICE_COUNT]; // 0x00d437e8
 
-        s32* _EnumeratedDeviceCount = (s32*)0x0067ac8c; // TODO INVALID_SOUND_DEVICE_COUNT
+        s32 EnumeratedDeviceCount = INVALID_SOUND_DEVICE_COUNT; // 0x0067ac8c
         s32* _SoundDeviceIndex = (s32*)0x0067ace4; // TODO INVALID_SOUND_DEVICE_INDEX
-        SoundDeviceDetail* _EnumeratedDevices = (SoundDeviceDetail*)0x00d1dbc4; // TODO [MAX_SOUND_ENUMERATED_DEVICE_COUNT];
+        SoundDeviceDetail EnumeratedDevices[MAX_SOUND_ENUMERATED_DEVICE_COUNT]; // 0x00d1dbc4
 
-        s32* _SoundRecordingDeviceCount = (s32*)0x0067ad00; // TODO INVALID_SOUND_RECORDING_DEVICE_COUNT
-        s32* _SoundRecordingDeviceIndex = (s32*)0x0067ad04; // TODO INVALID_SOUND_RECORDING_DEVICE_INDEX
-        SoundRecordingDevice* _SoundRecordingDevices = (SoundRecordingDevice*)0x00d4424c; // TODO [MAX_SOUND_RECORDING_DEVICE_COUNT]; //
+        s32 SoundRecordingDeviceCount = INVALID_SOUND_RECORDING_DEVICE_COUNT; // 0x0067ad00
+        s32 SoundRecordingDeviceIndex = INVALID_SOUND_RECORDING_DEVICE_INDEX; // 0x0067ad04
+        SoundRecordingDevice SoundRecordingDevices[MAX_SOUND_RECORDING_DEVICE_COUNT]; // 0x00d4424c
     };
 
     extern SoundDeviceContainer SoundDeviceState;
