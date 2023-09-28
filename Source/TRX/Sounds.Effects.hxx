@@ -68,9 +68,15 @@ namespace Sounds
     SoundEffect* AcquireSoundEffect(const u32 indx, const BOOL mode);
     BOOL SelectSoundEffectVolume(const u32 indx, const f32 volume);
     BOOL SelectSoundEffectFrequency(const u32 indx, const f32 hz);
-    void UpdateSoundEffectChannelsPosition(SoundEffect* self);
+    void ComputeSoundEffectChannelsPosition(SoundEffect* self);
     void SelectNextSoundEffectDescriptorChannel(const s32 indx);
     void SelectSoundEffectDescriptorVolume(const f32 volume);
     void UpdateSoundEffectDescriptorUnk30(const u32 mode); // TODO name, enum
     void SelectSoundEffectDescriptorUnk30(const u32 mode); // TODO name, enum
+    BOOL ComputeSoundEffect(SoundEffect* self, const f32 value);
+    void ComputeSoundEffectsPositions(void);
+    void AutoCalculateSoundEffectRemainingDelay(SoundEffect* self);
+    void ComputeSoundEffectPans(SoundEffect* self);
+    void ComputeSoundEffectLocationVelocity(SoundEffect* self);
+    void ComputeUnknownSoundEffectValue(SoundEffect* self); // TODO name
 }

@@ -27,6 +27,7 @@ SOFTWARE.
 #include "Sounds.Controllers.DirectSoundController.hxx"
 #include "Sounds.Devices.DirectSound.hxx"
 #include "Sounds.Devices.hxx"
+#include "Sounds.Effects.hxx"
 #include "Sounds.hxx"
 #include "Time.hxx"
 
@@ -1105,10 +1106,7 @@ namespace Sounds
 
         effect->Options = effect->Options & (~mode | 0x40000000);// TODO
 
-        if (!result)
-        {
-            LogMessage("[ERROR] [SOUND] Unable to set secondary sound hardware buffer options.\n");
-        }
+        if (!result) { LogMessage("[ERROR] [SOUND] Unable to set secondary sound hardware buffer options.\n"); }
 
         return result;
     }
@@ -1154,10 +1152,7 @@ namespace Sounds
 
         if (!self->Self->SelectSoundEffectOptions(self, effect, U32_MAX)) { return FALSE; } // TODO constant
 
-        if (effect->Sample == NULL)
-        {
-            LogError("Unable to start sound effect, sound sample is missing.");
-        }
+        if (effect->Sample == NULL) { LogError("Unable to start sound effect, sound sample is missing."); }
 
         if (effect->Sample->Descriptor.LoopMode == SoundLoopMode::Unknown2 || 0 < effect->Sample->Descriptor.Unk6) // TODO constants
         {
@@ -1300,10 +1295,7 @@ namespace Sounds
     // a.k.a. pollSfx
     void PollSoundDirectSoundSoundControllerSoundEffect(void)
     {
-        if (*SoundState.Lock._Count < 1)
-        {
-            LogError("Unable to poll sound effect, sound sample is not locked.");
-        }
+        if (*SoundState.Lock._Count < 1) { LogError("Unable to poll sound effect, sound sample is not locked."); }
 
         auto time1 = AcquireTime(); // TODO type, name
         auto time2 = time1 - *SoundState._SoundTime1; // TODO type, name
@@ -1312,26 +1304,20 @@ namespace Sounds
         {
             *SoundState._SoundTime1 = time1;
 
-            if (*SoundState._UnknownSoundCount1 < 2) // TODO constants
-            {
-                FUN_005b9ac0();
-            }
+            if (SoundState.UnknownSoundCount1 < 2) { ComputeSoundEffectsPositions(); } // TODO constants
 
-            f32 volume = 0.0f; // TODO constants
+            f32 value = 0.0f;
 
             if (AcquireSoundDeviceControllerMixMode() != SoundMixMode::None)
             {
-                volume = Clamp(time2 * 0.0000008477105f, 0.0f, 0.25f); // TODO constants
+                value = Clamp(time2 * 0.0000008477105f, 0.0f, 0.25f); // TODO constants
             }
 
             for (u32 x = 0; x < 64; x++) // TODO: constants
             {
                 auto effect = &SoundState.Effects._Cache[x];
 
-                if (FUN_005bb8b0(effect, volume))
-                {
-                    FUN_005bc8d0(effect);
-                }
+                if (ComputeSoundEffect(effect, value)) { FUN_005bc8d0(effect); }
             }
         }
     }

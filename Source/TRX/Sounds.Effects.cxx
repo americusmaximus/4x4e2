@@ -21,12 +21,14 @@ SOFTWARE.
 */
 
 #include "Logger.hxx"
-#include "Sounds.hxx"
+#include "Mathematics.Basic.hxx"
 #include "Sounds.Effects.hxx"
+#include "Sounds.hxx"
 
 #include <math.h>
 
 using namespace Logger;
+using namespace Mathematics;
 using namespace Objects;
 
 namespace Sounds
@@ -73,7 +75,7 @@ namespace Sounds
         self->Unknown1007 = 0;
         self->Unknown1008 = 0;
 
-        self->Unknown1001 = -1.0f; // TODO constant
+        self->RemainingDelay = -1.0f; // TODO constant
 
         self->MinimumDistance = 20.0f; // TODO constant
         self->AAA01 = *SoundState._UnknownSoundEffectValue1;
@@ -122,12 +124,9 @@ namespace Sounds
     // 0x005bc730
     void DisposeSoundEffect(SoundEffect* self)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant;
+        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
 
-        if (self->AAA31 != 0) // TODO constant
-        {
-            LogMessage("[SOUND] Releasing sound effect %s.", self->Sample->Descriptor.Definition.Name);
-        }
+        if (self->DebugMode) { LogMessage("[SOUND] Releasing sound effect %s.", self->Sample->Descriptor.Definition.Name); }
 
         if (self->UnknownIndex != 0) // TODO constant
         {
@@ -139,7 +138,7 @@ namespace Sounds
             self->UnknownIndex = 0; // TODO constant
         }
 
-        self->AAA31 = 0; // TODO constant
+        self->DebugMode = FALSE;
         self->AAA03 = 0; // TODO constant
 
         if (self->Sample != NULL)
@@ -206,10 +205,7 @@ namespace Sounds
     // a.k.a. updatePlaybackPos
     void UpdateSoundEffectPosition(SoundEffect* self, const f64 position)
     {
-        if (self->Sample == NULL)
-        {
-            LogError("Unable to update sound effect playback position, sound sample is missing.");
-        }
+        if (self->Sample == NULL) { LogError("Unable to update sound effect playback position, sound sample is missing."); }
 
         if (position < 0.0 || self->Sample->Length < position)
         {
@@ -377,19 +373,19 @@ namespace Sounds
     {
         LockSounds();
 
-        *SoundState.Effects._Index = indx;
+        SoundState.Effects.Index = indx;
 
         UnlockSound1();
     }
 
     // 0x005bb4d0
-    void UpdateSoundEffectChannelsPosition(SoundEffect* self)
+    void ComputeSoundEffectChannelsPosition(SoundEffect* self)
     {
         for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
         {
-            const auto dx = self->Descriptor.Location.X - SoundState.Effects.Channels.Position._X[x];
-            const auto dy = self->Descriptor.Location.Y - SoundState.Effects.Channels.Position._Y[x];
-            const auto dz = self->Descriptor.Location.Z - SoundState.Effects.Channels.Position._Z[x];
+            const auto dx = self->Descriptor.Location.X - SoundState.Effects.Channels.Position.X[x];
+            const auto dy = self->Descriptor.Location.Y - SoundState.Effects.Channels.Position.Y[x];
+            const auto dz = self->Descriptor.Location.Z - SoundState.Effects.Channels.Position.Z[x];
 
             self->AAA04[x] = (f32)sqrt(dx * dx + dy * dy + dz * dz);
         }
@@ -420,5 +416,292 @@ namespace Sounds
     void SelectSoundEffectDescriptorUnk30(const u32 mode) // TODO name, enum
     {
         SoundState._SoundEffectDescriptors[*SoundState._SoundEffectDescriptorIndex].Unk30 = mode;
+    }
+
+    // 0x005bb8b0
+    // a.k.a. compute
+    BOOL ComputeSoundEffect(SoundEffect* self, const f32 value)
+    {
+        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+
+        if (self->Sample == NULL) { return FALSE; }
+
+        if (self->DebugMode) { LogMessage("[SOUND] [DBG] Sample: %s\n", self->Sample->Descriptor.Definition.Name); }
+
+        if (self->AAA03 == 0 || self->Descriptor.Unknown1005 < 0.0)
+        {
+            LogMessage("[SOUND] Releasing sound effect %s\n", self->Sample->Descriptor.Definition.Name);
+
+            DisposeSoundEffect(self);
+
+            return FALSE;
+        }
+
+        if (0.0 < value && 0.0 <= self->AAA29)
+        {
+            if (self->AAA29 <= value)
+            {
+                if ((self->AAA30 & 0x7fffffffU) != 0) // TODO constant
+                {
+                    DisposeSoundEffect(self);
+
+                    return FALSE;
+                }
+
+                self->Descriptor.Volume = self->AAA28;
+            }
+            else
+            {
+                self->Descriptor.Volume = self->Descriptor.Volume + (value / self->AAA29) * (self->AAA28 - self->Descriptor.Volume);
+
+                self->AAA29 = self->AAA29 - value;
+            }
+
+            self->Options = self->Options | 8; // TODO constant
+        }
+
+        ComputeSoundEffectLocationVelocity(self);
+
+        SoundState.Effects.Index = UpdateSoundEffectPositionCount(self->Descriptor.Location.X, self->Descriptor.Location.Y, self->Descriptor.Location.Z);
+
+        if (1 < SoundState.UnknownSoundCount1) { ComputeSoundEffectsPositions(); } // TODO constant
+
+        if ((self->Descriptor).RemainingDelay == -1.0) // TODO constant
+        {
+            if (self->DebugMode) { LogMessage("  auto computing delay...\n"); }
+
+            AutoCalculateSoundEffectRemainingDelay(self);
+        }
+
+        if (self->DebugMode) { LogMessage("  delayRemaining = %7.2fs\n", self->Descriptor.RemainingDelay); }
+
+        self->HZ = self->Descriptor.HZ;
+
+        if (self->DebugMode) { LogMessage("  freq = %5.2f\n", self->HZ); }
+
+        if (isfinite(value)) { ComputeSoundEffectsPositions(); }
+
+        if ((self->Descriptor.Unk30 & 1) == 0) // TODO constant
+        {
+            const auto dx = self->Descriptor.Location.X - SoundState.Effects.Position.X[SoundState.Effects.Index];
+            const auto dy = self->Descriptor.Location.Y - SoundState.Effects.Position.Y[SoundState.Effects.Index];
+            const auto dz = self->Descriptor.Location.Z - SoundState.Effects.Position.Z[SoundState.Effects.Index];
+
+            auto distance = sqrt(dx * dx + dy * dy + dz * dz);
+
+            if (self->DebugMode) { LogMessage("  distToEar = %7.2fs\n", distance); }
+
+            const auto vx = SoundState.Effects.Velocity._X[SoundState.Effects.Index] - self->Descriptor.Velocity.X;
+            const auto vy = SoundState.Effects.Velocity._Y[SoundState.Effects.Index] - self->Descriptor.Velocity.Y;
+            const auto vz = SoundState.Effects.Velocity._Z[SoundState.Effects.Index] - self->Descriptor.Velocity.Z;
+
+            const auto interim = distance <= 0 ? sqrt(vx * vx + vy * vy + vz * vz) : ((dx * vx + dy * vy + dz * vz) / distance);
+
+            const auto doppler = (interim + 1116.4) / 1116.4; // TODO constant
+
+            if (self->DebugMode) { LogMessage("  doppler = %5.2f\n", doppler); }
+
+            const auto clamped = Clamp(doppler, 0.25, 4.0); // TODO constants
+
+            if (self->DebugMode) { LogMessage("  doppler (clamped) = %5.2f\n", clamped); }
+
+            self->HZ = self->HZ * (f32)clamped;
+        }
+        else if (self->DebugMode) { LogMessage("  non spatialized\n"); }
+
+        ComputeSoundEffectChannelsPosition(self);
+        ComputeUnknownSoundEffectValue(self);
+
+        if (self->DebugMode) { LogMessage("  vol = %5.2f\n", self->Descriptor.Volume); }
+
+        ComputeSoundEffectPans(self);
+
+        if (self->DebugMode)
+        {
+            for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+            {
+                LogMessage("  channelVol[%d] = %5.2f\n", x, self->Sample->Descriptor.Definition.BitsPerSample * self->Pans[x]);
+            }
+        }
+
+        self->HZ = Clamp(self->HZ, 0.05f, 20.0f); // TODO constants
+
+        if (self->DebugMode) { LogMessage("  effFreq = %5.2f\n", self->HZ); }
+
+        return TRUE;
+    }
+
+    // 0x005b9ac0
+    void ComputeSoundEffectsPositions(void)
+    {
+        if (*SoundState.Options._ChannelCount == 2) // TODO constant
+        {
+            SoundState.Effects.Channels.Position.X[0] = SoundState.Effects.Position.X[SoundState.Effects.Index] - (SoundState.Effects.Orientation.XYZ.X[SoundState.Effects.Index] * 0.5f); // TODO constant
+            SoundState.Effects.Channels.Position.Y[0] = SoundState.Effects.Position.Y[SoundState.Effects.Index] - (SoundState.Effects.Orientation.XYZ.Y[SoundState.Effects.Index] * 0.5f); // TODO constant
+            SoundState.Effects.Channels.Position.Z[0] = SoundState.Effects.Position.Z[SoundState.Effects.Index] - (SoundState.Effects.Orientation.XYZ.Z[SoundState.Effects.Index] * 0.5f); // TODO constant
+
+            SoundState.Effects.Channels.Position.X[1] = SoundState.Effects.Position.X[SoundState.Effects.Index] + (SoundState.Effects.Orientation.XYZ.X[SoundState.Effects.Index] * 0.5f); // TODO constant
+            SoundState.Effects.Channels.Position.Y[1] = SoundState.Effects.Position.Y[SoundState.Effects.Index] + (SoundState.Effects.Orientation.XYZ.Y[SoundState.Effects.Index] * 0.5f); // TODO constant
+            SoundState.Effects.Channels.Position.Z[1] = SoundState.Effects.Position.Z[SoundState.Effects.Index] + (SoundState.Effects.Orientation.XYZ.Z[SoundState.Effects.Index] * 0.5f); // TODO constant
+        }
+        else
+        {
+            for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+            {
+                SoundState.Effects.Channels.Position.X[x] = SoundState.Effects.Position.X[SoundState.Effects.Index];
+                SoundState.Effects.Channels.Position.Y[x] = SoundState.Effects.Position.Y[SoundState.Effects.Index];
+                SoundState.Effects.Channels.Position.Z[x] = SoundState.Effects.Position.Z[SoundState.Effects.Index];
+            }
+        }
+    }
+
+    // 0x005bb810
+    // a.k.a. autoCalcDelayRemaining
+    void AutoCalculateSoundEffectRemainingDelay(SoundEffect* self)
+    {
+        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+
+        if ((self->Descriptor.Unk30 & 1) != 0) // TODO constant
+        {
+            self->Descriptor.RemainingDelay = 0.0f;
+
+            return;
+        }
+
+        const auto dx = self->Descriptor.Location.X - SoundState.Effects.Position.X[SoundState.Effects.Index];
+        const auto dy = self->Descriptor.Location.Y - SoundState.Effects.Position.Y[SoundState.Effects.Index];
+        const auto dz = self->Descriptor.Location.Z - SoundState.Effects.Position.Z[SoundState.Effects.Index];
+
+        self->Descriptor.RemainingDelay = (f32)((1.0 / 1116.4) * sqrt(dx * dx + dy * dy + dz * dz)); // TODO constants
+    }
+
+    // 0x005bb6d0
+    void ComputeSoundEffectPans(SoundEffect* self)
+    {
+        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+
+        const auto volume = self->Descriptor.Volume * AcquireSoundEffectChannelVolume(self->Descriptor.NextChannelIndex);
+
+        if ((self->Descriptor.Unk30 & 1) == 0)
+        {
+            auto distance = self->Descriptor.MinimumDistance;
+
+            for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+            {
+                auto value = Clamp(self->AAA04[x], self->Descriptor.AAA01, self->Descriptor.MaximumDistance);
+
+                if (distance * 0.05f < value) // TODO constant
+                {
+                    distance = distance / value;
+                }
+                else
+                {
+                    distance = 20.0f; // TODO constant
+                }
+
+                self->Pans[x] = volume * distance;
+            }
+        }
+        else
+        {
+            for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++) { self->Pans[x] = volume; }
+        }
+    }
+
+    // 0x005bb340
+    void ComputeSoundEffectLocationVelocity(SoundEffect* self)
+    {
+        if (self->Descriptor.Unknown103 == 1) // TODO constant
+        {
+            if (self->Descriptor.Unknown102->X != self->Descriptor.Location.X
+                || self->Descriptor.Unknown102->Y != self->Descriptor.Location.Y
+                || self->Descriptor.Unknown102->Z != self->Descriptor.Location.Z)
+            {
+                self->Descriptor.Location.X = self->Descriptor.Unknown102->X;
+                self->Descriptor.Location.Y = self->Descriptor.Unknown102->Y;
+                self->Descriptor.Location.Z = self->Descriptor.Unknown102->Z;
+
+                self->Options = self->Options | 2; // TODO constant
+            }
+        }
+        else if (self->Descriptor.Unknown103 == 2) // TODO constant
+        {
+            if (self->Descriptor.Unknown102->X != self->Descriptor.Location.X
+                || self->Descriptor.Unknown102->Y != self->Descriptor.Location.Y
+                || self->Descriptor.Unknown102->Z != self->Descriptor.Location.Z)
+            {
+                // TODO
+                DebugBreak();
+
+                self->Options = self->Options | 2; // TODO constant
+            }
+        }
+
+        if (self->Descriptor.Unknown105 == 1) // TODO constant
+        {
+            if (self->Descriptor.Unknown104->X != self->Descriptor.Velocity.X
+                || self->Descriptor.Unknown104->Y != self->Descriptor.Velocity.Y
+                || self->Descriptor.Unknown104->Z != self->Descriptor.Velocity.Z)
+            {
+                self->Descriptor.Velocity.X = self->Descriptor.Unknown104->X;
+                self->Descriptor.Velocity.Y = self->Descriptor.Unknown104->Y;
+                self->Descriptor.Velocity.Z = self->Descriptor.Unknown104->Z;
+
+                self->Options = self->Options | 4; // TODO constant
+            }
+        }
+        else if (self->Descriptor.Unknown105 == 2) // TODO constant
+        {
+            // TODO NOT IMPLEMENTED
+            DebugBreak();
+
+            self->Options = self->Options | 4; // TODO constant
+        }
+    }
+
+    // 0x005bb540
+    void ComputeUnknownSoundEffectValue(SoundEffect* self)
+    {
+        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+
+        if (1 < *SoundState.Options._ChannelCount) // TODO constant
+        {
+            if ((self->Descriptor.Unk30 & 1) == 0 && self->UnknownIndex == 0
+                && AcquireSoundDeviceControllerMixMode() == SoundMixMode::None)
+            {
+                auto min = S32_MAX;
+
+                for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+                {
+                    auto value = Max(0, (s32)round(self->AAA04[x] * (1.0 / 1116.4) * *SoundState.Options._HZ)); // TODO constant
+
+                    self->AAA12[x] = value;
+
+                    if (value < min) { min = value; }
+                }
+
+                for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++)
+                {
+                    self->AAA12[x] = self->AAA12[x] - min;
+
+                    while (self->AAA12[x] <= *SoundDeviceControllerState._Unknown4)
+                    {
+                        x = x + 1;
+
+                        if (*SoundState.Options._ChannelCount <= x) { return; }
+                    }
+
+                    self->AAA12[x] = *SoundDeviceControllerState._Unknown4;
+                }
+            }
+            else
+            {
+                for (u32 x = 0; x < *SoundState.Options._ChannelCount; x++) { self->AAA12[x] = 0; } // TODO constant
+            }
+        }
+        else
+        {
+            self->AAA12[0] = 0; // TODO constant
+        }
     }
 }

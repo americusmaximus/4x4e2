@@ -115,14 +115,20 @@ namespace Sounds
         s32 NextChannelIndex; // TODO better name
         s32 Unknown101; // TODO
         f64x3 Location;
-        s32 Unknown102; // TODO
+
+        // NOTE, this also can be f64x3 (see ComputeSoundEffectLocationVelocity)
+        f32x3* Unknown102; // TODO
         s32 Unknown103; // TODO
+
         f32x3 Velocity;
-        s32 Unknown104; // TODO
+
+        // NOTE, this also can be f64x3 + int (see ComputeSoundEffectLocationVelocity)
+        f32x3* Unknown104; // TODO
         s32 Unknown105; // TODO
+
         f32 Volume;
         f32 HZ; // TODO
-        f32 Unknown1001; // TODO
+        f32 RemainingDelay;
         s32 Unknown1002[2]; // TODO
         u32 Unk30;// TODO enum
         s32 Unknown1004; // TODO
@@ -156,14 +162,8 @@ namespace Sounds
 
         f32 Pans[8]; // TODO constant
 
-        s32 AAA12; // TODO
-        s32 AAA13; // TODO
-        s32 AAA14; // TODO
-        s32 AAA15; // TODO
-        s32 AAA16; // TODO
-        s32 AAA17; // TODO
-        s32 AAA18; // TODO
-        s32 AAA19; // TODO
+        s32 AAA12[8]; // TODO
+
         s32 AAA20; // TODO
         s32 AAA21; // TODO
         s32 AAA22; // TODO
@@ -172,10 +172,11 @@ namespace Sounds
         s32 AAA25; // TODO
         s32 AAA26; // TODO
         s32 AAA27; // TODO
-        s32 AAA28; // TODO
+        f32 AAA28; // TODO
         f32 AAA29; // TODO
         s32 AAA30; // TODO
-        s32 AAA31; // TODO
+
+        BOOL DebugMode;
 
         f64 Position;
 
