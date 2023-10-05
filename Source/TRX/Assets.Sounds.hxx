@@ -55,6 +55,6 @@ namespace Assets::Sounds
         u32 BitsPerSample;
         u32 Channels;
         u32 HZ;
-        s32 Length;
+        s32 Length; // TODO type
     };
 }

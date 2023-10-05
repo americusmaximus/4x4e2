@@ -42,10 +42,10 @@ namespace Sounds
     {
         ZeroMemory(&self->Descriptor, sizeof(SoundSampleDescriptor));
 
-        self->Descriptor.ReferenceDistance = 20.0f; // TODO constant
+        self->Descriptor.ReferenceDistance = 20.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
 
-        self->Descriptor.MinimumDistance = *SoundState._UnknownSoundEffectValue1;
-        self->Descriptor.MaximumDistance = 10000.0f; // TODO constant
+        self->Descriptor.MinimumDistance = *SoundState._UnknownSoundEffectValue1 * SoundDeviceControllerState.DistanceFactor.InverseValue;
+        self->Descriptor.MaximumDistance = 10000.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
 
         ConstructInStreamFile(&self->Stream);
 
@@ -163,5 +163,26 @@ namespace Sounds
 
         self->Lock.Offset = 0;
         self->Lock.Length = 0;
+    }
+
+    // 0x005b8840
+    SoundSample* AcquireSoundEffectSample(void)
+    {
+        for(u32 x = 0; x < 64; x++)
+        {
+            *SoundState._SoundEffectIndex = *SoundState._SoundEffectIndex + 1;
+
+            if (63 < *SoundState._SoundEffectIndex) { *SoundState._SoundEffectIndex = 0; } // TODO constant
+
+            if (SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.CacheControl == SoundCacheMode::Normal
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.Priority == 0
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk6 == 0
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Lock.Length == 0)
+            {
+                return &SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex];
+            }
+        }
+
+        return NULL;
     }
 }

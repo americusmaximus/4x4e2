@@ -45,4 +45,14 @@ namespace Sounds
     };
 
     extern SoundSampleContainer SoundSampleState;
+
+    s32 AcquireSoundSampleDescriptorOffset(SoundSampleDescriptor* self, const s32 offset);
+    s32 AcquireSoundSampleDescriptorValue204(SoundSampleDescriptor* self, const s32 offset);
+    SoundSample* AcquireSoundEffectSample(void);
+    u32 AcquireUnknownSoundSampleDescriptorValue1(SoundSampleDescriptor* self);
+    void DisposeSoundSample(SoundSample* self);
+    void LoadSoundSampleDescriptor(SoundSampleDescriptor* self);
+    void ReleaseSoundSampleMemory(SoundSample* self);
+    void UnlockSoundSample(SoundSample* self);
+    void* LockSoundSample(SoundSample* self, const s32 offset, const s32 length);
 }

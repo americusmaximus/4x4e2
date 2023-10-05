@@ -51,7 +51,7 @@ namespace Sounds
     {
         const auto result = self->Self->Stop(self);
 
-        for (u32 x = 0; x < MAX_SOUND_WAVEOUT_BUFFER_COUNT; x++)
+        for (u32 x = 0; x < MAX_SOUND_CHANNEL_COUNT; x++)
         {
             if (SoundWaveOutSoundControllerState.Memory._Data[x] != NULL)
             {
@@ -134,7 +134,7 @@ namespace Sounds
             }
         }
 
-        for (u32 x = 0; x < MAX_SOUND_WAVEOUT_BUFFER_COUNT; x++)
+        for (u32 x = 0; x < MAX_SOUND_CHANNEL_COUNT; x++)
         {
             if (SoundWaveOutSoundControllerState.Buffers._Headers[x] != NULL)
             {
@@ -159,7 +159,7 @@ namespace Sounds
         *SoundWaveOutSoundControllerState.Mode.Active._HZ = hz;
 
         {
-            auto const value = (u32)roundf(AcquireMaximumSoftWareSoundLatency()
+            const auto value = (u32)roundf(AcquireMaximumSoftWareSoundLatency()
                 * *SoundWaveOutSoundControllerState.Mode.Active._HZ / (f32)*SoundWaveOutSoundControllerState.Counters._Unknown2);
 
             *SoundWaveOutSoundControllerState.Counters._Unknown1 = (value + 0xf) & 0xfffffff0; // TODO
@@ -330,17 +330,29 @@ namespace Sounds
             return FALSE;
         }
 
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
-        // TODO: NOT IMPLEMENTED
+        void* data[MAX_SOUND_CHANNEL_COUNT];
 
-        const auto length = (*SoundWaveOutSoundControllerState.Mode.Active._Bits >> 3)
-            * *SoundWaveOutSoundControllerState.Counters._Unknown1
-            * *SoundWaveOutSoundControllerState.Mode.Active._Channels;
+        for (u32 x = 0; x < *SoundWaveOutSoundControllerState.Mode.Active._Channels; x++)
+        {
+            const auto offset = (*SoundWaveOutSoundControllerState.Mode.Active._Bits >> 3);
 
-        SoundWaveOutSoundControllerState.Buffers._Headers[indx]->dwBufferLength = length;
+            data[x] = (void*)&SoundWaveOutSoundControllerState.Buffers._Data[indx][offset];
+        }
+
+        FillSoundDeviceControllerBuffer(data,
+            *SoundWaveOutSoundControllerState.Mode.Active._Bits,
+            *SoundWaveOutSoundControllerState.Mode.Active._Channels,
+            *SoundWaveOutSoundControllerState.Mode.Active._HZ,
+            *SoundWaveOutSoundControllerState.Counters._Unknown1,
+            *SoundWaveOutSoundControllerState.Mode.Active._Channels * (*SoundWaveOutSoundControllerState.Mode.Active._Bits >> 3));
+
+        {
+            const auto length = (*SoundWaveOutSoundControllerState.Mode.Active._Bits >> 3)
+                * *SoundWaveOutSoundControllerState.Counters._Unknown1
+                * *SoundWaveOutSoundControllerState.Mode.Active._Channels;
+
+            SoundWaveOutSoundControllerState.Buffers._Headers[indx]->dwBufferLength = length;
+        }
 
         if (waveOutPrepareHeader(*SoundWaveOutSoundControllerState._Device,
             SoundWaveOutSoundControllerState.Buffers._Headers[indx], sizeof(WAVEHDR)) != MMSYSERR_NOERROR)
@@ -359,5 +371,13 @@ namespace Sounds
         }
 
         return TRUE;
+    }
+
+    // 0x005c2490
+    u32 AcquireSoundWaveOutDeviceControllerUnknownValue1(void)
+    {
+        return (*SoundWaveOutSoundControllerState.Mode.Active._Bits >> 3)
+            * *SoundWaveOutSoundControllerState.Counters._Unknown1
+            * *SoundWaveOutSoundControllerState.Mode.Active._Channels;
     }
 }

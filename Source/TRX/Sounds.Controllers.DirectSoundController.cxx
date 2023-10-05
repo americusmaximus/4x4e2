@@ -29,6 +29,7 @@ SOFTWARE.
 #include "Sounds.Devices.hxx"
 #include "Sounds.Effects.hxx"
 #include "Sounds.hxx"
+#include "Sounds.Samples.hxx"
 #include "Time.hxx"
 
 #include <math.h>
@@ -38,6 +39,8 @@ SOFTWARE.
 #define DSBPLAY_NONE 0
 #define DSBSTATUS_NONE 0
 #define DSBPRIORITY_NONE 0
+
+#define DEFAULT_DIRECT_SOUND_BUFFER_SIZE 1024
 
 using namespace App::Windows;
 using namespace Assets::Sounds;
@@ -254,11 +257,11 @@ namespace Sounds
             SoundDirectSoundSoundControllerState.EAX.Instance = NULL;
         }
 
-        auto ac = channels;
-
         if (SoundDirectSoundSoundControllerState.Buffers.Primary.Buffer != NULL)
         {
-            if (ac == 1) // TODO constant
+            auto actual = channels;
+
+            if (actual == SOUND_CHANNEL_COUNT_MONO)
             {
                 if (DSC(SoundDirectSoundSoundControllerState.DirectSound.Instance->SetSpeakerConfig(DSSPEAKER_MONO),
                     "Unable to set speaker configuration.") != DS_OK)
@@ -272,7 +275,7 @@ namespace Sounds
                     return FALSE;
                 }
             }
-            else if (ac == 2) // TODO constant
+            else if (actual == SOUND_CHANNEL_COUNT_STEREO)
             {
                 if (DSC(SoundDirectSoundSoundControllerState.DirectSound.Instance->SetSpeakerConfig(DSSPEAKER_STEREO),
                     "Unable to set speaker configuration.") != DS_OK)
@@ -286,7 +289,7 @@ namespace Sounds
                     return FALSE;
                 }
             }
-            else if (2 < ac) // TODO constant
+            else if (SOUND_CHANNEL_COUNT_STEREO < actual)
             {
                 if (DSC(SoundDirectSoundSoundControllerState.DirectSound.Instance->SetSpeakerConfig(DSSPEAKER_SURROUND),
                     "Unable to set speaker configuration.") != DS_OK)
@@ -300,26 +303,23 @@ namespace Sounds
                     return FALSE;
                 }
 
-                ac = 2; // TODO constant
+                actual = SOUND_CHANNEL_COUNT_STEREO;
             }
-
-            const auto alignment = (bits >> 3) * ac;
 
             WAVEFORMATEX pf =
             {
                 .wFormatTag = WAVE_FORMAT_PCM,
-                .nChannels = (WORD)ac,
+                .nChannels = (WORD)actual,
                 .nSamplesPerSec = hz,
-                .nAvgBytesPerSec = hz * alignment,
-                .nBlockAlign = (WORD)alignment,
+                .nAvgBytesPerSec = hz * (actual * (bits >> 3)),
+                .nBlockAlign = (WORD)(actual * (bits >> 3)),
                 .wBitsPerSample = (WORD)bits
             };
 
             if (DSC(SoundDirectSoundSoundControllerState.Buffers.Primary.Buffer->SetFormat(&pf),
                 "Unable to set primary sound buffer format.") == DS_OK)
             {
-                if (DSC(SoundDirectSoundSoundControllerState.Buffers.Primary.Buffer->GetFormat(
-                    &pf, sizeof(WAVEFORMATEX), NULL),
+                if (DSC(SoundDirectSoundSoundControllerState.Buffers.Primary.Buffer->GetFormat(&pf, sizeof(WAVEFORMATEX), NULL),
                     "Unable to get primary sound buffer format.") == DS_OK)
                 {
                     *SoundDirectSoundSoundControllerState.Buffers.Primary._BitsPerSample = pf.wBitsPerSample;
@@ -335,18 +335,18 @@ namespace Sounds
                     WAVEFORMATEX tbf =
                     {
                         .wFormatTag = WAVE_FORMAT_PCM,
-                        .nChannels = 1, // TODO constant
-                        .nSamplesPerSec = 22050, // TODO constant
-                        .nAvgBytesPerSec = 22050 * 2, // TODO constant
-                        .nBlockAlign = 2, // TODO constant
-                        .wBitsPerSample = 16 // TODO constant
+                        .nChannels = SOUND_CHANNEL_COUNT_MONO,
+                        .nSamplesPerSec = SOUND_FREQUENCY_22050,
+                        .nAvgBytesPerSec = SOUND_FREQUENCY_22050 * SOUND_BYTES_2,
+                        .nBlockAlign = SOUND_BYTES_2,
+                        .wBitsPerSample = SOUND_BITS_16
                     };
 
                     DSBUFFERDESC tbd =
                     {
                         .dwSize = sizeof(DSBUFFERDESC),
                         .dwFlags = DSBCAPS_CTRL3D | DSBCAPS_STATIC,
-                        .dwBufferBytes = 1024, // TODO constant
+                        .dwBufferBytes = DEFAULT_DIRECT_SOUND_BUFFER_SIZE,
                         .lpwfxFormat = &tbf
                     };
 
@@ -410,16 +410,6 @@ namespace Sounds
 
                     *SoundDirectSoundSoundControllerState.Buffers.Secondary._ChannelBufferSize = align * *SoundDirectSoundSoundControllerState.Buffers.Secondary._Count;
 
-                    WAVEFORMATEX sf =
-                    {
-                        .wFormatTag = WAVE_FORMAT_PCM,
-                        .nChannels = 2, // TODO constant
-                        .nSamplesPerSec = 44100, // TODO constant
-                        .nAvgBytesPerSec = 44100 * align, // TODO constant
-                        .nBlockAlign = (WORD)align,
-                        .wBitsPerSample = 16 // TODO constant
-                    };
-
                     const auto size = *SoundDirectSoundSoundControllerState.Buffers.Secondary._Unknown1
                         * *SoundDirectSoundSoundControllerState.Buffers.Secondary._ChannelBufferSize;
 
@@ -427,7 +417,7 @@ namespace Sounds
                     {
                         .dwSize = sizeof(DSBUFFERDESC),
                         .dwBufferBytes = size,
-                        .lpwfxFormat = &sf
+                        .lpwfxFormat = &pf
                     };
 
                     if (SoundDirectSoundSoundControllerState.Buffers.Secondary.Buffer != NULL)
@@ -1385,8 +1375,10 @@ namespace Sounds
         void* audio2;
         DWORD audio2size;
 
-        if (DSC(SoundDirectSoundSoundControllerState.Buffers.Secondary.Buffer->Lock(
-            *SoundDirectSoundSoundControllerState.Buffers.Secondary._Unknown2 * *SoundDirectSoundSoundControllerState.Buffers.Secondary._ChannelBufferSize,
+        const auto off = *SoundDirectSoundSoundControllerState.Buffers.Secondary._Unknown2
+            * *SoundDirectSoundSoundControllerState.Buffers.Secondary._ChannelBufferSize;
+
+        if (DSC(SoundDirectSoundSoundControllerState.Buffers.Secondary.Buffer->Lock(off,
             *SoundDirectSoundSoundControllerState.Buffers.Secondary._ChannelBufferSize,
             &audio1, &audio1size, &audio2, &audio2size, DSBLOCK_NONE),
             "Unable to lock secondary sound buffer.") != DS_OK)
@@ -1400,9 +1392,11 @@ namespace Sounds
 
             for (u32 x = 0; x < *SoundDirectSoundSoundControllerState.Buffers.Primary._Channels; x++)
             {
-                data[x] = (void*)((addr)audio1 + (addr)(x * (*SoundDirectSoundSoundControllerState.Buffers.Primary._BitsPerSample >> 3)));
+                const auto offset = x * (*SoundDirectSoundSoundControllerState.Buffers.Primary._BitsPerSample >> 3);
+                data[x] = (void*)((addr)audio1 + (addr)offset);
             }
 
+            // TODO NOT IMPLEMENTED !!!  FillSoundDeviceControllerBuffer(data,
             FUN_005c1340(data,
                 *SoundDirectSoundSoundControllerState.Buffers.Primary._BitsPerSample,
                 *SoundDirectSoundSoundControllerState.Buffers.Primary._Channels,

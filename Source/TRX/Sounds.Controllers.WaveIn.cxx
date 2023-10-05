@@ -311,4 +311,12 @@ namespace Sounds
 
         return TRUE;
     }
+
+    // 0x005c2a90
+    u32 AcquireSoundWaveInDeviceControllerUnknownValue1(void)
+    {
+        return (*SoundWaveInSoundControllerState.Mode.Active._Bits >> 3)
+            * *SoundWaveInSoundControllerState.Counters._Unknown3
+            * *SoundWaveInSoundControllerState.Mode.Active._Channels;
+    }
 }

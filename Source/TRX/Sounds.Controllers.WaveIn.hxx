@@ -199,4 +199,6 @@ namespace Sounds
     };
 
     extern SoundWaveInSoundControllerContainer SoundWaveInSoundControllerState;
+
+    u32 AcquireSoundWaveInDeviceControllerUnknownValue1(void);
 }

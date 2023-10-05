@@ -192,7 +192,7 @@ namespace IO::Ini
 
         if (original == NULL)
         {
-            auto const writer = fopen(file, "wt");
+            auto writer = fopen(file, "wt");
 
             if (writer == NULL) { return FALSE; }
 

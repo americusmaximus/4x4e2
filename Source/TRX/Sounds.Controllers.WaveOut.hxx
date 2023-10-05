@@ -27,7 +27,6 @@ SOFTWARE.
 
 #include <mmeapi.h>
 
-#define MAX_SOUND_WAVEOUT_BUFFER_COUNT 8
 #define INVALID_WAVEOUT_DEVICE_INDEX (-1)
 
 namespace Sounds
@@ -101,14 +100,14 @@ namespace Sounds
 
         struct
         {
-            CHAR** _Data = (CHAR**)0x00d44afc; // TODO [MAX_SOUND_WAVEOUT_BUFFER_COUNT]
-            WAVEHDR** _Headers = (WAVEHDR**)0x00d44abc; // TODO [MAX_SOUND_WAVEOUT_BUFFER_COUNT]
+            CHAR** _Data = (CHAR**)0x00d44afc; // TODO [MAX_SOUND_CHANNEL_COUNT]
+            WAVEHDR** _Headers = (WAVEHDR**)0x00d44abc; // TODO [MAX_SOUND_CHANNEL_COUNT]
         } Buffers;
 
         struct
         {
-            HGLOBAL* _Data = (HGLOBAL*)0x00d44adc; // TODO [MAX_SOUND_WAVEOUT_BUFFER_COUNT]
-            HGLOBAL* _Headers = (HGLOBAL*)0x00d44a9c; // TODO [MAX_SOUND_WAVEOUT_BUFFER_COUNT]
+            HGLOBAL* _Data = (HGLOBAL*)0x00d44adc; // TODO [MAX_SOUND_CHANNEL_COUNT]
+            HGLOBAL* _Headers = (HGLOBAL*)0x00d44a9c; // TODO [MAX_SOUND_CHANNEL_COUNT]
         } Memory;
 
         struct
@@ -131,4 +130,5 @@ namespace Sounds
     extern SoundWaveOutSoundControllerContainer SoundWaveOutSoundControllerState;
 
     BOOL PollSoundWaveOutDeviceControllerBuffer(const u32 indx);
+    u32 AcquireSoundWaveOutDeviceControllerUnknownValue1(void);
 }

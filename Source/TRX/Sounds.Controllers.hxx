@@ -25,6 +25,8 @@ SOFTWARE.
 #include "Native.Basic.hxx"
 #include "Sounds.Basic.hxx"
 
+#define DEFAULT_DISTANCE_FACTOR_VALUE (1.0f)
+
 namespace Sounds
 {
     struct SoundEffect;
@@ -35,7 +37,7 @@ namespace Sounds
     typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERRELEASE) (AbstractSoundDeviceController* self);
     typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERSTART) (AbstractSoundDeviceController* self);
     typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERSTOP) (AbstractSoundDeviceController* self);
-    typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERRESET)(AbstractSoundDeviceController* self, const u32 bits, const u16 channels, const u32 hz, u32* count);
+    typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERRESET)(AbstractSoundDeviceController* self, const u32 bits, const u32 channels, const u32 hz, u32* count);
     typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERPOLL) (AbstractSoundDeviceController* self);
     typedef const SoundMixMode(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERQUERYCAPABILITIES) (AbstractSoundDeviceController* self);
     typedef const void(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERAPPLYOPTIONS) (AbstractSoundDeviceController* self);
@@ -122,15 +124,24 @@ namespace Sounds
         void* UnknownMemory2; // 0x00d44110
         void* UnknownMemory3; // 0x00d440c8
 
-        void** _UnknownArray1 = (void**)0x00d440cc; // TODO array of 8
+        // TODO the arrays look like arrays of floats
+        f32** _UnknownArray1 = (f32**)0x00d440cc; // TODO array of 8
         void** _UnknownArray2 = (void**)0x00d44114; // TODO array of 8
         void** _UnknownArray3 = (void**)0x00d44134; // TODO array of 8
         void** _UnknownArray4 = (void**)0x00d440f0; // TODO array of 8
 
         s32* _Unknown1 = (s32*)0x00d440c4; // TODO
-        s32* _Unknown2 = (s32*)0x00d440b8; // TODO
+        s32* _Unknown2 = (s32*)0x00d440b8; // TODO Name: NextMixingBuffer.Length
         s32* _Unknown3 = (s32*)0x00d440bc; // TODO
-        s32* _Unknown4 = (s32*)0x00d440c0; // TODO
+        u32* _Unknown4 = (u32*)0x00d440c0; // TODO
+
+        s32* _Unknown5 = (s32*)0x00d44160; // TODO
+
+        struct
+        {
+            f32 Value = DEFAULT_DISTANCE_FACTOR_VALUE; //  0x0067acec
+            f32 InverseValue = DEFAULT_DISTANCE_FACTOR_VALUE; // 0x0067acf0
+        } DistanceFactor;
     };
 
     extern SoundDeviceControllerContainer SoundDeviceControllerState;
@@ -163,4 +174,9 @@ namespace Sounds
     void SelectSoundDeviceControllerPosition(const f64 x, const f64 y, const f64 z);
 
     void AllocateSoundDeviceControllerMixBuffers(const u32 count, const s32 value);
+    s32 AcquireSoundDeviceControllerUnknown5(void);
+    void FillSoundDeviceControllerBuffer(void** data, const u32 bits, const u32 channels, const u32 hz, const u32 count, const u32 offset);
+    void ConvertSoundControllerMixBuffer(const f32* input, void* output, const u32 bits, const  u32 count, const u32 pitch);
+    void SelectSoundDeviceControllerDistanceFactor(const f32 value);
+    void SelectSoundDeviceControllerEnvironment(const f32 volume, const f32 time, const f32 damping);
 }

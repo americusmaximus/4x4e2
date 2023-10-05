@@ -78,9 +78,9 @@ namespace Sounds
     void LoadSoundSampleDescriptor(SoundSampleDescriptor* self)
     {
         self->LoopMode = SoundLoopMode::Looping;
-        self->ReferenceDistance = 20.0f; // TODO constant
-        self->MinimumDistance = *SoundState._UnknownSoundEffectValue1;
-        self->MaximumDistance = 10000.0f; // TODO constant
+        self->ReferenceDistance = 20.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
+        self->MinimumDistance = *SoundState._UnknownSoundEffectValue1 * SoundDeviceControllerState.DistanceFactor.InverseValue;
+        self->MaximumDistance = 10000.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
         self->ChannelLength[0] = self->Definition.Length;
         self->Unk6 = -1; // TODO constant
 
