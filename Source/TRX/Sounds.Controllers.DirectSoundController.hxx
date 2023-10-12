@@ -164,9 +164,9 @@ namespace Sounds
 
     extern SoundDirectSoundSoundControllerContainer SoundDirectSoundSoundControllerState;
 
-    s32 AcquireSoundDirectSoundSoundControllerFrequency(const f32 value);
-    BOOL StopSoundDirectSoundDeviceControllerSoundSample(const s32 indx);
-    void PollSoundDirectSoundSoundControllerSoundEffect(void);
-    s32 AcquireUnknownSoundValue102(const f32 value);
     BOOL FillSoundDirectSoundDeviceControllerSecondaryBuffer(void);
+    BOOL StopSoundDirectSoundDeviceControllerSoundSample(const s32 indx);
+    s32 AcquireSoundDirectSoundSoundControllerFrequency(const f32 value);
+    s32 AcquireSoundDirectSoundSoundControllerVolume(const f32 value);
+    void PollSoundDirectSoundSoundControllerSoundEffect(void);
 }

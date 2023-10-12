@@ -29,12 +29,14 @@ SOFTWARE.
 #define MIN_SOUND_EFFECT_CHANNEL_COUNT 0
 #define MAX_SOUND_EFFECT_CHANNEL_COUNT 32
 
-#define SOUND_BITS_8 8
-#define SOUND_BITS_16 16
-
+#define MIN_SOUND_LOCK_COUNT 0
+#define DEFAULT_SOUND_LOCK_COUNT 1
 #define MAX_SOUND_LOCK_COUNT 100
 
 #define MAX_SOUND_THREAD_ACTION_ITERATION_COUNT 100
+
+#define MIN_SOUND_VOLUME (0.0f)
+#define MAX_SOUND_VOLUME (1.0f)
 
 namespace Sounds
 {
@@ -54,9 +56,9 @@ namespace Sounds
 
             u32* _Channels = (u32*)0x0067acd4; // TODO, default value SOUND_CHANNEL_COUNT_STEREO
 
-            u32* _HZ = (u32*)0x0067acd8; // TODO, default value 22050
+            u32* _HZ = (u32*)0x0067acd8; // TODO, default value SOUND_FREQUENCY_22050
 
-            f32* _MaximumSoftWareLatency = (f32*)0x0067acfc; // TODO default value 0.5f;
+            f32* _MaximumSoftWareLatency = (f32*)0x0067acfc; // TODO default value DEFAULT_SOUND_LATENCY
         } Options;
 
         struct

@@ -43,6 +43,13 @@ SOFTWARE.
 
 #define MAX_SOUND_CHANNEL_COUNT 8
 
+#define MIN_SOUND_USER_DATA_COUNT 0
+#define MAX_SOUND_USER_DATA_COUNT 2
+
+#define MIN_SOUND_LATENCY (0.05f)
+#define DEFAULT_SOUND_LATENCY (0.5f)
+#define MAX_SOUND_LATENCY (2.0f)
+
 #define SOUND_DIRECTORY_NAME "sound"
 
 // NOTE: klp is a legacy metadata file used in earlier games.
@@ -148,7 +155,6 @@ namespace Sounds
         SoundEffectDescriptorUnknownType Type;
     };
 
-
     // a.k.a. SfxOptions
     struct SoundEffectDescriptor
     {
@@ -165,7 +171,7 @@ namespace Sounds
         f32 Volume;
         f32 HZ; // TODO
         f32 RemainingDelay;
-        void* UserData[2]; // TODO
+        void* UserData[MAX_SOUND_USER_DATA_COUNT]; // TODO
         u32 Unk30;// TODO enum
         s32 Unknown1004; // TODO
         f64 Position; // Linear position within the timeline of the sound effect.
@@ -203,7 +209,7 @@ namespace Sounds
         s32 AAA20[MAX_SOUND_CHANNEL_COUNT]; // TODO
 
         f32 AAA28; // TODO MinimumDistance?
-        f32 AAA29; // TODO
+        f32 Volume;
         s32 AAA30; // TODO MaximumDistance?
 
         BOOL DebugMode;

@@ -838,7 +838,7 @@ namespace Sounds
 
         if (SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].AdvancedBuffer != NULL)
         {
-            auto volume = 0.0f;
+            auto volume = MIN_SOUND_VOLUME;
             auto minimumDistance = 0.0f;
             auto maximumDistance = 0.0f;
 
@@ -851,9 +851,9 @@ namespace Sounds
 
                 volume = value;
 
-                if ((effect->Descriptor.Unk30 & 1) == 0 && 0.0f < value) // TODO constants
+                if ((effect->Descriptor.Unk30 & 1) == 0 && MIN_SOUND_VOLUME < value) // TODO constant
                 {
-                    volume = 1.0f; // TODO constants
+                    volume = MAX_SOUND_VOLUME;
                     minimumDistance = minimumDistance * value;
                     maximumDistance = maximumDistance * value;
                 }
@@ -881,7 +881,7 @@ namespace Sounds
 
             if (mode & 8) // TODO constants
             {
-                auto value = AcquireUnknownSoundValue102(effect->Descriptor.Volume * volume);
+                auto value = AcquireSoundDirectSoundSoundControllerVolume(effect->Descriptor.Volume * volume);
 
                 auto v1 = value - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume;
                 auto v2 = v1 >> 0x1f;// TODO
@@ -986,7 +986,7 @@ namespace Sounds
             }
 
             // The value in lPan is measured in hundredths of a decibel(dB), in the range of DSBPAN_LEFT to DSBPAN_RIGHT.
-            // These values are currently defined in Dsound.h as - 10, 000 and 10, 000 respectively.
+            // These values are currently defined in Dsound.h as - 10,000 and 10,000 respectively.
             // The value DSBPAN_LEFT means the right channel is attenuated by 100 dB.
             // The value DSBPAN_RIGHT means the left channel is attenuated by 100 dB.
             // The neutral value is DSBPAN_CENTER, defined as zero.This value of 0 in the lplPan parameter'
@@ -996,13 +996,13 @@ namespace Sounds
 
             auto val = DSBPAN_CENTER;
 
-            if (count == 2 && 0.0f < maximum)
+            if (count == 2 && 0.0f < maximum) // TODO constant
             {
                 if (effect->Pans[1] <= effect->Pans[0])
                 {
                     if (effect->Pans[0] < effect->Pans[1])
                     {
-                        if (0.0f < effect->Pans[1])
+                        if (0.0f < effect->Pans[1]) // TODO constant
                         {
                             val = (s32)round(AcquireUnknownSoundValue101(-868.589 * (f64)log2f(effect->Pans[0] / effect->Pans[1]))); // TODO constants
 
@@ -1017,7 +1017,7 @@ namespace Sounds
                         }
                     }
                 }
-                else if (effect->Pans[0] <= 0.0f)
+                else if (effect->Pans[0] <= 0.0f) // TODO constant
                 {
                     val = DSBPAN_RIGHT;
                 }
@@ -1033,7 +1033,7 @@ namespace Sounds
             }
 
             {
-                const auto value = AcquireUnknownSoundValue102(maximum);
+                const auto value = AcquireSoundDirectSoundSoundControllerVolume(maximum);
 
                 auto v1 = value - SoundDirectSoundSoundControllerState.SoundUnk0x24Array[indx].Volume;
 
@@ -1272,14 +1272,13 @@ namespace Sounds
     }
 
     // 0x005b5020
-    // TODO name
-    s32 AcquireUnknownSoundValue102(const f32 value)
+    s32 AcquireSoundDirectSoundSoundControllerVolume(const f32 value)
     {
-        if (value <= 0.0f) { return DSBVOLUME_MIN; }// TODO constant
+        if (value <= MIN_SOUND_VOLUME) { return DSBVOLUME_MIN; }
 
-        if (1.0f <= value) { return DSBVOLUME_MAX; }// TODO constant
+        if (MAX_SOUND_VOLUME <= value) { return DSBVOLUME_MAX; }
 
-        const auto result = (s32)round(AcquireUnknownSoundValue101((f64)log2f(value) * 868.589));// TODO constant
+        const auto result = (s32)round(AcquireUnknownSoundValue101((f64)log2f(value) * 868.589)); // TODO constant
 
         return Clamp(result, DSBVOLUME_MIN, DSBVOLUME_MAX);
     }
@@ -1288,7 +1287,7 @@ namespace Sounds
     // a.k.a. pollSfx
     void PollSoundDirectSoundSoundControllerSoundEffect(void)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Unable to poll sound effect, sound sample is not locked."); }
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Unable to poll sound effect, sound sample is not locked."); }
 
         auto time1 = AcquireTime(); // TODO type, name
         auto time2 = time1 - *SoundState._SoundTime1; // TODO type, name
@@ -1299,11 +1298,11 @@ namespace Sounds
 
             if (SoundState.UnknownSoundCount1 < 2) { ComputeSoundEffectsPositions(); } // TODO constants
 
-            f32 value = 0.0f;
+            f32 value = MIN_SOUND_VOLUME;
 
             if (AcquireSoundDeviceControllerMixMode() != SoundMixMode::None)
             {
-                value = Clamp(time2 * 0.0000008477105f, 0.0f, 0.25f); // TODO constants
+                value = Clamp(time2 * 0.0000008477105f, MIN_SOUND_VOLUME, 0.25f); // TODO constants
             }
 
             for (u32 x = 0; x < 64; x++) // TODO: constants

@@ -58,7 +58,7 @@ namespace Sounds
     {
         if (!AcquireSoundDeviceControllerActiveState()) { LogError("Unable to select maximum sound latency while sound is active."); }
 
-        *SoundState.Options._MaximumSoftWareLatency = Clamp(value, 0.05f, 2.0f); // TODO constants
+        *SoundState.Options._MaximumSoftWareLatency = Clamp(value, MIN_SOUND_LATENCY, MAX_SOUND_LATENCY);
     }
 
     // 0x005c0420
@@ -83,7 +83,7 @@ namespace Sounds
     // a.k.a. unlockSound
     void UnlockSound1(void)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Unable to unlock sound that was not locked."); } // TODO
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Unable to unlock sound that was not locked."); }
 
         UnlockSound3();
     }
@@ -91,7 +91,7 @@ namespace Sounds
     // 0x005be50c
     void UnlockSound2(void)
     {
-        *SoundState.Lock._Count = *SoundState.Lock._Count + -1;
+        *SoundState.Lock._Count = *SoundState.Lock._Count - 1;
 
         DisposeMutex(SoundState.Lock.Mutex);
     }
@@ -99,9 +99,9 @@ namespace Sounds
     // 0x005be4ff
     void UnlockSound3(void)
     {
-        if (*SoundState.Lock._Count != 1) // TODO
+        if (*SoundState.Lock._Count != DEFAULT_SOUND_LOCK_COUNT)
         {
-            *SoundState.Lock._Count = *SoundState.Lock._Count + -1;
+            *SoundState.Lock._Count = *SoundState.Lock._Count - 1;
 
             DisposeMutex(SoundState.Lock.Mutex);
 
@@ -140,7 +140,7 @@ namespace Sounds
     {
         if (!StopSoundThread()) { return FALSE; }
 
-        *SoundState.Thread._TimeValue = Max(0.002f, value); //TODO constants
+        *SoundState.Thread._TimeValue = Max(0.002f, value); // TODO constants
 
         *SoundState.Thread._IsActive = FALSE;
         *SoundState.Thread._IsQuit = FALSE;
@@ -231,36 +231,6 @@ namespace Sounds
         SoundState.MixMode = mode;
     }
 
-    // 0x005be700
-    u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z)
-    {
-        if (SoundState.UnknownSoundCount1 < 2) { return 0; } // TODO constant
-
-        auto diff = (x - SoundState.Effects.Position.X[0]) * (x - SoundState.Effects.Position.X[0])
-            + (y - SoundState.Effects.Position.Y[0]) * (y - SoundState.Effects.Position.Y[0])
-            + (z - SoundState.Effects.Position.Z[0]) * (z - SoundState.Effects.Position.Z[0]);
-
-        u32 result = 0;
-
-        for (u32 xx = 1; xx < SoundState.UnknownSoundCount1; xx++)
-        {
-            const auto dx = x - SoundState.Effects.Position.X[xx]; // TODO
-            const auto dy = y - SoundState.Effects.Position.Y[xx]; // TODO
-            const auto dz = z - SoundState.Effects.Position.Z[xx]; // TODO
-
-            const auto delta = dx * dx + dy * dy + dz * dz;
-
-            if (delta < diff)
-            {
-                diff = delta;
-
-                result = result + 1;
-            }
-        }
-
-        return result;
-    }
-
     // 0x005bed90
     void ReleaseSounds(void)
     {
@@ -282,11 +252,11 @@ namespace Sounds
 
         if (value < 2) { SoundState.Effects.Index = 0; } // TODO constant
 
-        if (*SoundState.Lock._Count == 0) { LogError("Unable to unlock unlocked sound."); }
+        if (*SoundState.Lock._Count == MIN_SOUND_LOCK_COUNT) { LogError("Unable to unlock unlocked sound."); }
 
-        if (*SoundState.Lock._Count != 1)
+        if (*SoundState.Lock._Count != DEFAULT_SOUND_LOCK_COUNT)
         {
-            *SoundState.Lock._Count = *SoundState.Lock._Count + -1;
+            *SoundState.Lock._Count = *SoundState.Lock._Count - 1;
 
             DisposeMutex(SoundState.Lock.Mutex);
 

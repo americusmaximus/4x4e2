@@ -125,75 +125,75 @@ namespace Sounds
         {
             {
                 .Format = WAVE_FORMAT_1M08,
-                .Bits = 8,
-                .Channels = 1,
-                .HZ = 11025
+                .Bits = SOUND_BITS_8,
+                .Channels = SOUND_CHANNEL_COUNT_MONO,
+                .HZ = SOUND_FREQUENCY_11025
             },
             {
                 .Format = WAVE_FORMAT_1M16,
-                .Bits = 16,
-                .Channels = 1,
-                .HZ = 11025
+                .Bits = SOUND_BITS_16,
+                .Channels = SOUND_CHANNEL_COUNT_MONO,
+                .HZ = SOUND_FREQUENCY_11025
             },
             {
                 .Format = WAVE_FORMAT_1S08,
-                .Bits = 8,
-                .Channels = 2,
-                .HZ = 11025
+                .Bits = SOUND_BITS_8,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_11025
             },
             {
                 .Format = WAVE_FORMAT_1S16,
-                .Bits = 16,
-                .Channels = 2,
-                .HZ = 11025
+                .Bits = SOUND_BITS_16,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_11025
             },
             {
                 .Format = WAVE_FORMAT_2M08,
-                .Bits = 8,
-                .Channels = 1,
-                .HZ = 22050
+                .Bits = SOUND_BITS_8,
+                .Channels = SOUND_CHANNEL_COUNT_MONO,
+                .HZ = SOUND_FREQUENCY_22050
             },
             {
                 .Format = WAVE_FORMAT_2M16,
-                .Bits = 16,
-                .Channels = 1,
-                .HZ = 22050
+                .Bits = SOUND_BITS_16,
+                .Channels = SOUND_CHANNEL_COUNT_MONO,
+                .HZ = SOUND_FREQUENCY_22050
             },
             {
                 .Format = WAVE_FORMAT_2S08,
-                .Bits = 8,
-                .Channels = 2,
-                .HZ = 22050
+                .Bits = SOUND_BITS_8,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_22050
             },
             {
                 .Format = WAVE_FORMAT_2S16,
-                .Bits = 16,
-                .Channels = 2,
-                .HZ = 22050
+                .Bits = SOUND_BITS_16,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_22050
             },
             {
                 .Format = WAVE_FORMAT_4M08,
-                .Bits = 8,
-                .Channels = 1,
-                .HZ = 44100
+                .Bits = SOUND_BITS_8,
+                .Channels = SOUND_CHANNEL_COUNT_MONO,
+                .HZ = SOUND_FREQUENCY_44100
             },
             {
                 .Format = WAVE_FORMAT_4M16,
-                .Bits = 16,
-                .Channels = 2,
-                .HZ = 44100
+                .Bits = SOUND_BITS_16,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_44100
             },
             {
                 .Format = WAVE_FORMAT_4S08,
-                .Bits = 8,
-                .Channels = 2,
-                .HZ = 44100
+                .Bits = SOUND_BITS_8,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_44100
             },
             {
                 .Format = WAVE_FORMAT_4S16,
-                .Bits = 16,
-                .Channels = 2,
-                .HZ = 44100
+                .Bits = SOUND_BITS_16,
+                .Channels = SOUND_CHANNEL_COUNT_STEREO,
+                .HZ = SOUND_FREQUENCY_44100
             }
         };
     };

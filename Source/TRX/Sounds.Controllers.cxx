@@ -290,7 +290,7 @@ namespace Sounds
 
                 PollSoundDeviceControllerSoundSamples(FALSE);
 
-                *SoundState.Lock._Count = *SoundState.Lock._Count + -1;
+                *SoundState.Lock._Count = *SoundState.Lock._Count - 1;
 
                 DisposeMutex(SoundState.Lock.Mutex);
             }
@@ -338,7 +338,7 @@ namespace Sounds
 
             if (effect->Options == 0) { continue; } // TODO constant
 
-            ComputeSoundEffect(effect, 0.0f); // TODO constant
+            ComputeSoundEffect(effect, MIN_SOUND_VOLUME);
 
             if (!(*SoundState._SoundDeviceController)->Self->SelectSoundEffectOptions(*SoundState._SoundDeviceController, effect, effect->Options))
             {
@@ -569,7 +569,7 @@ namespace Sounds
     // 0x005c1340
     void FillSoundDeviceControllerBuffer(void** data, const u32 bits, const u32 channels, const u32 hz, const u32 count, const u32 length)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Unable to fill sound buffer, sounds must be locked."); } // TODO constant
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Unable to fill sound buffer, sounds must be locked."); }
 
         for (u32 x = 0; x < channels; x++) { if (SoundDeviceControllerState._UnknownArray4[x] == NULL) { return; } }
 
@@ -587,7 +587,7 @@ namespace Sounds
             // Check if the next mixing buffer has no data.
             if (*SoundDeviceControllerState._Unknown2 < 1)
             {
-                if (*SoundState.Lock._Count < 1) { LogError("Unable to fill sound channel buffer, sounds must be locked."); } // TODO constant
+                if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Unable to fill sound channel buffer, sounds must be locked."); }
 
                 if (0 < *SoundDeviceControllerState._Unknown2) { LogError("Next mixing buffer contains data."); }
 
@@ -670,7 +670,7 @@ namespace Sounds
 
     // 0x005ba170
     // a.k.a. convertMixBufToOutput
-    void ConvertSoundControllerMixBuffer(const f32* input, void* output, const u32 bits, const  u32 count, const u32 pitch)
+    void ConvertSoundControllerMixBuffer(const f32* input, void* output, const u32 bits, const u32 count, const u32 pitch)
     {
         if (bits != SOUND_BITS_8 && bits != SOUND_BITS_16) { LogError("Unable to convert mix buffer, invalid bits %d.", bits); } // TODO consts
 
@@ -682,11 +682,11 @@ namespace Sounds
 
                 auto out = (u8*)((addr)output + (addr)(x * pitch));
 
-                if (value < -1.0) // TODO constant
+                if (value < -1.0f) // TODO constant
                 {
                     out[0] = U8_MIN;
                 }
-                else if (value < 1.0) // TODO constant
+                else if (value < 1.0f) // TODO constant
                 {
                     out[0] = (u8)round(value * 127.0f + 128.0f); // TODO constants
                 }

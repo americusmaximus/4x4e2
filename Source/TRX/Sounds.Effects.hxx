@@ -69,13 +69,14 @@ namespace Sounds
     BOOL AcquireSoundEffectDistanceState(const f64 x, const f64 y, const f64 z, const f32 distance);
     BOOL AttemptSoundEffectAcquire(const u32 indx);
     BOOL AttemptSoundEffectDispose(const u32 indx);
-    BOOL ComputeSoundEffect(SoundEffect* self, const f32 value);
+    BOOL ComputeSoundEffect(SoundEffect* self, const f32 volume);
     BOOL PollSoundEffectStream(SoundEffect* self);
     BOOL SelectSoundEffectFrequency(const u32 indx, const f32 hz);
     BOOL SelectSoundEffectVolume(const u32 indx, const f32 volume);
     f32 AcquireSoundEffectChannelVolume(const s32 indx);
     SoundEffect* AcquireSoundEffect(const u32 indx, const BOOL mode);
     u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z);
+    void AcquireSoundEffectsState(char* buffer);
     void AutoCalculateSoundEffectRemainingDelay(SoundEffect* self);
     void ComputeSoundEffectChannelsPosition(SoundEffect* self);
     void ComputeSoundEffectLocationVelocity(SoundEffect* self);
@@ -110,5 +111,4 @@ namespace Sounds
     void SelectSoundEffectIndex(const s32 indx);
     void UpdateCurrentSoundEffectDescriptorUnk30(const u32 mode); // TODO name, enum
     void UpdateSoundEffectPosition(SoundEffect* self, const f64 position);
-    void AcquireSoundEffectsState(char* buffer);
 }

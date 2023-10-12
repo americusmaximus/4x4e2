@@ -27,6 +27,7 @@ SOFTWARE.
 #include "Sounds.Samples.hxx"
 
 #include <math.h>
+#include <stdio.h>
 
 using namespace Logger;
 using namespace Mathematics;
@@ -63,14 +64,14 @@ namespace Sounds
         self->Unknown104.Single = NULL;
         self->Unknown104.Type = SoundEffectDescriptorUnknownType::None;
 
-        self->Volume = 1.0f; // TODO constant
+        self->Volume = MAX_SOUND_VOLUME;
         self->HZ = 1.0f; // TODO constant
 
         self->Velocity.X = 0.0f;
         self->Velocity.Y = 0.0f;
         self->Velocity.Z = 0.0f;
 
-        ZeroMemory(&self->UserData, sizeof(self->UserData)); // TODO
+        ZeroMemory(&self->UserData, MAX_SOUND_USER_DATA_COUNT * sizeof(void*)); // TODO
 
         self->Position = 0.0;
 
@@ -126,7 +127,7 @@ namespace Sounds
     // 0x005bc730
     void DisposeSoundEffect(SoundEffect* self)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Sound effect must be locked."); }
 
         if (self->DebugMode) { LogMessage("[SOUND] Releasing sound effect %s.", self->Sample->Descriptor.Definition.Name); }
 
@@ -209,10 +210,7 @@ namespace Sounds
     {
         if (self->Sample == NULL) { LogError("Unable to update sound effect playback position, sound sample is missing."); }
 
-        if (position < 0.0 || self->Sample->Length < position)
-        {
-            LogError("Unable to update sound effect playback position, invalid position provided.");
-        }
+        if (position < 0.0 || self->Sample->Length < position) { LogError("Unable to update sound effect playback position, invalid position provided."); }
 
         auto delta = position - self->Position;
 
@@ -267,10 +265,7 @@ namespace Sounds
     {
         *SoundState._SoundEffectDescriptorIndex = *SoundState._SoundEffectDescriptorIndex + 1;
 
-        if (7 < *SoundState._SoundEffectDescriptorIndex) // TODO constant
-        {
-            LogError("Unable to push sound effect descriptor, the stack is full.");
-        }
+        if (7 < *SoundState._SoundEffectDescriptorIndex) { LogError("Unable to push sound effect descriptor, the stack is full."); } // TODO constant
 
         CopyMemory(&SoundState._SoundEffectDescriptors[*SoundState._SoundEffectDescriptorIndex],
             &SoundState._SoundEffectDescriptors[*SoundState._SoundEffectDescriptorIndex - 1], sizeof(SoundEffectDescriptor));
@@ -390,10 +385,7 @@ namespace Sounds
     // a.k.a. setNextSfxChannel
     void SelectNextSoundEffectDescriptorChannel(const s32 indx)
     {
-        if (indx < MIN_SOUND_EFFECT_CHANNEL_COUNT || (MAX_SOUND_EFFECT_CHANNEL_COUNT - 1) < indx)
-        {
-            LogError("Unable to select sound effect channel, invalid index %d.", indx);
-        }
+        if (indx < MIN_SOUND_EFFECT_CHANNEL_COUNT || (MAX_SOUND_EFFECT_CHANNEL_COUNT - 1) < indx) { LogError("Unable to select sound effect channel, invalid index %d.", indx); }
 
         SoundState._SoundEffectDescriptors[*SoundState._SoundEffectDescriptorIndex].NextChannelIndex = indx;
     }
@@ -502,7 +494,7 @@ namespace Sounds
     // a.k.a. setNextSfxUserData
     void SelectCurrentSoundEffectDescriptorUserData(const s32 indx, void* value)
     {
-        if (indx < 0 || 1 < indx) { LogError("Unable to set sound effect user data, invalid index %d.", indx); } // TODO constants
+        if (indx < MIN_SOUND_USER_DATA_COUNT || (MAX_SOUND_USER_DATA_COUNT - 1) < indx) { LogError("Unable to set sound effect user data, invalid index %d.", indx); } // TODO constants
 
         SoundState._SoundEffectDescriptors[*SoundState._SoundEffectDescriptorIndex].UserData[indx] = value;
     }
@@ -518,16 +510,16 @@ namespace Sounds
     // a.k.a. setNumberOfSfxChannels
     void SelectSoundEffectChannelCount(const u32 value)
     {
-        if (MAX_SOUND_EFFECT_CHANNEL_COUNT <= value) { LogError("Unable to set sound effect channel count, invalid value %d.", value); }
+        if ((MAX_SOUND_EFFECT_CHANNEL_COUNT + 1) <= value) { LogError("Unable to set sound effect channel count, invalid value %d.", value); }
 
         *SoundState.Effects.Channels._Count = value;
     }
 
     // 0x005bb8b0
     // a.k.a. compute
-    BOOL ComputeSoundEffect(SoundEffect* self, const f32 value)
+    BOOL ComputeSoundEffect(SoundEffect* self, const f32 volume)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Sound effect must be locked."); }
 
         if (self->Sample == NULL) { return FALSE; }
 
@@ -542,9 +534,9 @@ namespace Sounds
             return FALSE;
         }
 
-        if (0.0 < value && 0.0 <= self->AAA29)
+        if (MIN_SOUND_VOLUME < volume && MIN_SOUND_VOLUME <= self->Volume)
         {
-            if (self->AAA29 <= value)
+            if (self->Volume <= volume)
             {
                 if ((self->AAA30 & 0x7fffffffU) != 0) // TODO constant
                 {
@@ -557,9 +549,9 @@ namespace Sounds
             }
             else
             {
-                self->Descriptor.Volume = self->Descriptor.Volume + (value / self->AAA29) * (self->AAA28 - self->Descriptor.Volume);
+                self->Descriptor.Volume = self->Descriptor.Volume + (volume / self->Volume) * (self->AAA28 - self->Descriptor.Volume);
 
-                self->AAA29 = self->AAA29 - value;
+                self->Volume = self->Volume - volume;
             }
 
             self->Options = self->Options | 8; // TODO constant
@@ -584,7 +576,7 @@ namespace Sounds
 
         if (self->DebugMode) { LogMessage("  freq = %5.2f\n", self->HZ); }
 
-        if (isfinite(value)) { ComputeSoundEffectsPositions(); }
+        if (isfinite(volume)) { ComputeSoundEffectsPositions(); }
 
         if ((self->Descriptor.Unk30 & 1) == 0) // TODO constant
         {
@@ -664,7 +656,7 @@ namespace Sounds
     // a.k.a. autoCalcDelayRemaining
     void AutoCalculateSoundEffectRemainingDelay(SoundEffect* self)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Sound effect must be locked."); } // TODO constant
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Sound effect must be locked."); }
 
         if ((self->Descriptor.Unk30 & 1) != 0) // TODO constant
         {
@@ -708,7 +700,7 @@ namespace Sounds
     // 0x005bb6d0
     void ComputeSoundEffectPans(SoundEffect* self)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Unable to compute sound effect pans, sounds must be locked."); } // TODO constant
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Unable to compute sound effect pans, sounds must be locked."); }
 
         const auto volume = self->Descriptor.Volume * AcquireSoundEffectChannelVolume(self->Descriptor.NextChannelIndex);
 
@@ -801,7 +793,7 @@ namespace Sounds
     // 0x005bb540
     void ComputeUnknownSoundEffectValue(SoundEffect* self)
     {
-        if (*SoundState.Lock._Count < 1) { LogError("Unable to compute sound effect TODO, sounds must be locked."); } // TODO constant
+        if (*SoundState.Lock._Count < DEFAULT_SOUND_LOCK_COUNT) { LogError("Unable to compute sound effect TODO, sounds must be locked."); }
 
         if (*SoundState.Options._Channels == SOUND_CHANNEL_COUNT_NONE || *SoundState.Options._Channels == SOUND_CHANNEL_COUNT_MONO)
         {
@@ -854,37 +846,6 @@ namespace Sounds
         return (dx * dx + dy * dy + dz * dz) <= (distance * distance);
     }
 
-    // 0x005be1a0
-    // a.k.a. setSfxChannelVol
-    void SelectSoundEffectChannelVolume(const s32 indx, const f32 volume)
-    {
-        if (indx < MIN_SOUND_EFFECT_CHANNEL_COUNT || (MAX_SOUND_EFFECT_CHANNEL_COUNT - 1) < indx)
-        {
-            LogError("Unable to select sound effect channel volume, invalid index %d.", indx);
-        }
-
-        SoundState.Effects.Channels._Volumes[indx] = volume;
-
-        if (*SoundState._SoundDeviceController == NULL) { return; }
-
-        if (AcquireSoundDeviceControllerMixMode() == SoundMixMode::None) { return; }
-
-        LockSounds();
-
-        for (u32 x = 0; x < 64; x++) // TODO constant
-        {
-            auto effect = &SoundState.Effects._Cache[x];
-
-            if (effect->AAA03 != 0 && effect->UnknownIndex != 0
-                && effect->Descriptor.NextChannelIndex == indx) // TODO constant
-            {
-                effect->Options = effect->Options | 8; // TODO constant
-            }
-        }
-
-        UnlockSound1();
-    }
-
     // 0x005be340
     // a.k.a. isSfxChannelEnabled
     BOOL AcquireSoundEffectChannelState(const s32 indx)
@@ -935,13 +896,88 @@ namespace Sounds
         {
             const auto effect = &SoundState.Effects._Cache[x];
 
-            index = index + sprintf(&buffer[index], "sfx slot %d: %s, pos %7.1f/%7.1f\n",
-                x, effect->Sample->Descriptor.Definition.Name,
-                effect->Descriptor.Position, (f32)effect->Sample->Descriptor.Definition.Length);
+            if (effect->Sample != NULL && effect->AAA03 != 0) // TODO constant
+            {
+                PollSoundEffectStream(effect);
+
+                index = index + sprintf(&buffer[index], "sfx slot %d: %s, pos %7.1f/%7.1f\n",
+                    x, effect->Sample->Descriptor.Definition.Name,
+                    effect->Descriptor.Position, (f32)effect->Sample->Descriptor.Definition.Length);
+            }
         }
 
         UnlockSound1();
 
         buffer[index] = NULL;
+    }
+
+    // 0x005be1a0
+    // a.k.a. setSfxChannelVol
+    void SelectSoundEffectChannelVolume(const s32 indx, const f32 volume)
+    {
+        if (indx < MIN_SOUND_EFFECT_CHANNEL_COUNT || (MAX_SOUND_EFFECT_CHANNEL_COUNT - 1) < indx)
+        {
+            LogError("Unable to select sound effect channel volume, invalid index %d.", indx);
+        }
+
+        SoundState.Effects.Channels._Volumes[indx] = volume;
+
+        if (*SoundState._SoundDeviceController == NULL) { return; }
+
+        if (AcquireSoundDeviceControllerMixMode() == SoundMixMode::None) { return; }
+
+        LockSounds();
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            auto effect = &SoundState.Effects._Cache[x];
+
+            if (effect->AAA03 != 0 && effect->UnknownIndex != 0
+                && effect->Descriptor.NextChannelIndex == indx) // TODO constant
+            {
+                effect->Options = effect->Options | 8; // TODO constant
+            }
+        }
+
+        UnlockSound1();
+    }
+
+    // 0x005be700
+    // TODO: Name
+    u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z)
+    {
+        if (SoundState.UnknownSoundCount1 < 2) { return 0; } // TODO constant
+
+        auto diff = (x - SoundState.Effects.Position.X[0]) * (x - SoundState.Effects.Position.X[0])
+            + (y - SoundState.Effects.Position.Y[0]) * (y - SoundState.Effects.Position.Y[0])
+            + (z - SoundState.Effects.Position.Z[0]) * (z - SoundState.Effects.Position.Z[0]);
+
+        u32 result = 0;
+
+        for (u32 xx = 1; xx < SoundState.UnknownSoundCount1; xx++)
+        {
+            const auto dx = x - SoundState.Effects.Position.X[xx]; // TODO
+            const auto dy = y - SoundState.Effects.Position.Y[xx]; // TODO
+            const auto dz = z - SoundState.Effects.Position.Z[xx]; // TODO
+
+            const auto delta = dx * dx + dy * dy + dz * dz;
+
+            if (delta < diff)
+            {
+                diff = delta;
+
+                result = result + 1;
+            }
+        }
+
+        return result;
+    }
+
+    // 0x005bbd80
+    // a.k.a. mix
+    // NOTE: Originally the container is being passed by value.
+    void MixSoundEffect(SoundEffect* self, SoundEffectMixContainer container) // TODO
+    {
+        // TODO NOT IMPLEMENTED
     }
 }

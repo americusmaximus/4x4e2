@@ -81,10 +81,7 @@ namespace Sounds
     // a.k.a. freeMemory
     void DisposeSoundSample(SoundSample* self)
     {
-        if (self->Descriptor.Priority != 0)
-        {
-            LogError("Unable to release sound effect sample, it is currently in use.");
-        }
+        if (self->Descriptor.Priority != 0) { LogError("Unable to release sound effect sample, it is currently in use."); }
 
         UnlockSoundSample(self);
         ReleaseSoundSampleMemory(self);
@@ -166,9 +163,9 @@ namespace Sounds
     }
 
     // 0x005b8840
-    SoundSample* AcquireSoundEffectSample(void)
+    SoundSample* AcquireCurrentSoundEffectSample(void)
     {
-        for(u32 x = 0; x < 64; x++)
+        for(u32 x = 0; x < 64; x++) // TODO constant
         {
             *SoundState._SoundEffectIndex = *SoundState._SoundEffectIndex + 1;
 

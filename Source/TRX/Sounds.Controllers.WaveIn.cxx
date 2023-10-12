@@ -110,7 +110,7 @@ namespace Sounds
             }
         }
 
-        *SoundWaveInSoundControllerState.Counters._Unknown2 = *SoundWaveInSoundControllerState.Counters._Unknown1 + -1;
+        *SoundWaveInSoundControllerState.Counters._Unknown2 = *SoundWaveInSoundControllerState.Counters._Unknown1 - 1;
         *SoundWaveInSoundControllerState.Counters._Unknown4 = *SoundWaveInSoundControllerState.Counters._Unknown3;
 
         if (waveInStart(*SoundWaveInSoundControllerState._Device) != MMSYSERR_NOERROR)

@@ -48,7 +48,7 @@ namespace Sounds
 
     s32 AcquireSoundSampleDescriptorOffset(SoundSampleDescriptor* self, const s32 offset);
     s32 AcquireSoundSampleDescriptorValue204(SoundSampleDescriptor* self, const s32 offset);
-    SoundSample* AcquireSoundEffectSample(void);
+    SoundSample* AcquireCurrentSoundEffectSample(void);
     u32 AcquireUnknownSoundSampleDescriptorValue1(SoundSampleDescriptor* self);
     void DisposeSoundSample(SoundSample* self);
     void LoadSoundSampleDescriptor(SoundSampleDescriptor* self);
