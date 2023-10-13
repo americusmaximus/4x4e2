@@ -66,6 +66,7 @@ namespace Sounds
     extern SoundEffectContainer SoundEffectState;
 
     BOOL AcquireSoundEffectChannelState(const s32 indx);
+    BOOL AcquireSoundEffectDescriptor(const u32 indx, SoundEffectDescriptor* desc);
     BOOL AcquireSoundEffectDistanceState(const f64 x, const f64 y, const f64 z, const f32 distance);
     BOOL AttemptSoundEffectAcquire(const u32 indx);
     BOOL AttemptSoundEffectDispose(const u32 indx);
@@ -83,6 +84,7 @@ namespace Sounds
     void ComputeSoundEffectPans(SoundEffect* self);
     void ComputeSoundEffectsPositions(void);
     void ComputeUnknownSoundEffectValue(SoundEffect* self); // TODO name
+    void DisposeNamedSoundEffect(const char* name);
     void DisposeSoundEffect(SoundEffect* self);
     void InitializeCurrentSoundEffectDescriptor(void);
     void InitializeSoundEffectDescriptor(SoundEffectDescriptor* self);

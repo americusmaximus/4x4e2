@@ -107,7 +107,7 @@ namespace Sounds
 
         Assets::Sounds::SoundCacheMode CacheControl;
 
-        s32 Priority; // TODO name ReferenceCount
+        s32 ReferenceCount;
         u32 Offset; // TODO: name Index
     };
 
@@ -160,6 +160,7 @@ namespace Sounds
     {
         s32 NextChannelIndex; // TODO better name
         s32 Unknown101; // TODO
+
         f64x3 Location;
 
         SoundEffectDescriptorUnknown Unknown102;

@@ -24,14 +24,17 @@ SOFTWARE.
 #include "IO.Streams.hxx"
 #include "Logger.hxx"
 #include "Memory.hxx"
+#include "Sounds.Effects.hxx"
 #include "Sounds.hxx"
 #include "Sounds.Samples.hxx"
+#include "Strings.hxx"
 
 using namespace Assets::Sounds;
 using namespace IO::Streams;
 using namespace Logger;
 using namespace Memory;
 using namespace Objects;
+using namespace Strings;
 
 namespace Sounds
 {
@@ -52,7 +55,7 @@ namespace Sounds
         self->Descriptor.AllocatedMemory1 = NULL;
 
         self->Descriptor.CacheControl = SoundCacheMode::Normal;
-        self->Descriptor.Priority = 0;
+        self->Descriptor.ReferenceCount = 0;
         self->Descriptor.Offset = 0;
 
         self->Unk6 = 0;
@@ -81,7 +84,7 @@ namespace Sounds
     // a.k.a. freeMemory
     void DisposeSoundSample(SoundSample* self)
     {
-        if (self->Descriptor.Priority != 0) { LogError("Unable to release sound effect sample, it is currently in use."); }
+        if (self->Descriptor.ReferenceCount != 0) { LogError("Unable to release sound effect sample, it is currently in use."); }
 
         UnlockSoundSample(self);
         ReleaseSoundSampleMemory(self);
@@ -172,7 +175,7 @@ namespace Sounds
             if (63 < *SoundState._SoundEffectIndex) { *SoundState._SoundEffectIndex = 0; } // TODO constant
 
             if (SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.CacheControl == SoundCacheMode::Normal
-                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.Priority == 0
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.ReferenceCount == 0
                 && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk6 == 0
                 && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Lock.Length == 0)
             {
@@ -181,5 +184,28 @@ namespace Sounds
         }
 
         return NULL;
+    }
+
+    // 0x005bea70
+    void DisposeNamedSoundSample(const char* name, const BOOL dispose)
+    {
+        LockSounds();
+
+        if (dispose) { DisposeNamedSoundEffect(name); }
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            if (SoundState._SoundEffectSamples[x].Descriptor.ReferenceCount == 0)
+            {
+                auto sample = &SoundState._SoundEffectSamples[x];
+
+                if (EqualStrings(name, sample->Descriptor.Definition.Name))
+                {
+                    DisposeSoundSample(sample);
+                }
+            }
+        }
+
+        UnlockSound1();
     }
 }

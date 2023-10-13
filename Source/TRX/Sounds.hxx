@@ -25,6 +25,7 @@ SOFTWARE.
 #include "Assets.Sounds.hxx"
 #include "Native.Basic.hxx"
 #include "Sounds.Controllers.hxx"
+#include "Sounds.Disk.hxx"
 
 #define MIN_SOUND_EFFECT_CHANNEL_COUNT 0
 #define MAX_SOUND_EFFECT_CHANNEL_COUNT 32
@@ -149,6 +150,8 @@ namespace Sounds
 
         SoundEffectDescriptor* _SoundEffectDescriptors = (SoundEffectDescriptor*)0x00d38688; // TOOD array of 8
         s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680;
+
+        SoundDisk** _SoundDisk = (SoundDisk**)0x0067acc4; // TODO
     };
 
     extern SoundContainer SoundState;
