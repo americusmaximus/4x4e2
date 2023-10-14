@@ -168,5 +168,6 @@ namespace Sounds
     BOOL StopSoundDirectSoundDeviceControllerSoundSample(const s32 indx);
     s32 AcquireSoundDirectSoundSoundControllerFrequency(const f32 value);
     s32 AcquireSoundDirectSoundSoundControllerVolume(const f32 value);
+    void InitializeSoundDirectSoundDeviceControllerEnvironment(void);
     void PollSoundDirectSoundSoundControllerSoundEffect(void);
 }

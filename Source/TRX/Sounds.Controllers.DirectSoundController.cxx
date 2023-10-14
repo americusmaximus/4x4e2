@@ -1421,4 +1421,68 @@ namespace Sounds
 
         return FALSE;
     }
+
+    // 0x005b5430
+    // INLINE
+    void InitializeSoundDirectSoundDeviceControllerEnvironment(void)
+    {
+        if (SoundDirectSoundSoundControllerState.EAX.Instance != NULL)
+        {
+            SoundDirectSoundSoundControllerState.EAX.Instance->Release();
+            SoundDirectSoundSoundControllerState.EAX.Instance = NULL;
+        }
+
+        WAVEFORMATEX format =
+        {
+            .wFormatTag = WAVE_FORMAT_PCM,
+            .nChannels = SOUND_CHANNEL_COUNT_MONO,
+            .nSamplesPerSec = SOUND_FREQUENCY_22050,
+            .nAvgBytesPerSec = SOUND_FREQUENCY_22050 * SOUND_BYTES_2,
+            .nBlockAlign = SOUND_BYTES_2,
+            .wBitsPerSample = SOUND_BITS_16
+        };
+
+        DSBUFFERDESC desc =
+        {
+            .dwSize = sizeof(DSBUFFERDESC),
+            .dwFlags = DSBCAPS_CTRL3D | DSBCAPS_STATIC,
+            .dwBufferBytes = DEFAULT_DIRECT_SOUND_BUFFER_SIZE,
+            .lpwfxFormat = &format
+        };
+
+        IDirectSoundBuffer* buffer;
+
+        if (DSC(SoundDirectSoundSoundControllerState.DirectSound.Instance->CreateSoundBuffer(&desc, &buffer, NULL),
+            "Unable to create temporary secondary sound buffer for property set creation.") == DS_OK)
+        {
+            IDirectSound3DBuffer* buff;
+
+            buffer->QueryInterface(IID_IDirectSound3DBuffer, (void**)&buff);
+
+            if (buff == NULL)
+            {
+                if (buffer != NULL)
+                {
+                    buffer->Release();
+                    buffer = NULL;
+                }
+            }
+            else
+            {
+                buff->QueryInterface(IID_IKsPropertySet, (void**)&SoundDirectSoundSoundControllerState.EAX.Instance);
+
+                if (buff != NULL)
+                {
+                    buff->Release();
+                    buff = NULL;
+                }
+
+                if (buffer != NULL)
+                {
+                    buffer->Release();
+                    buffer = NULL;
+                }
+            }
+        }
+    }
 }

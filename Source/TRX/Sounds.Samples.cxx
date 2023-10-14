@@ -23,6 +23,7 @@ SOFTWARE.
 #include "Assets.Sounds.hxx"
 #include "IO.Streams.hxx"
 #include "Logger.hxx"
+#include "Mathematics.Basic.hxx"
 #include "Memory.hxx"
 #include "Sounds.Effects.hxx"
 #include "Sounds.hxx"
@@ -32,6 +33,7 @@ SOFTWARE.
 using namespace Assets::Sounds;
 using namespace IO::Streams;
 using namespace Logger;
+using namespace Mathematics;
 using namespace Memory;
 using namespace Objects;
 using namespace Strings;
@@ -43,20 +45,16 @@ namespace Sounds
     // 0x005ba700
     SoundSample* ConstructSoundSample(SoundSample* self)
     {
-        ZeroMemory(&self->Descriptor, sizeof(SoundSampleDescriptor));
-
-        self->Descriptor.ReferenceDistance = 20.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
-
-        self->Descriptor.MinimumDistance = *SoundState._UnknownSoundEffectValue1 * SoundDeviceControllerState.DistanceFactor.InverseValue;
-        self->Descriptor.MaximumDistance = 10000.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
+        ConstructSoundSampleDescriptor(&self->Descriptor);
 
         ConstructInStreamFile(&self->Stream);
 
         self->Descriptor.AllocatedMemory1 = NULL;
 
         self->Descriptor.CacheControl = SoundCacheMode::Normal;
-        self->Descriptor.ReferenceCount = 0;
-        self->Descriptor.Offset = 0;
+
+        self->ReferenceCount = 0;
+        self->Index = 0;
 
         self->Unk6 = 0;
         self->Unk7 = -1; // TODO constant
@@ -84,7 +82,7 @@ namespace Sounds
     // a.k.a. freeMemory
     void DisposeSoundSample(SoundSample* self)
     {
-        if (self->Descriptor.ReferenceCount != 0) { LogError("Unable to release sound effect sample, it is currently in use."); }
+        if (self->ReferenceCount != 0) { LogError("Unable to release sound effect sample, it is currently in use."); }
 
         UnlockSoundSample(self);
         ReleaseSoundSampleMemory(self);
@@ -127,7 +125,7 @@ namespace Sounds
 
         void* result = NULL;
 
-        if (self->Descriptor.Offset == 0)
+        if (self->Index == 0)
         {
             if (self->Descriptor.AllocatedMemory1 == NULL) { LogError("Unable to lock sound sample, memory buffer is not allocated."); }
 
@@ -137,8 +135,7 @@ namespace Sounds
         {
             if (*SoundState._SoundDeviceController == NULL) { return NULL; }
 
-            result = (*SoundState._SoundDeviceController)->Self->LockSoundSample(*SoundState._SoundDeviceController,
-                self->Descriptor.Offset, offset, length);
+            result = (*SoundState._SoundDeviceController)->Self->LockSoundSample(*SoundState._SoundDeviceController, self->Index, offset, length);
         }
 
         if (result != NULL)
@@ -155,10 +152,9 @@ namespace Sounds
     {
         if (self->Lock.Length == NULL) { return; }
 
-        if (self->Descriptor.Offset != 0 && *SoundState._SoundDeviceController != NULL)
+        if (self->Index != 0 && *SoundState._SoundDeviceController != NULL)
         {
-            (*SoundState._SoundDeviceController)->Self->UnlockSoundSample(*SoundState._SoundDeviceController,
-                self->Descriptor.Offset, self->Lock.Offset, self->Lock.Length);
+            (*SoundState._SoundDeviceController)->Self->UnlockSoundSample(*SoundState._SoundDeviceController, self->Index, self->Lock.Offset, self->Lock.Length);
         }
 
         self->Lock.Offset = 0;
@@ -166,16 +162,17 @@ namespace Sounds
     }
 
     // 0x005b8840
+    // INLINE
     SoundSample* AcquireCurrentSoundEffectSample(void)
     {
-        for(u32 x = 0; x < 64; x++) // TODO constant
+        for (u32 x = 0; x < 64; x++) // TODO constant
         {
             *SoundState._SoundEffectIndex = *SoundState._SoundEffectIndex + 1;
 
             if (63 < *SoundState._SoundEffectIndex) { *SoundState._SoundEffectIndex = 0; } // TODO constant
 
             if (SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.CacheControl == SoundCacheMode::Normal
-                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.ReferenceCount == 0
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].ReferenceCount == 0
                 && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk6 == 0
                 && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Lock.Length == 0)
             {
@@ -195,7 +192,7 @@ namespace Sounds
 
         for (u32 x = 0; x < 64; x++) // TODO constant
         {
-            if (SoundState._SoundEffectSamples[x].Descriptor.ReferenceCount == 0)
+            if (SoundState._SoundEffectSamples[x].ReferenceCount == 0)
             {
                 auto sample = &SoundState._SoundEffectSamples[x];
 
@@ -207,5 +204,22 @@ namespace Sounds
         }
 
         UnlockSound1();
+    }
+
+    // 0x005bcf80
+    f64 AcquireSoundSamplePosition(SoundSample* self, const f64 position, const SoundSeek mode)
+    {
+        auto value = CalculateSoundSampleDescriptorPosition(&self->Descriptor, position, mode, SoundSeek::End);
+
+        if (AcquireUnknownSoundSampleDescriptorValue1(&self->Descriptor) == 0) // TODO constant
+        {
+            value = Clamp(value, 0.0, 1.0); // TODO constant
+        }
+        else
+        {
+            value = value - AcquireUnknownSoundValue101(value);
+        }
+
+        return CalculateSoundSampleDescriptorPosition(&self->Descriptor, value, SoundSeek::End, mode);
     }
 }

@@ -68,13 +68,24 @@ namespace Sounds
     BOOL AcquireSoundEffectChannelState(const s32 indx);
     BOOL AcquireSoundEffectDescriptor(const u32 indx, SoundEffectDescriptor* desc);
     BOOL AcquireSoundEffectDistanceState(const f64 x, const f64 y, const f64 z, const f32 distance);
+    BOOL AcquireSoundEffectSoundSampleDescriptor(const u32 indx, SoundSampleDescriptor* desc);
     BOOL AttemptSoundEffectAcquire(const u32 indx);
     BOOL AttemptSoundEffectDispose(const u32 indx);
     BOOL ComputeSoundEffect(SoundEffect* self, const f32 volume);
     BOOL PollSoundEffectStream(SoundEffect* self);
+    BOOL SelectSoundEffectDebugMode(const u32 indx, const BOOL mode);
+    BOOL SelectSoundEffectDescriptorUserData(const u32 indx, const s32 index, void* value);
     BOOL SelectSoundEffectFrequency(const u32 indx, const f32 hz);
+    BOOL SelectSoundEffectLocation(const u32 indx, const f64 x, const f64 y, const f64 z);
+    BOOL SelectSoundEffectUnknown102Double(const u32 indx, f64x3* value); // TODO name
+    BOOL SelectSoundEffectUnknown102Single(const u32 indx, f32x3* value); // TODO name
+    BOOL SelectSoundEffectUnknown104Double(const u32 indx, f64x3* value); // TODO name
+    BOOL SelectSoundEffectUnknown104Single(const u32 indx, f32x3* value); // TODO name
+    BOOL SelectSoundEffectVelocity(const u32 indx, const f32 x, const f32 y, const f32 z);
     BOOL SelectSoundEffectVolume(const u32 indx, const f32 volume);
+    BOOL SelectSoundEffectVolumeValues(const u32 indx, const f32 min, const f32 volume, const u32 max);
     f32 AcquireSoundEffectChannelVolume(const s32 indx);
+    f64 CalculateSoundEffectPosition(const u32 indx, const SoundSeek mode);
     SoundEffect* AcquireSoundEffect(const u32 indx, const BOOL mode);
     u32 UpdateSoundEffectPositionCount(const f64 x, const f64 y, const f64 z);
     void AcquireSoundEffectsState(char* buffer);
@@ -93,11 +104,11 @@ namespace Sounds
     void PushCurrentSoundEffectDescriptor(void);
     void ReleaseSoundEffectSamples(void);
     void RemoveCurrentSoundEffectDescriptorUnk30(const u32 mode); // TODO name, enum
-    void SelectCurrentSoundDescriptorPosition(const f64 value, const s32 mode); // TODO name, params
-    void SelectCurrentSoundDescriptorUnknownValues102103(f64x3* value);
-    void SelectCurrentSoundDescriptorUnknownValues103102(f32x3* value);
-    void SelectCurrentSoundDescriptorUnknownValues104105(f64x3* value);
-    void SelectCurrentSoundDescriptorUnknownValues105104(f32x3* value);
+    void SelectCurrentSoundDescriptorPosition(const f64 value, const SoundSeek mode);
+    void SelectCurrentSoundDescriptorUnknownValues102103(f64x3* value); // TODO name
+    void SelectCurrentSoundDescriptorUnknownValues103102(f32x3* value); // TODO name
+    void SelectCurrentSoundDescriptorUnknownValues104105(f64x3* value); // TODO name
+    void SelectCurrentSoundDescriptorUnknownValues105104(f32x3* value); // TODO name
     void SelectCurrentSoundEffectDescriptorFrequency(const f32 value);
     void SelectCurrentSoundEffectDescriptorLocation(const f64 x, const f64 y, const f64 z);
     void SelectCurrentSoundEffectDescriptorRemainingDelay(const f32 value);
@@ -106,7 +117,7 @@ namespace Sounds
     void SelectCurrentSoundEffectDescriptorVelocity(const f32 x, const f32 y, const f32 z);
     void SelectCurrentSoundEffectDescriptorVolume(const f32 volume);
     void SelectCurrentSoundEffectDistances(const f32 min, const f32 ref, const f32 max);
-    void SelectNextSoundEffectDescriptorChannel(const s32 indx);
+    void SelectNextSoundEffectDescriptorChannel(const s32 indx); // TODO name
     void SelectSoundEffectChannelCount(const u32 value);
     void SelectSoundEffectChannelState(const s32 indx, const BOOL value);
     void SelectSoundEffectChannelVolume(const s32 indx, const f32 volume);

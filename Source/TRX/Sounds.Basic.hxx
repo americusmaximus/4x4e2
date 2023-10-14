@@ -106,15 +106,15 @@ namespace Sounds
         s32 Unk112; // TODO
 
         Assets::Sounds::SoundCacheMode CacheControl;
-
-        s32 ReferenceCount;
-        u32 Offset; // TODO: name Index
     };
 
     // a.k.a. SfxSample
     struct SoundSample
     {
         SoundSampleDescriptor Descriptor;
+
+        s32 ReferenceCount;
+        u32 Index;
 
         s32 Unk6; // TODO
         s32 Unk7; // TODO, some sort of index
@@ -155,6 +155,13 @@ namespace Sounds
         SoundEffectDescriptorUnknownType Type;
     };
 
+    enum class SoundSeek : u32
+    {
+        Set = 0,
+        Current = 1,
+        End = 2
+    };
+
     // a.k.a. SfxOptions
     struct SoundEffectDescriptor
     {
@@ -175,8 +182,12 @@ namespace Sounds
         void* UserData[MAX_SOUND_USER_DATA_COUNT]; // TODO
         u32 Unk30;// TODO enum
         s32 Unknown1004; // TODO
+
+
         f64 Position; // Linear position within the timeline of the sound effect.
-        s32 Unknown1007; // TODO
+
+        SoundSeek Seek;
+
         s32 Unknown1008; // TODO
 
         f32 MinimumDistance;
@@ -209,9 +220,12 @@ namespace Sounds
 
         s32 AAA20[MAX_SOUND_CHANNEL_COUNT]; // TODO
 
-        f32 AAA28; // TODO MinimumDistance?
-        f32 Volume;
-        s32 AAA30; // TODO MaximumDistance?
+        struct
+        {
+            f32 Minimum;
+            f32 Current;
+            f32 Maximum;
+        } Volume;
 
         BOOL DebugMode;
 

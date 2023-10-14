@@ -47,6 +47,19 @@ using namespace Strings;
 
 namespace Sounds
 {
+    // 0x005bcd20
+    SoundSampleDescriptor* ConstructSoundSampleDescriptor(SoundSampleDescriptor* self)
+    {
+        ZeroMemory(self, sizeof(SoundSampleDescriptor));
+
+        self->ReferenceDistance = 20.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
+
+        self->MinimumDistance = *SoundState._UnknownSoundEffectValue1 * SoundDeviceControllerState.DistanceFactor.InverseValue;
+        self->MaximumDistance = 10000.0f * SoundDeviceControllerState.DistanceFactor.InverseValue; // TODO constant
+
+        return self;
+    }
+
     // 0x005bcde0
     s32 AcquireSoundSampleDescriptorOffset(SoundSampleDescriptor* self, const s32 offset)
     {
@@ -260,5 +273,42 @@ namespace Sounds
         }
 
         ReleaseInStreamFile(&stream, ReleaseMode::None);
+    }
+
+    // 0x005bce10
+    // a.k.a. cvtPlaybackPos
+    f64 CalculateSoundSampleDescriptorPosition(SoundSampleDescriptor* self, const f64 position, const SoundSeek src, const SoundSeek dst)
+    {
+        if (src == dst) { return position; }
+
+        auto result = position;
+
+        switch (src)
+        {
+        case SoundSeek::Set: { break; }
+        case SoundSeek::Current: { result = self->Definition.HZ * position; break; }
+        case SoundSeek::End:
+        {
+            if (self->Definition.Length < 1) { LogError("Unable to calculate sound sample position, unable to use relative sample position when length of %s is not known.", self->Definition.Name); }
+
+            result = self->Definition.Length * position; break;
+        }
+        default: { LogError("Unable to calculate sound sample position, invalid input sample position type."); }
+        }
+
+        switch (dst)
+        {
+        case SoundSeek::Set: { break; }
+        case SoundSeek::Current: { result = position / self->Definition.HZ; break; }
+        case SoundSeek::End:
+        {
+            if (self->Definition.Length < 1) { LogError("Unable to calculate sound sample position, unable to use relative sample position when length of %s is not known.", self->Definition.Name); }
+
+            result = position / self->Definition.Length; break;
+        }
+        default: { LogError("Unable to calculate sound sample position, invalid input sample position type."); }
+        }
+
+        return result;
     }
 }

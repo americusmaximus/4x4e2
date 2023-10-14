@@ -51,7 +51,7 @@ namespace Sounds
     typedef void* (CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERLOCKSOUNDSAMPLE) (AbstractSoundDeviceController* self, const s32 indx, const s32 offset, const s32 length);
     typedef const void(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERUNLOCKSOUNDSAMPLE) (AbstractSoundDeviceController* self, const s32 indx, const s32 offset, const s32 length);
     typedef const u32(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERALLOCATESOUNDEFFECT) (AbstractSoundDeviceController* self, const s32 indx);
-    typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERSELECTSOUNDEFFECTOPTIONS) (AbstractSoundDeviceController* self, SoundEffect* effect, const s32 options); // TODO enum
+    typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERSELECTSOUNDEFFECTOPTIONS) (AbstractSoundDeviceController* self, SoundEffect* effect, const u32 options); // TODO enum
     typedef const f64(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERACQUIRESOUNDEFFECTPOSITION) (void* self, SoundEffect* effect);
     typedef const BOOL(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERSTARTSOUNDEFFECT) (AbstractSoundDeviceController* self, SoundEffect* effect);
     typedef const void(CDECLAPI* ABSTRACTSOUNDDEVICECONTROLLERRELEASESOUNDEFFECT) (AbstractSoundDeviceController* self, SoundEffect* effect);
