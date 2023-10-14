@@ -39,6 +39,9 @@ SOFTWARE.
 #define MIN_SOUND_VOLUME (0.0f)
 #define MAX_SOUND_VOLUME (1.0f)
 
+#define MAX_SOUND_UNKNOWN_ALLOCATION_SIZE (2 * 1024 * 1024)
+#define MAX_SOUND_SAMPLE_ALLOCATION_SIZE (4 * 1024 * 1024)
+
 namespace Sounds
 {
     struct SoundContainer
@@ -152,6 +155,9 @@ namespace Sounds
         s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680;
 
         SoundDisk** _SoundDisk = (SoundDisk**)0x0067acc4; // TODO
+
+        u32 UnknownAllocationSize = MAX_SOUND_UNKNOWN_ALLOCATION_SIZE; // 0x0067acf4
+        u32 MaximumSoundSampleAllocationSize = MAX_SOUND_SAMPLE_ALLOCATION_SIZE; // 0x0067acf8
     };
 
     extern SoundContainer SoundState;
@@ -169,6 +175,7 @@ namespace Sounds
     void LockSounds(void);
     void ReleaseSounds(void);
     void SelectMaximumSoftWareLatency(const f32 value);
+    void SelectSoundAllocation(const u32 unk, const u32 samples);
     void SelectSoundMixMode(const SoundMixMode mode);
     void UnlockSound1(void);
     void UnlockSound2(void);

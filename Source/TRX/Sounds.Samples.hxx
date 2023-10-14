@@ -46,6 +46,8 @@ namespace Sounds
 
     extern SoundSampleContainer SoundSampleState;
 
+    BOOL AllocateSoundSample(SoundSample* self);
+    BOOL ReduceSoundSampleAllocation(const u32 size);
     f64 AcquireSoundSamplePosition(SoundSample* self, const f64 position, const SoundSeek mode);
     f64 CalculateSoundSampleDescriptorPosition(SoundSampleDescriptor* self, const f64 position, const SoundSeek src, const SoundSeek dst);
     s32 AcquireSoundSampleDescriptorOffset(SoundSampleDescriptor* self, const s32 offset);
@@ -53,6 +55,7 @@ namespace Sounds
     SoundSample* AcquireCurrentSoundEffectSample(void);
     SoundSampleDescriptor* ConstructSoundSampleDescriptor(SoundSampleDescriptor* self);
     u32 AcquireUnknownSoundSampleDescriptorValue1(SoundSampleDescriptor* self);
+    void AcquireSoundSamplesStatistics(u32* occupiedCount, u32* occupiedAllocation, u32* freeCount, u32* freeAllocation, u32* totalCount, u32* totalAllocated); // TODO names
     void DisposeNamedSoundSample(const char* name, const BOOL dispose);
     void DisposeSoundSample(SoundSample* self);
     void LoadSoundSampleDescriptor(SoundSampleDescriptor* self);

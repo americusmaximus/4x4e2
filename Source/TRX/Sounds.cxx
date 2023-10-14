@@ -282,4 +282,13 @@ namespace Sounds
 
         return *SoundState.Options._HZ;
     }
+
+    // 0x005bea50
+    void SelectSoundAllocation(const u32 unk, const u32 samples)
+    {
+        SoundState.UnknownAllocationSize = unk;
+        SoundState.MaximumSoundSampleAllocationSize = samples;
+
+        ReduceSoundSampleAllocation(0);
+    }
 }

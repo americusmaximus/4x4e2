@@ -117,10 +117,10 @@ namespace Sounds
         u32 Index;
 
         s32 Unk6; // TODO
-        s32 Unk7; // TODO, some sort of index
+        s32 Unk7; // TODO, enumeration, related to streaming
         s32 Length; // TODO type
 
-        s32 Unk9;
+        u32 AllocatedMemorySize; // TODO
         s32 Unk10; // TODO name Position
         s32 Position;
         SoundDecoder* Decoder;

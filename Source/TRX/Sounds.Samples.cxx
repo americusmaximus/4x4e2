@@ -65,7 +65,7 @@ namespace Sounds
         self->Stream.File.Handle = NULL;
 
         self->Length = 0;
-        self->Unk9 = 0;
+        self->AllocatedMemorySize = 0;
 
         return self;
     }
@@ -103,7 +103,7 @@ namespace Sounds
         self->Descriptor.CacheControl = SoundCacheMode::Normal;
         self->Unk6 = 0;
         self->Length = 0;
-        self->Unk9 = 0;
+        self->AllocatedMemorySize = 0;
         self->Unk7 = -1; // TODO constant
     }
 
@@ -249,5 +249,160 @@ namespace Sounds
         if (!IsInStreamFileAvailable(&self->Stream)) { LogError("Unable to seek sound sample, no MP3 and no WAV for sample '%s'.", self->Descriptor.Definition.Name); }
 
         SeekInStreamFile(&self->Stream, AcquireSoundSampleDescriptorOffset(&self->Descriptor, self->Unk10) + self->Unk13, StreamSeek::Set);
+    }
+
+    // 0x005ba7a0
+    // a.k.a. allocateHwSample
+    BOOL AllocateSoundSample(SoundSample* self)
+    {
+        ReleaseSoundDeviceControllerSoundSample(self);
+        ReleaseSoundSampleMemory(self);
+
+        if ((self->Descriptor).Definition.Type == SoundSampleType::WAVYADPCM)
+        {
+            LogMessage("[ERROR] [SOUND] Unable to use Yamaha WAV on non-CE platform.\n");
+
+            return FALSE;
+        }
+
+        if (AcquireSoundDeviceControllerMixMode() == SoundMixMode::None)
+        {
+            ReduceSoundSampleAllocation(self->AllocatedMemorySize);
+
+            auto ptr = ReallocateMemory(self->Descriptor.AllocatedMemory1, self->AllocatedMemorySize);
+
+            if (ptr == NULL) { return FALSE; }
+
+            self->Descriptor.AllocatedMemory1 = ptr;
+
+            return TRUE;
+        }
+
+        SoundSampleDescriptor desc;
+        CopyMemory(&desc, &self->Descriptor, sizeof(SoundSampleDescriptor));
+
+        desc.Definition.Length = self->Length;
+
+        u32 indx = 0; // TODO constant
+
+        if (*SoundState._SoundDeviceController != NULL)
+        {
+            for (u32 x = 0; x < 64; x++) // TODO constant
+            {
+                indx = (*SoundState._SoundDeviceController)->Self->AllocateSoundSample(*SoundState._SoundDeviceController, &desc);
+
+                if (indx != 0) { break; } // TODO constant
+
+                auto index = *SoundState._SoundEffectIndex;
+
+                for (u32 xx = 0; xx < 64; xx++) // TODO constant
+                {
+                    indx = index + 1;
+
+                    if (63 < index) { index = 0; } // TODO constant
+
+                    if (SoundState._SoundEffectSamples[index].Descriptor.CacheControl == SoundCacheMode::Normal
+                        && SoundState._SoundEffectSamples[index].Index != 0
+                        && SoundState._SoundEffectSamples[index].ReferenceCount == 0
+                        && SoundState._SoundEffectSamples[index].Unk6 == 0
+                        && SoundState._SoundEffectSamples[index].Lock.Length == 0)
+                    {
+                        DisposeSoundSample(&SoundState._SoundEffectSamples[index]);
+
+                        break;
+                    }
+                }
+            }
+
+            if (indx == 0) { LogMessage("[ERROR] [SOUND] Unable to allocate sound sample.\n"); } // TODO constant
+        }
+
+        self->Index = indx;
+
+        if (self->Index != 0) { return TRUE; } // TODO constant
+
+        return FALSE;
+    }
+
+    // 0x005b88b0
+    BOOL ReduceSoundSampleAllocation(const u32 size)
+    {
+        u32 sum = 0;
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            if (SoundState._SoundEffectSamples[x].Descriptor.AllocatedMemory1 != NULL)
+            {
+                sum = sum + SoundState._SoundEffectSamples[x].AllocatedMemorySize;
+            }
+        }
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            if (sum + size <= SoundState.MaximumSoundSampleAllocationSize) { return TRUE; }
+
+            auto indx = *SoundState._SoundEffectDescriptorIndex;
+
+            for (u32 xx = 0; xx < 64; xx++) // TODO constant
+            {
+                indx = indx + 1;
+
+                if (63 < indx) { indx = 0; } // TODO constant
+
+                if (SoundState._SoundEffectSamples[xx].Descriptor.AllocatedMemory1 != NULL
+                    && 0 < SoundState._SoundEffectSamples[x].Length
+                    && SoundState._SoundEffectSamples[x].ReferenceCount == 0
+                    && SoundState._SoundEffectSamples[x].Descriptor.CacheControl == SoundCacheMode::Normal
+                    && SoundState._SoundEffectSamples[x].Unk6 == 0
+                    && SoundState._SoundEffectSamples[x].Lock.Length == 0)
+                {
+                    sum = sum - SoundState._SoundEffectSamples[x].AllocatedMemorySize;
+
+                    DisposeSoundSample(&SoundState._SoundEffectSamples[x]);
+                }
+            }
+
+        }
+
+        return FALSE;
+    }
+
+    // 0x005bedd0
+    void AcquireSoundSamplesStatistics(u32* occupiedCount, u32* occupiedAllocation, u32* freeCount, u32* freeAllocation, u32* totalCount, u32* totalAllocated)
+    {
+        u32 fc = 0;
+        u32 fa = 0;
+
+        u32 oc = 0;
+        u32 oa = 0;;
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            if (0 < SoundState._SoundEffectSamples[x].Length)
+            {
+                if (SoundState._SoundEffectSamples[x].ReferenceCount == 0
+                    && SoundState._SoundEffectSamples[x].Descriptor.CacheControl == SoundCacheMode::Normal
+                    && SoundState._SoundEffectSamples[x].Unk6)
+                {
+                    fc = fc + 1;
+                    fa = fa + SoundState._SoundEffectSamples[x].AllocatedMemorySize;
+                }
+                else
+                {
+                    oc = oc + 1;
+                    oa = oa + SoundState._SoundEffectSamples[x].AllocatedMemorySize;
+                }
+            }
+        }
+
+        if (occupiedCount != NULL) { *occupiedCount = oc; }
+        if (occupiedAllocation != NULL) { *occupiedAllocation = oa; }
+
+        if (freeCount != NULL) { *freeCount = fc; }
+        if (freeAllocation != NULL) { *freeAllocation = fa; }
+
+        if (totalCount != NULL) { *totalCount = 64 - oc - fc; } // TODO constant
+
+        if (totalAllocated != NULL) { *totalAllocated = (u32)Max(0, (s32)(SoundState.MaximumSoundSampleAllocationSize - oa - fa)); }
     }
 }
