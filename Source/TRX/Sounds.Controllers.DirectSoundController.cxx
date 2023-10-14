@@ -105,7 +105,7 @@ namespace Sounds
                     }
                 }
 
-                if (AcquireSoundMixMode2() == SoundMixMode::Advanced
+                if (AcquireSoundMixMode() == SoundMixMode::Advanced
                     && SoundDeviceState.EnumeratedDevices[indx].MixMode == SoundMixMode::Advanced)
                 {
                     SoundDirectSoundSoundControllerState.Buffers.Primary.Buffer->QueryInterface(
@@ -495,7 +495,7 @@ namespace Sounds
 
         if (SoundDirectSoundSoundControllerState.DirectSound.Listener == NULL)
         {
-            if (AcquireSoundMixMode2() == SoundMixMode::None) { return SoundMixMode::None; }
+            if (AcquireSoundMixMode() == SoundMixMode::None) { return SoundMixMode::None; }
 
             DSCAPS caps = { .dwSize = sizeof(DSCAPS) };
 

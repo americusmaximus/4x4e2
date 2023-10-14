@@ -42,4 +42,48 @@ namespace IO::Ini
 
         strcpy(self->Section, section);
     }
+
+    // 0x0047e500
+    void ReadAbstractIniInteger(AbstractIni* self, const char* name, s32* value)
+    {
+        char buffer[MAX_INI_STRING_BUFFER_LENGTH];
+
+        sprintf(buffer, "%d", *value);
+
+        self->Self->Read(self, name, buffer, MAX_INI_STRING_BUFFER_LENGTH);
+
+        sscanf(buffer, "%d", value);
+    }
+
+    // 0x0047e560
+    void WriteAbstractIniInteger(AbstractIni* self, const char* name, const s32 value)
+    {
+        char buffer[MAX_INI_STRING_BUFFER_LENGTH];
+
+        sprintf(buffer, "%d", value);
+
+        self->Self->Write(self, name, buffer);
+    }
+
+    // 0x0047e5a0
+    void ReadAbstractIniReal(AbstractIni* self, const char* name, f32* value)
+    {
+        char buffer[MAX_INI_STRING_BUFFER_LENGTH];
+
+        sprintf(buffer, "%g", (f64)*value);
+
+        self->Self->Read(self, name, buffer, MAX_INI_STRING_BUFFER_LENGTH);
+
+        sscanf(buffer, "%f", value);
+    }
+
+    // 0x0047e610
+    void WriteAbstractIniReal(AbstractIni* self, const char* name, const f32 value)
+    {
+        char buffer[MAX_INI_STRING_BUFFER_LENGTH];
+
+        sprintf(buffer, "%g", (f64)value);
+
+        self->Self->Write(self, name, buffer);
+    }
 }

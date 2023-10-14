@@ -121,8 +121,8 @@ namespace Sounds
         s32 Length; // TODO type
 
         s32 Unk9;
-        s32 Unk10;
-        s32 Unl11;
+        s32 Unk10; // TODO name Position
+        s32 Position;
         SoundDecoder* Decoder;
         s32 Unk13;
 

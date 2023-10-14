@@ -41,7 +41,7 @@ namespace Sounds
     SoundContainer SoundState;
 
     // 0x005bfc60
-    SoundMixMode AcquireSoundMixMode2(void)
+    SoundMixMode AcquireSoundMixMode(void)
     {
         return SoundState.MixMode;
     }
@@ -49,16 +49,16 @@ namespace Sounds
     // 0x005c0710
     f32 AcquireMaximumSoftWareSoundLatency(void)
     {
-        return *SoundState.Options._MaximumSoftWareLatency;
+        return SoundState.Options.MaximumSoftWareLatency;
     }
 
     // 0x005c0720
     // a.k.a. setMaxSwSoundLatency
     void SelectMaximumSoftWareLatency(const f32 value)
     {
-        if (!AcquireSoundDeviceControllerActiveState()) { LogError("Unable to select maximum sound latency while sound is active."); }
+        if (AcquireSoundDeviceControllerActiveState()) { LogError("Unable to select maximum sound latency while sound is active."); }
 
-        *SoundState.Options._MaximumSoftWareLatency = Clamp(value, MIN_SOUND_LATENCY, MAX_SOUND_LATENCY);
+        SoundState.Options.MaximumSoftWareLatency = Clamp(value, MIN_SOUND_LATENCY, MAX_SOUND_LATENCY);
     }
 
     // 0x005c0420

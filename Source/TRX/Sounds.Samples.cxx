@@ -30,6 +30,8 @@ SOFTWARE.
 #include "Sounds.Samples.hxx"
 #include "Strings.hxx"
 
+#include <math.h>
+
 using namespace Assets::Sounds;
 using namespace IO::Streams;
 using namespace Logger;
@@ -221,5 +223,31 @@ namespace Sounds
         }
 
         return CalculateSoundSampleDescriptorPosition(&self->Descriptor, value, SoundSeek::End, mode);
+    }
+
+    // 0x005babb0
+    // a.k.a. seek
+    void SeekSoundSample(SoundSample* self, const s32 src, const s32 dst)
+    {
+        if (self->Unk7 < 0) { LogError("Unable to seek sound sample, %s is not streamed.", self->Descriptor.Definition.Name); } // tODO constant
+
+        self->Unk10 = (s32)round(AcquireSoundSamplePosition(self, (f64)src, SoundSeek::Set));
+
+        if (self->Unk10 < 0) { self->Unk10 = 0; }
+
+        if (dst < 0 || self->Length <= dst) { LogError("Unable to seek sound sample, invalid destination position."); }
+
+        self->Position = dst;
+
+        if (self->Decoder != NULL)
+        {
+            if (!FUN_004aabe0(self->Decoder, self->Unk10)) { LogError("Unable to seek sound sample %s to %d.", self->Descriptor.Definition.Name, self->Unk10); }
+
+            return;
+        }
+
+        if (!IsInStreamFileAvailable(&self->Stream)) { LogError("Unable to seek sound sample, no MP3 and no WAV for sample '%s'.", self->Descriptor.Definition.Name); }
+
+        SeekInStreamFile(&self->Stream, AcquireSoundSampleDescriptorOffset(&self->Descriptor, self->Unk10) + self->Unk13, StreamSeek::Set);
     }
 }

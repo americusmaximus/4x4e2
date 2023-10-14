@@ -57,6 +57,7 @@ namespace Sounds
     void DisposeSoundSample(SoundSample* self);
     void LoadSoundSampleDescriptor(SoundSampleDescriptor* self);
     void ReleaseSoundSampleMemory(SoundSample* self);
+    void SeekSoundSample(SoundSample*, const s32 src, const s32 dst);
     void UnlockSoundSample(SoundSample* self);
     void* LockSoundSample(SoundSample* self, const s32 offset, const s32 length);
 }

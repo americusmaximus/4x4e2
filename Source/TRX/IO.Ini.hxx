@@ -184,4 +184,9 @@ namespace IO::Ini
     extern IniMemoryContainer IniMemoryState;
 
     char* AcquireIniMemoryString(char* input, char* output);
+
+    void ReadAbstractIniInteger(AbstractIni* self, const char* name, s32* value);
+    void ReadAbstractIniReal(AbstractIni* self, const char* name, f32* value);
+    void WriteAbstractIniInteger(AbstractIni* self, const char* name, const s32 value);
+    void WriteAbstractIniReal(AbstractIni* self, const char* name, const f32 value);
 }

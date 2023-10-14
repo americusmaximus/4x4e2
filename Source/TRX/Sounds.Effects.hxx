@@ -122,6 +122,7 @@ namespace Sounds
     void SelectSoundEffectChannelState(const s32 indx, const BOOL value);
     void SelectSoundEffectChannelVolume(const s32 indx, const f32 volume);
     void SelectSoundEffectIndex(const s32 indx);
+    void SelectSoundEffectPosition(SoundEffect* self);
     void UpdateCurrentSoundEffectDescriptorUnk30(const u32 mode); // TODO name, enum
     void UpdateSoundEffectPosition(SoundEffect* self, const f64 position);
 }

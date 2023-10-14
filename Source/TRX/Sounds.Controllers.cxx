@@ -94,12 +94,12 @@ namespace Sounds
     {
         if (!ReleaseSoundDeviceController()) { return FALSE; }
 
-        SelectSoundDevice(*SoundDeviceState._SoundDeviceIndex);
+        SelectSoundDevice(SoundDeviceState.SoundDeviceIndex);
 
-        if (INVALID_SOUND_DEVICE_INDEX < *SoundDeviceState._SoundDeviceIndex)
+        if (INVALID_SOUND_DEVICE_INDEX < SoundDeviceState.SoundDeviceIndex)
         {
-            const auto type = SoundDeviceState.SoundDevices[*SoundDeviceState._SoundDeviceIndex].Type;
-            const auto index = SoundDeviceState.SoundDevices[*SoundDeviceState._SoundDeviceIndex].Index;
+            const auto type = SoundDeviceState.SoundDevices[SoundDeviceState.SoundDeviceIndex].Type;
+            const auto index = SoundDeviceState.SoundDevices[SoundDeviceState.SoundDeviceIndex].Index;
 
             switch (type)
             {

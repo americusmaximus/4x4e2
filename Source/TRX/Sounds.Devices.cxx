@@ -127,7 +127,7 @@ namespace Sounds
     // 0x005bfdc0
     s32 AcquireSelectedSoundDeviceIndex(void)
     {
-        return *SoundDeviceState._SoundDeviceIndex;
+        return SoundDeviceState.SoundDeviceIndex;
     }
 
     // 0x005bfa40
@@ -152,15 +152,15 @@ namespace Sounds
         }
 
         const auto count = AcquireSoundDeviceCount();
-        const auto index = indx < 0 ? *SoundDeviceState._SoundDeviceIndex : indx;
+        const auto index = indx < 0 ? SoundDeviceState.SoundDeviceIndex : indx;
 
         if (indx < count && INVALID_SOUND_RECORDING_DEVICE_INDEX < indx)
         {
-            *SoundDeviceState._SoundDeviceIndex = indx;
+            SoundDeviceState.SoundDeviceIndex = indx;
         }
         else
         {
-            *SoundDeviceState._SoundDeviceIndex = AcquireSoundDeviceIndex();
+            SoundDeviceState.SoundDeviceIndex = AcquireSoundDeviceIndex();
         }
     }
 

@@ -1210,6 +1210,28 @@ namespace Sounds
         return result;
     }
 
+    // 0x005bcc20
+    void SelectSoundEffectPosition(SoundEffect* self)
+    {
+        if (self->Sample == NULL) { LogError("Unable to select sound effect position, sound sample is missing."); }
+
+        self->Descriptor.Position = CalculateSoundSampleDescriptorPosition(&self->Sample->Descriptor, self->Descriptor.Position, self->Descriptor.Seek, SoundSeek::Set);
+        self->Descriptor.Seek = SoundSeek::Set;
+
+        self->Descriptor.Position = AcquireSoundSamplePosition(self->Sample, self->Descriptor.Position, self->Descriptor.Seek);
+
+        if (self->Sample->Unk7 < 0) // TODO constant
+        {
+            self->Position = self->Descriptor.Position;
+
+            return;
+        }
+
+        SeekSoundSample(self->Sample, (s32)round(self->Descriptor.Position), 0);
+
+        self->Position = (f64)self->Sample->Position;
+    }
+
     // 0x005bbd80
     // a.k.a. mix
     // NOTE: Originally the container is being passed by value.

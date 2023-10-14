@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hxx" />
+    <ClInclude Include="App.Options.hxx" />
     <ClInclude Include="App.Windows.hxx" />
     <ClInclude Include="ASCII.hxx" />
     <ClInclude Include="Assets.Basic.hxx" />
@@ -76,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cxx" />
+    <ClCompile Include="App.Options.cxx" />
     <ClCompile Include="App.Windows.cxx" />
     <ClCompile Include="Editor.Clipboard.cxx" />
     <ClCompile Include="Editor.cxx" />
