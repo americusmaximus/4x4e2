@@ -20,10 +20,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include "Vehicles.Sounds.hxx"
 
-#include "IO.Ini.hxx"
-
-namespace App::Options
+namespace Vehicles
 {
+    VehicleSoundEffectContainer VehicleSoundEffectState;
+
+    // 0x005e9850
+    VehicleSoundEffect* ConstructVehicleSoundEffect(VehicleSoundEffect* self)
+    {
+        //TODO NOT IMPLEMENTED FUN_005e1900
+
+        return self;
+    }
+
+    // 0x005e9870
+    void* ReleaseVehicleSoundEffect(VehicleSoundEffect* self)
+    {
+        return self;
+    }
 }

@@ -47,6 +47,7 @@ namespace Sounds
     extern SoundSampleContainer SoundSampleState;
 
     BOOL AllocateSoundSample(SoundSample* self);
+    BOOL AllocateSoundSampleDescriptor(SoundSampleDescriptor* self);
     BOOL ReduceSoundSampleAllocation(const u32 size);
     f64 AcquireSoundSamplePosition(SoundSample* self, const f64 position, const SoundSeek mode);
     f64 CalculateSoundSampleDescriptorPosition(SoundSampleDescriptor* self, const f64 position, const SoundSeek src, const SoundSeek dst);

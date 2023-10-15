@@ -26,6 +26,7 @@ SOFTWARE.
 #include "Native.Basic.hxx"
 #include "Sounds.Controllers.hxx"
 #include "Sounds.Disk.hxx"
+#include "Sounds.Manager.hxx"
 
 #define MIN_SOUND_EFFECT_CHANNEL_COUNT 0
 #define MAX_SOUND_EFFECT_CHANNEL_COUNT 32
@@ -47,6 +48,8 @@ namespace Sounds
     struct SoundContainer
     {
         SoundMixMode MixMode = SoundMixMode::Advanced; // 0x0067ace8
+
+        SoundManager** _Manager = (SoundManager**)0x0067d46c; // TODO, points to SoundManagerState.Instance
 
         struct
         {
@@ -154,7 +157,7 @@ namespace Sounds
         SoundEffectDescriptor* _SoundEffectDescriptors = (SoundEffectDescriptor*)0x00d38688; // TOOD array of 8
         s32* _SoundEffectDescriptorIndex = (s32*)0x00d38680;
 
-        SoundDisk** _SoundDisk = (SoundDisk**)0x0067acc4; // TODO
+        SoundDisk** _SoundDisk = (SoundDisk**)0x0067acc4; // TODO Points to SoundDiskState.Instance
 
         u32 UnknownAllocationSize = MAX_SOUND_UNKNOWN_ALLOCATION_SIZE; // 0x0067acf4
         u32 MaximumSoundSampleAllocationSize = MAX_SOUND_SAMPLE_ALLOCATION_SIZE; // 0x0067acf8
@@ -187,4 +190,7 @@ namespace Sounds
 
     typedef const BOOL(CDECLAPI* FUN_004AABE0) (SoundDecoder*, s32); // TODO
     static FUN_004AABE0 FUN_004aabe0 = (FUN_004AABE0)0x004aabe0;//TODO
+
+    typedef const u32(CDECLAPI* FUN_005BD740) (char*); // TODO
+    static FUN_005BD740 FUN_005bd740 = (FUN_005BD740)0x005bd740;//TODO
 }

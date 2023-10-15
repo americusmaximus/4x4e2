@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include "IO.Ini.hxx"
 
-namespace App::Options
+namespace Sounds::Options
 {
+    void LoadSoundOptions(IO::Ini::AbstractIni* ini);
+    void SaveSoundOptions(IO::Ini::AbstractIni* ini);
 }

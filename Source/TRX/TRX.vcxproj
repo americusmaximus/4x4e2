@@ -71,7 +71,10 @@
     <ClInclude Include="Sounds.Effects.hxx" />
     <ClInclude Include="Sounds.hxx" />
     <ClInclude Include="Sounds.Controllers.WaveIn.hxx" />
+    <ClInclude Include="Sounds.Options.hxx" />
     <ClInclude Include="Sounds.Samples.hxx" />
+    <ClInclude Include="Sounds.Manager.hxx" />
+    <ClInclude Include="Vehicles.Sounds.hxx" />
     <ClInclude Include="Strings.hxx" />
     <ClInclude Include="Time.hxx" />
   </ItemGroup>
@@ -114,8 +117,11 @@
     <ClCompile Include="Sounds.Disk.cxx" />
     <ClCompile Include="Sounds.Effects.cxx" />
     <ClCompile Include="Sounds.Controllers.WaveIn.cxx" />
+    <ClCompile Include="Vehicles.Sounds.cxx" />
     <ClCompile Include="Sounds.Samples.cxx" />
     <ClCompile Include="Sounds.Samples.Descriptors.cxx" />
+    <ClCompile Include="Sounds.Manager.cxx" />
+    <ClCompile Include="Sounds.Options.cxx" />
     <ClCompile Include="Strings.cxx" />
     <ClCompile Include="Time.cxx" />
   </ItemGroup>

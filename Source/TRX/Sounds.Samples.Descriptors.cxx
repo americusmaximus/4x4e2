@@ -23,6 +23,7 @@ SOFTWARE.
 #include "Logger.hxx"
 #include "Objects.hxx"
 #include "Sounds.hxx"
+#include "Sounds.Samples.hxx"
 #include "Strings.hxx"
 
 #include <stdio.h>
@@ -39,6 +40,7 @@ SOFTWARE.
 #define MAX_SFX_FILE_LINE_LENGTH 300
 #define SFX_COMMENT_VALUE "//"
 
+using namespace Assets::Sounds;
 using namespace IO::Streams;
 using namespace IO;
 using namespace Logger;
@@ -310,5 +312,76 @@ namespace Sounds
         }
 
         return result;
+    }
+
+    // 0x005be7f0
+    BOOL AllocateSoundSampleDescriptor(SoundSampleDescriptor* self)
+    {
+        LockSounds();
+        DisposeNamedSoundSample(self->Definition.Name, TRUE);
+
+        auto found = FALSE;
+
+        for (u32 x = 0; x < 64; x++) // TODO constant
+        {
+            *SoundState._SoundEffectIndex = *SoundState._SoundEffectIndex + 1;
+
+            if (63 < *SoundState._SoundEffectIndex) { *SoundState._SoundEffectIndex = 0; } // TODO constant
+
+            if (SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.CacheControl == SoundCacheMode::Normal
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].ReferenceCount == 0
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk6 == 0
+                && SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Lock.Length == 0)
+            {
+                found = TRUE;
+
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            UnlockSound1();
+
+            return FALSE;
+        }
+
+        auto sample = &SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex];
+
+        if (sample != NULL)
+        {
+            CopyMemory(&SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor, self, sizeof(SoundSampleDescriptor));
+
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.CacheControl = SoundCacheMode::Normal;
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].ReferenceCount = 0;
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Index = 0;
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk6 = 1;
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk7 = -1;
+
+            const auto offset = SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Descriptor.Definition.Length;;
+
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Length = offset;
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Unk10 = offset;
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].Position = offset;
+
+            SoundState._SoundEffectSamples[*SoundState._SoundEffectIndex].AllocatedMemorySize = AcquireSoundSampleDescriptorOffset(&sample->Descriptor, offset);
+
+            if (AllocateSoundSample(sample))
+            {
+                UnlockSound1();
+
+                return TRUE;
+            }
+            else
+            {
+                DisposeSoundSample(sample);
+
+                return FALSE;
+            }
+        }
+
+        UnlockSound1();
+
+        return FALSE;
     }
 }
