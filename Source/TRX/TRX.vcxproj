@@ -27,6 +27,7 @@
     <ClInclude Include="Assets.Sounds.hxx" />
     <ClInclude Include="Basic.hxx" />
     <ClInclude Include="Direct.Draw.hxx" />
+    <ClInclude Include="Direct.Sound.VoiceManager.hxx" />
     <ClInclude Include="Editor.hxx" />
     <ClInclude Include="Editor.ScrollBar.hxx" />
     <ClInclude Include="Editor.StringList.hxx" />

@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "App.Windows.hxx"
 #include "Direct.Sound.EAX.hxx"
+#include "Direct.Sound.VoiceManager.hxx"
 #include "Logger.hxx"
 #include "Mathematics.Basic.hxx"
 #include "Sounds.Controllers.DirectSoundController.hxx"
@@ -52,7 +53,7 @@ namespace Sounds
 {
     SoundDirectSoundSoundControllerContainer SoundDirectSoundSoundControllerState;
 
-    GUID IKsPropertySetImpl_QuerySupport = { 0x62a69bae, 0xdf9d, 0x11d1, 0x99, 0xa6, 0x00, 0xc0, 0x4f, 0xc9, 0x9d, 0x46 }; // DSPROPSETID_VoiceManager
+    GUID DSPROPSETID_VoiceManager = { 0x62a69bae, 0xdf9d, 0x11d1, 0x99, 0xa6, 0x00, 0xc0, 0x4f, 0xc9, 0x9d, 0x46 };
     GUID DSPROPSETID_EAX_ReverbProperties = { 0x4a4e6fc1, 0xc341, 0x11d1, 0xb7, 0x3a, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00 };
     
     // 0x005b4b60
@@ -387,8 +388,8 @@ namespace Sounds
 
                     if (SoundDirectSoundSoundControllerState.EAX.Instance != NULL)
                     {
-                        BOOL value = TRUE;
-                        SoundDirectSoundSoundControllerState.EAX.Instance->Set(IKsPropertySetImpl_QuerySupport, NULL, NULL, NULL, &value, sizeof(BOOL));
+                        DWORD value = DSPROPERTY_VMANAGER_MODE_AUTO;
+                        SoundDirectSoundSoundControllerState.EAX.Instance->Set(DSPROPSETID_VoiceManager, DSPROPERTY_VMANAGER_MODE, NULL, NULL, &value, sizeof(DWORD));
                     }
 
                     if (AcquireSoundDeviceControllerMixMode() != SoundMixMode::None)
