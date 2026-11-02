@@ -39,6 +39,7 @@ DirectX 9.0 renderers are upgrades to the DirectX 8.0 renderers. These renderers
 ## Thanks
 1. Thanks to [My Abandonware](https://www.myabandonware.com/) for providing [4x4 Evo 2](https://www.myabandonware.com/game/4x4-evo-2-a6c).
 2. Thanks to [d3d8to9](https://github.com/crosire/d3d8to9) for the insights and the details for the upgrade to DirectX 9.0 above and beyond what Microsoft's article [Converting to Direct3D 9](https://learn.microsoft.com/en-us/windows/win32/direct3d9/converting-to-directx-9) provides.
+3. Thanks to [Dolphin Emulator](https://wiki.dolphin-emu.org/index.php?title=4x4_EVO_2) for pointing out that 4x4 EVO 2 GameCube version was shipped with debug symbols.
 
 ## Legal
 1. This is not a complete game. Please purchase software you like!
